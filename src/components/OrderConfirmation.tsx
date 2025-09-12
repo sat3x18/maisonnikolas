@@ -225,4 +225,4 @@ const OrderConfirmation: React.FC = () => {
   );
 };
 
-export default OrderConfirmation;
+export default OrderConfirmation
