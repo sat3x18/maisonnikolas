@@ -104,6 +104,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
           </form>
 
           <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+          </div>
+        </div>
       </div>
     </div>
   );
