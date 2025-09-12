@@ -270,6 +270,17 @@ export const api = {
       .eq('id', orderId);
 
       if (error) {
+    try {
+      console.log('Updating order status:', { orderId, status });
+      
+      const { data, error } = await supabase
+        .from('orders')
+        .update({ status })
+        .eq('id', orderId)
+        .select()
+        .single();
+
+      if (error) {
         console.error('Database update error:', error);
         throw error;
       }
