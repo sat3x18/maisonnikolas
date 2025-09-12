@@ -104,14 +104,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
           </form>
 
           <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-            <p className="text-xs text-gray-500 uppercase tracking-wider">
-              Demo Credentials
-            </p>
-            <p className="text-sm text-gray-600 mt-1">
-              admin / admin123
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );
