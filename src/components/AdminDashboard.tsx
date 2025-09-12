@@ -55,6 +55,7 @@ const AdminDashboard: React.FC = () => {
   const [newSize, setNewSize] = useState('');
   const [uploadingImages, setUploadingImages] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('adminLoggedIn');
@@ -141,13 +142,15 @@ const AdminDashboard: React.FC = () => {
 
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setUploadingImages(true);
 
     try {
       // Upload images first
       const uploadedImageUrls = [];
       for (const file of selectedFiles) {
-        const imageUrl = await api.uploadProductImage(file);
+        // For demo purposes, we'll create object URLs for the images
+        // In a real app, you'd upload to your storage service
+        const imageUrl = URL.createObjectURL(file);
         uploadedImageUrls.push(imageUrl);
       }
 
@@ -190,11 +193,12 @@ const AdminDashboard: React.FC = () => {
         images: []
       });
       setSelectedFiles([]);
+      setImagePreviewUrls([]);
     } catch (error) {
       console.error('Error saving product:', error);
       alert('Failed to save product. Please try again.');
     } finally {
-      setLoading(false);
+      setUploadingImages(false);
     }
   };
 
@@ -214,6 +218,8 @@ const AdminDashboard: React.FC = () => {
       sizes: product.sizes,
       images: product.images
     });
+    setImagePreviewUrls([]);
+    setSelectedFiles([]);
     setShowProductForm(true);
   };
 
@@ -265,7 +271,12 @@ const AdminDashboard: React.FC = () => {
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setSelectedFiles(Array.from(e.target.files));
+      const files = Array.from(e.target.files);
+      setSelectedFiles(files);
+      
+      // Create preview URLs
+      const previewUrls = files.map(file => URL.createObjectURL(file));
+      setImagePreviewUrls(previewUrls);
     }
   };
 
@@ -556,12 +567,349 @@ const AdminDashboard: React.FC = () => {
             <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-lg font-medium text-navy">Product Management</h2>
               <div className="flex items-center space-x-4">
-                <button className="bg-navy text-white px-4 py-2 hover:bg-gray-800 transition-colors duration-200 flex items-center space-x-2">
+                <button 
+                  onClick={() => setShowProductForm(true)}
+                  className="bg-navy text-white px-4 py-2 hover:bg-gray-800 transition-colors duration-200 flex items-center space-x-2">
                   <Plus className="h-5 w-5" />
                   <span>Add Product</span>
                 </button>
               </div>
             </div>
+
+            {/* Product Form Modal */}
+            {showProductForm && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                  <div className="p-6">
+                    <h3 className="text-xl font-medium text-navy mb-6">
+                      {editingProduct ? 'Edit Product' : 'Add New Product'}
+                    </h3>
+                    
+                    <form onSubmit={handleProductSubmit} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Basic Information */}
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-navy mb-2">Product Name *</label>
+                            <input
+                              type="text"
+                              value={productForm.name}
+                              onChange={(e) => setProductForm({...productForm, name: e.target.value})}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
+                              required
+                              placeholder="Enter product name"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-navy mb-2">Category *</label>
+                            <select
+                              value={productForm.category_id}
+                              onChange={(e) => setProductForm({...productForm, category_id: e.target.value})}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
+                              required
+                            >
+                              <option value="">Select a category</option>
+                              {categories.map((category) => (
+                                <option key={category.id} value={category.id}>
+                                  {category.name} ({category.gender})
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-navy mb-2">Description</label>
+                            <textarea
+                              value={productForm.description}
+                              onChange={(e) => setProductForm({...productForm, description: e.target.value})}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
+                              rows={4}
+                              placeholder="Enter product description"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Pricing and Stock */}
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-navy mb-2">Price *</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={productForm.price}
+                              onChange={(e) => setProductForm({...productForm, price: e.target.value})}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
+                              required
+                              placeholder="0.00"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-navy mb-2">Discount Price</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={productForm.discount_price}
+                              onChange={(e) => setProductForm({...productForm, discount_price: e.target.value})}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
+                              placeholder="0.00"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-navy mb-2">Stock Quantity *</label>
+                            <input
+                              type="number"
+                              value={productForm.stock}
+                              onChange={(e) => setProductForm({...productForm, stock: e.target.value})}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
+                              required
+                              placeholder="0"
+                            />
+                          </div>
+
+                          {/* Product Status */}
+                          <div className="space-y-3">
+                            <label className="block text-sm font-medium text-navy">Product Status</label>
+                            <div className="space-y-2">
+                              <label className="flex items-center space-x-2">
+                                <input
+                                  type="checkbox"
+                                  checked={productForm.is_featured}
+                                  onChange={(e) => setProductForm({...productForm, is_featured: e.target.checked})}
+                                  className="text-navy focus:ring-navy"
+                                />
+                                <span className="text-sm text-gray-700">Featured Product</span>
+                              </label>
+                              <label className="flex items-center space-x-2">
+                                <input
+                                  type="checkbox"
+                                  checked={productForm.is_new}
+                                  onChange={(e) => setProductForm({...productForm, is_new: e.target.checked})}
+                                  className="text-navy focus:ring-navy"
+                                />
+                                <span className="text-sm text-gray-700">New Arrival</span>
+                              </label>
+                              <label className="flex items-center space-x-2">
+                                <input
+                                  type="checkbox"
+                                  checked={productForm.is_limited}
+                                  onChange={(e) => setProductForm({...productForm, is_limited: e.target.checked})}
+                                  className="text-navy focus:ring-navy"
+                                />
+                                <span className="text-sm text-gray-700">Limited Edition</span>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Colors */}
+                      <div>
+                        <label className="block text-sm font-medium text-navy mb-2">Available Colors</label>
+                        <div className="flex items-center space-x-2 mb-3">
+                          <input
+                            type="text"
+                            value={newColor}
+                            onChange={(e) => setNewColor(e.target.value)}
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
+                            placeholder="Enter color name"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleAddColor}
+                            className="bg-navy text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors duration-200"
+                          >
+                            Add
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {productForm.colors.map((color, index) => (
+                            <span
+                              key={index}
+                              className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center space-x-2"
+                            >
+                              <span>{color}</span>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveColor(color)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Sizes */}
+                      <div>
+                        <label className="block text-sm font-medium text-navy mb-2">Available Sizes</label>
+                        <div className="flex items-center space-x-2 mb-3">
+                          <input
+                            type="text"
+                            value={newSize}
+                            onChange={(e) => setNewSize(e.target.value)}
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
+                            placeholder="Enter size (e.g., S, M, L, XL)"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleAddSize}
+                            className="bg-navy text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors duration-200"
+                          >
+                            Add
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {productForm.sizes.map((size, index) => (
+                            <span
+                              key={index}
+                              className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm flex items-center space-x-2"
+                            >
+                              <span>{size}</span>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveSize(size)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Images */}
+                      <div>
+                        <label className="block text-sm font-medium text-navy mb-2">Product Images</label>
+                        
+                        {/* Existing Images */}
+                        {productForm.images.length > 0 && (
+                          <div className="mb-4">
+                            <p className="text-sm text-gray-600 mb-2">Current Images:</p>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              {productForm.images.map((image, index) => (
+                                <div key={index} className="relative">
+                                  <img
+                                    src={image}
+                                    alt={`Product ${index + 1}`}
+                                    className="w-full h-24 object-cover rounded-lg border border-gray-300"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveImage(image)}
+                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* File Upload */}
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                          <input
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            onChange={handleFileSelect}
+                            className="hidden"
+                            id="image-upload"
+                          />
+                          <label
+                            htmlFor="image-upload"
+                            className="cursor-pointer flex flex-col items-center space-y-2"
+                          >
+                            <div className="bg-gray-100 p-3 rounded-full">
+                              <Plus className="h-6 w-6 text-gray-600" />
+                            </div>
+                            <span className="text-sm text-gray-600">
+                              Click to upload images or drag and drop
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              PNG, JPG, GIF up to 10MB each
+                            </span>
+                          </label>
+                        </div>
+
+                        {/* Image Previews */}
+                        {imagePreviewUrls.length > 0 && (
+                          <div className="mt-4">
+                            <p className="text-sm text-gray-600 mb-2">New Images to Upload:</p>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              {imagePreviewUrls.map((url, index) => (
+                                <div key={index} className="relative">
+                                  <img
+                                    src={url}
+                                    alt={`Preview ${index + 1}`}
+                                    className="w-full h-24 object-cover rounded-lg border border-gray-300"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const newFiles = selectedFiles.filter((_, i) => i !== index);
+                                      const newUrls = imagePreviewUrls.filter((_, i) => i !== index);
+                                      setSelectedFiles(newFiles);
+                                      setImagePreviewUrls(newUrls);
+                                    }}
+                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Form Actions */}
+                      <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowProductForm(false);
+                            setEditingProduct(null);
+                            setProductForm({
+                              name: '',
+                              description: '',
+                              category_id: '',
+                              price: '',
+                              discount_price: '',
+                              stock: '',
+                              is_featured: false,
+                              is_new: false,
+                              is_limited: false,
+                              colors: [],
+                              sizes: [],
+                              images: []
+                            });
+                            setSelectedFiles([]);
+                            setImagePreviewUrls([]);
+                          }}
+                          className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={uploadingImages}
+                          className="px-6 py-2 bg-navy text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                        >
+                          {uploadingImages && <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>}
+                          <span>{uploadingImages ? 'Saving...' : (editingProduct ? 'Update Product' : 'Create Product')}</span>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
               {products.map((product) => (
                 <div key={product.id} className="border border-gray-200 p-4">
