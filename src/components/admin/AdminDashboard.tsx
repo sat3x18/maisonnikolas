@@ -1,491 +1,376 @@
-import { createClient } from '@supabase/supabase-js';
+import React, { useState, useEffect } from 'react';
+import { api, Order, Product, Category, NewsletterSubscriber } from '../../lib/supabase';
+import { LogOut, Package, ShoppingCart, Users, Mail, Eye, Edit, Trash2 } from 'lucide-react';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+interface AdminDashboardProps {
+  onLogout: () => void;
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
+  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'categories' | 'newsletter'>('orders');
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([]);
+  const [loading, setLoading] = useState(true);
 
-// Types
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string;
-  created_at: string;
-  gender?: 'men' | 'women';
-}
+  useEffect(() => {
+    loadData();
+  }, []);
 
-export interface Product {
-  id: string;
-  name: string;
-  description?: string;
-  category_id: string;
-  price: number;
-  discount_price?: number;
-  images: string[];
-  colors: string[];
-  sizes: string[];
-  stock: number;
-  is_featured: boolean;
-  is_new: boolean;
-  is_limited: boolean;
-  created_at: string;
-  category?: Category;
-}
-
-export interface Order {
-  id: string;
-  order_number: string;
-  customer_name: string;
-  customer_surname: string;
-  customer_phone: string;
-  customer_city: string;
-  customer_address: string;
-  payment_method: string;
-  total_amount: number;
-  status: string;
-  created_at: string;
-  order_items?: OrderItem[];
-}
-
-export interface OrderItem {
-  id: string;
-  order_id: string;
-  product_id: string;
-  quantity: number;
-  price: number;
-  color?: string;
-  size?: string;
-  product?: Product;
-}
-
-export interface Review {
-  id: string;
-  product_id: string;
-  order_id: string;
-  customer_name: string;
-  rating: number;
-  comment?: string;
-  created_at: string;
-}
-
-export interface CartItem {
-  product: Product;
-  quantity: number;
-  color?: string;
-  size?: string;
-}
-
-export interface NewsletterSubscriber {
-  id: string;
-  email: string;
-  subscribed_at: string;
-  is_active: boolean;
-}
-
-// API Functions
-export const api = {
-  // Categories
-  getCategories: async (): Promise<Category[]> => {
-    const { data, error } = await supabase
-      .from('categories')
-      .select('*')
-      .order('name');
-    
-    if (error) throw error;
-    return data || [];
-  },
-
-  // Products
-  getProducts: async (categoryId?: string, search?: string): Promise<Product[]> => {
-    let query = supabase
-      .from('products')
-      .select(`
-        *,
-        category:categories(*)
-      `)
-      .order('created_at', { ascending: false });
-
-    if (categoryId) {
-      query = query.eq('category_id', categoryId);
-    }
-
-    if (search) {
-      query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
-    }
-
-    const { data, error } = await query;
-    if (error) throw error;
-    return data || [];
-  },
-
-  getProduct: async (id: string): Promise<Product | null> => {
-    const { data, error } = await supabase
-      .from('products')
-      .select(`
-        *,
-        category:categories(*)
-      `)
-      .eq('id', id)
-      .single();
-
-    if (error) throw error;
-    return data;
-  },
-
-  getFeaturedProducts: async (): Promise<Product[]> => {
-    const { data, error } = await supabase
-      .from('products')
-      .select(`
-        *,
-        category:categories(*)
-      `)
-      .eq('is_featured', true)
-      .limit(6);
-
-    if (error) throw error;
-    return data || [];
-  },
-
-  // Orders
-  createOrder: async (orderData: Omit<Order, 'id' | 'created_at'>, items: Omit<OrderItem, 'id' | 'order_id'>[]): Promise<Order> => {
-    const { data: order, error: orderError } = await supabase
-      .from('orders')
-      .insert(orderData)
-      .select()
-      .single();
-
-    if (orderError) throw orderError;
-
-    const orderItems = items.map(item => ({
-      ...item,
-      order_id: order.id
-    }));
-
-    const { error: itemsError } = await supabase
-      .from('order_items')
-      .insert(orderItems);
-
-    if (itemsError) throw itemsError;
-
-    // Send Discord webhook
-    await sendDiscordWebhook(order, items);
-
-    return order;
-  },
-
-  getOrder: async (orderNumber: string): Promise<Order | null> => {
-    const { data, error } = await supabase
-      .from('orders')
-      .select(`
-        *,
-        order_items:order_items(
-          *,
-          product:products(*)
-        )
-      `)
-      .eq('order_number', orderNumber)
-      .single();
-
-    if (error) throw error;
-    return data;
-  },
-
-  // Reviews
-  getProductReviews: async (productId: string): Promise<Review[]> => {
-    const { data, error } = await supabase
-      .from('reviews')
-      .select('*')
-      .eq('product_id', productId)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data || [];
-  },
-
-  createReview: async (reviewData: Omit<Review, 'id' | 'created_at'>): Promise<Review> => {
-    const { data, error } = await supabase
-      .from('reviews')
-      .insert(reviewData)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  },
-
-  // Newsletter subscription
-  subscribeToNewsletter: async (email: string): Promise<NewsletterSubscriber> => {
-    const { data, error } = await supabase
-      .from('newsletter_subscribers')
-      .insert({ email })
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    // Send Discord webhook
-    await sendNewsletterWebhook(email);
-
-    return data;
-  },
-
-  getNewsletterSubscribers: async (): Promise<NewsletterSubscriber[]> => {
-    const { data, error } = await supabase
-      .from('newsletter_subscribers')
-      .select('*')
-      .eq('is_active', true)
-      .order('subscribed_at', { ascending: false });
-
-    if (error) throw error;
-    return data || [];
-  },
-
-  // Admin functions
-  getAllOrders: async (): Promise<Order[]> => {
-    const { data, error } = await supabase
-      .from('orders')
-      .select(`
-        *,
-        order_items:order_items(
-          *,
-          product:products(*)
-        )
-      `)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data || [];
-  },
-
-  updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
+  const loadData = async () => {
     try {
-      const { data, error } = await supabase
-        .from('orders')
-        .update({ status })
-        .eq('id', orderId)
-        .select()
-        .single();
-
-      if (error) {
-        throw error;
-      }
+      setLoading(true);
+      const [ordersData, productsData, categoriesData, subscribersData] = await Promise.all([
+        api.getAllOrders(),
+        api.getProducts(),
+        api.getCategories(),
+        api.getNewsletterSubscribers()
+      ]);
       
-      if (!data) {
-        console.warn('⚠️ No order found with this ID:', orderId);
-        return;
-      }
-      
-      await api.sendOrderStatusUpdate(data, status);
-      
-      console.log('Order status updated successfully:', data);
-    } catch (err) {
-      throw err;
-    }
-  },
-
-  sendOrderStatusUpdate: async (order: Order, newStatus: string): Promise<void> => {
-    const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
-    
-    if (!webhookUrl) return;
-
-    const statusEmojis: { [key: string]: string } = {
-      pending: '⏳',
-      confirmed: '✅',
-      shipped: '🚚',
-      completed: '🎉',
-      cancelled: '❌'
-    };
-
-    const statusColors: { [key: string]: number } = {
-      pending: 0xFBBF24,
-      confirmed: 0x3B82F6,
-      shipped: 0x8B5CF6,
-      completed: 0x10B981,
-      cancelled: 0xEF4444
-    };
-
-    let embed: any = {
-      title: `${statusEmojis[newStatus]} Order Status Updated`,
-      color: statusColors[newStatus] || 0x6B7280,
-      fields: [
-        {
-          name: 'Order Number',
-          value: order.order_number,
-          inline: true
-        },
-        {
-          name: 'Customer',
-          value: `${order.customer_name} ${order.customer_surname}`,
-          inline: true
-        },
-        {
-          name: 'New Status',
-          value: newStatus.charAt(0).toUpperCase() + newStatus.slice(1),
-          inline: true
-        },
-        {
-          name: 'Total Amount',
-          value: `$${order.total_amount}`,
-          inline: true
-        }
-      ],
-      timestamp: new Date().toISOString()
-    };
-
-    // Add review link for completed orders
-    if (newStatus === 'completed') {
-      embed.fields.push({
-        name: '📝 Review Link',
-        value: `${window.location.origin}/review/${order.order_number}`,
-        inline: false
-      });
-      embed.description = '✨ Order completed! Customer can now leave a review using the link above.';
-    }
-
-    try {
-      await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          embeds: [embed]
-        })
-      });
+      setOrders(ordersData);
+      setProducts(productsData);
+      setCategories(categoriesData);
+      setSubscribers(subscribersData);
     } catch (error) {
-      console.error('Failed to send status update webhook:', error);
-    }
-  }
-};
-
-// Discord webhook function
-const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'order_id'>[]) => {
-  const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
-  
-  console.log('Discord webhook URL:', webhookUrl ? 'Found' : 'Not found');
-  
-  if (!webhookUrl) return;
-
-  const itemsText = items.map(item => 
-    `• ${item.quantity}x ${item.product?.name || 'Product'} (${item.color || 'N/A'}, ${item.size || 'N/A'}) - $${item.price}`
-  ).join('\n');
-
-  const embed = {
-    title: '🛍️ New Order Received!',
-    color: 0xD4AF37,
-    fields: [
-      {
-        name: 'Order Number',
-        value: order.order_number,
-        inline: true
-      },
-      {
-        name: 'Customer',
-        value: `${order.customer_name} ${order.customer_surname}`,
-        inline: true
-      },
-      {
-        name: 'Total Amount',
-        value: `$${order.total_amount}`,
-        inline: true
-      },
-      {
-        name: 'Contact',
-        value: `📞 ${order.customer_phone}\n🏙️ ${order.customer_city}`,
-        inline: true
-      },
-      {
-        name: 'Payment Method',
-        value: order.payment_method,
-        inline: true
-      },
-      {
-        name: 'Address',
-        value: order.customer_address,
-        inline: false
-      },
-      {
-        name: 'Items',
-        value: itemsText,
-        inline: false
-      }
-    ],
-    timestamp: new Date().toISOString()
-  };
-
-  try {
-    console.log('Sending Discord webhook...', embed);
-    
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        embeds: [embed]
-      })
-    });
-    
-    console.log('Discord webhook sent successfully');
-  } catch (error) {
-    console.error('Failed to send Discord webhook:', error);
-  }
-};
-
-// Newsletter webhook function
-const sendNewsletterWebhook = async (email: string) => {
-  const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
-  
-  console.log('Newsletter webhook URL:', webhookUrl ? 'Found' : 'Not found');
-  
-  if (!webhookUrl) return;
-
-  const embed = {
-    title: '📧 New Newsletter Subscription!',
-    color: 0x1e3a8a, // Navy blue
-    fields: [
-      {
-        name: 'Email',
-        value: email,
-        inline: true
-      },
-      {
-        name: 'Subscribed At',
-        value: new Date().toLocaleString(),
-        inline: true
-      },
-      {
-        name: 'Source',
-        value: 'Maison Nikolas Website',
-        inline: true
-      }
-    ],
-    timestamp: new Date().toISOString(),
-    footer: {
-      text: 'Newsletter Subscription'
+      console.error('Error loading admin data:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  try {
-    console.log('Sending newsletter webhook...', embed);
-    
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        embeds: [embed]
-      })
-    });
-    
-    console.log('Newsletter webhook sent successfully');
-  } catch (error) {
-    console.error('Failed to send newsletter webhook:', error);
+  const handleStatusUpdate = async (orderId: string, newStatus: string) => {
+    try {
+      await api.updateOrderStatus(orderId, newStatus);
+      // Reload orders to reflect the change
+      const updatedOrders = await api.getAllOrders();
+      setOrders(updatedOrders);
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      alert('Failed to update order status');
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'confirmed': return 'bg-blue-100 text-blue-800';
+      case 'shipped': return 'bg-purple-100 text-purple-800';
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-navy-900 border-t-transparent mx-auto mb-4"></div>
+          <p className="text-navy-900">Loading admin dashboard...</p>
+        </div>
+      </div>
+    );
   }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <h1 className="text-2xl font-bold text-navy-900">Admin Dashboard</h1>
+            <button
+              onClick={onLogout}
+              className="flex items-center space-x-2 text-gray-600 hover:text-navy-900 transition-colors"
+            >
+              <LogOut className="w-5 h-5" />
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center">
+              <ShoppingCart className="w-8 h-8 text-blue-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Total Orders</p>
+                <p className="text-2xl font-bold text-gray-900">{orders.length}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center">
+              <Package className="w-8 h-8 text-green-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Products</p>
+                <p className="text-2xl font-bold text-gray-900">{products.length}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center">
+              <Users className="w-8 h-8 text-purple-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Categories</p>
+                <p className="text-2xl font-bold text-gray-900">{categories.length}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center">
+              <Mail className="w-8 h-8 text-orange-600" />
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Subscribers</p>
+                <p className="text-2xl font-bold text-gray-900">{subscribers.length}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8 px-6">
+              {[
+                { id: 'orders', label: 'Orders', icon: ShoppingCart },
+                { id: 'products', label: 'Products', icon: Package },
+                { id: 'categories', label: 'Categories', icon: Users },
+                { id: 'newsletter', label: 'Newsletter', icon: Mail }
+              ].map(({ id, label, icon: Icon }) => (
+                <button
+                  key={id}
+                  onClick={() => setActiveTab(id as any)}
+                  className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === id
+                      ? 'border-navy-900 text-navy-900'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span>{label}</span>
+                </button>
+              ))}
+            </nav>
+          </div>
+
+          <div className="p-6">
+            {/* Orders Tab */}
+            {activeTab === 'orders' && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-gray-900">Recent Orders</h3>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Order Number
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Customer
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Total
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Date
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {orders.map((order) => (
+                        <tr key={order.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {order.order_number}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {order.customer_name} {order.customer_surname}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            ${order.total_amount}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <select
+                              value={order.status}
+                              onChange={(e) => handleStatusUpdate(order.id, e.target.value)}
+                              className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}
+                            >
+                              <option value="pending">Pending</option>
+                              <option value="confirmed">Confirmed</option>
+                              <option value="shipped">Shipped</option>
+                              <option value="completed">Completed</option>
+                              <option value="cancelled">Cancelled</option>
+                            </select>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(order.created_at).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button className="text-indigo-600 hover:text-indigo-900 mr-3">
+                              <Eye className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Products Tab */}
+            {activeTab === 'products' && (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-medium text-gray-900">Products</h3>
+                  <button className="bg-navy-900 text-white px-4 py-2 rounded-md hover:bg-navy-800">
+                    Add Product
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {products.map((product) => (
+                    <div key={product.id} className="border rounded-lg p-4">
+                      <img
+                        src={product.images[0] || '/placeholder.jpg'}
+                        alt={product.name}
+                        className="w-full h-48 object-cover rounded-md mb-4"
+                      />
+                      <h4 className="font-medium text-gray-900 mb-2">{product.name}</h4>
+                      <p className="text-sm text-gray-600 mb-2">${product.price}</p>
+                      <p className="text-sm text-gray-500 mb-4">Stock: {product.stock}</p>
+                      <div className="flex space-x-2">
+                        <button className="flex-1 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                          <Edit className="w-4 h-4 inline mr-1" />
+                          Edit
+                        </button>
+                        <button className="flex-1 bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
+                          <Trash2 className="w-4 h-4 inline mr-1" />
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Categories Tab */}
+            {activeTab === 'categories' && (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-medium text-gray-900">Categories</h3>
+                  <button className="bg-navy-900 text-white px-4 py-2 rounded-md hover:bg-navy-800">
+                    Add Category
+                  </button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Name
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Slug
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Gender
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {categories.map((category) => (
+                        <tr key={category.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {category.name}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {category.slug}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {category.gender || 'Unisex'}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button className="text-indigo-600 hover:text-indigo-900 mr-3">
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            <button className="text-red-600 hover:text-red-900">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Newsletter Tab */}
+            {activeTab === 'newsletter' && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-gray-900">Newsletter Subscribers</h3>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Email
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Subscribed Date
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Status
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {subscribers.map((subscriber) => (
+                        <tr key={subscriber.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {subscriber.email}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(subscriber.subscribed_at).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                              subscriber.is_active 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-red-100 text-red-800'
+                            }`}>
+                              {subscriber.is_active ? 'Active' : 'Inactive'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
+
+export default AdminDashboard;
