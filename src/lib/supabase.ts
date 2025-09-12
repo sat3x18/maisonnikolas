@@ -262,36 +262,32 @@ export const api = {
     return data || [];
   },
 
-  updateOrderStatus: async (
-  orderIdentifier: string,
-  status: string
-): Promise<void> => {
-  try {
-    // Try matching by ID first, then fallback to order_number
-    const { data, error } = await supabase
-      .from('orders')
-      .update({ status })
-      .or(`id.eq.${orderIdentifier},order_number.eq.${orderIdentifier}`)
-      .select()
-      .maybeSingle(); // safer than .single()
+  // ✅ Fixed updateOrderStatus
+  updateOrderStatus: async (orderIdentifier: string, status: string): Promise<void> => {
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .update({ status })
+        .or(`id.eq.${orderIdentifier},order_number.eq.${orderIdentifier}`)
+        .select()
+        .maybeSingle(); // safer than .single()
 
-    if (error) {
-      console.error('Database update error:', error);
-      throw error;
+      if (error) {
+        console.error('Database update error:', error);
+        throw error;
+      }
+
+      if (!data) {
+        console.warn('⚠️ No order found with this ID or order_number:', orderIdentifier);
+        return;
+      }
+
+      console.log('✅ Order status updated successfully:', data);
+    } catch (err) {
+      console.error('Failed to update order status:', err);
+      throw err;
     }
-
-    if (!data) {
-      console.warn('⚠️ No order found with this ID or order_number:', orderIdentifier);
-      return;
-    }
-
-    console.log('✅ Order status updated successfully:', data);
-  } catch (err) {
-    console.error('Failed to update order status:', err);
-    throw err;
-  }
-}
-
+  },
 
   sendOrderStatusUpdate: async (order: Order, newStatus: string): Promise<void> => {
     const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
@@ -342,7 +338,6 @@ export const api = {
       timestamp: new Date().toISOString()
     };
 
-    // Add review link for completed orders
     if (newStatus === 'completed') {
       embed.fields.push({
         name: '📝 Review Link',
@@ -358,9 +353,7 @@ export const api = {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          embeds: [embed]
-        })
+        body: JSON.stringify({ embeds: [embed] })
       });
     } catch (error) {
       console.error('Failed to send status update webhook:', error);
@@ -371,9 +364,6 @@ export const api = {
 // Discord webhook function
 const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'order_id'>[]) => {
   const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
-  
-  console.log('Discord webhook URL:', webhookUrl ? 'Found' : 'Not found');
-  
   if (!webhookUrl) return;
 
   const itemsText = items.map(item => 
@@ -384,59 +374,23 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
     title: '🛍️ New Order Received!',
     color: 0xD4AF37,
     fields: [
-      {
-        name: 'Order Number',
-        value: order.order_number,
-        inline: true
-      },
-      {
-        name: 'Customer',
-        value: `${order.customer_name} ${order.customer_surname}`,
-        inline: true
-      },
-      {
-        name: 'Total Amount',
-        value: `$${order.total_amount}`,
-        inline: true
-      },
-      {
-        name: 'Contact',
-        value: `📞 ${order.customer_phone}\n🏙️ ${order.customer_city}`,
-        inline: true
-      },
-      {
-        name: 'Payment Method',
-        value: order.payment_method,
-        inline: true
-      },
-      {
-        name: 'Address',
-        value: order.customer_address,
-        inline: false
-      },
-      {
-        name: 'Items',
-        value: itemsText,
-        inline: false
-      },
+      { name: 'Order Number', value: order.order_number, inline: true },
+      { name: 'Customer', value: `${order.customer_name} ${order.customer_surname}`, inline: true },
+      { name: 'Total Amount', value: `$${order.total_amount}`, inline: true },
+      { name: 'Contact', value: `📞 ${order.customer_phone}\n🏙️ ${order.customer_city}`, inline: true },
+      { name: 'Payment Method', value: order.payment_method, inline: true },
+      { name: 'Address', value: order.customer_address, inline: false },
+      { name: 'Items', value: itemsText, inline: false }
     ],
     timestamp: new Date().toISOString()
   };
 
   try {
-    console.log('Sending Discord webhook...', embed);
-    
     await fetch(webhookUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        embeds: [embed]
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ embeds: [embed] })
     });
-    
-    console.log('Discord webhook sent successfully');
   } catch (error) {
     console.error('Failed to send Discord webhook:', error);
   }
@@ -445,51 +399,26 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
 // Newsletter webhook function
 const sendNewsletterWebhook = async (email: string) => {
   const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
-  
-  console.log('Newsletter webhook URL:', webhookUrl ? 'Found' : 'Not found');
-  
   if (!webhookUrl) return;
 
   const embed = {
     title: '📧 New Newsletter Subscription!',
-    color: 0x1e3a8a, // Navy blue
+    color: 0x1e3a8a,
     fields: [
-      {
-        name: 'Email',
-        value: email,
-        inline: true
-      },
-      {
-        name: 'Subscribed At',
-        value: new Date().toLocaleString(),
-        inline: true
-      },
-      {
-        name: 'Source',
-        value: 'Maison Nikolas Website',
-        inline: true
-      }
+      { name: 'Email', value: email, inline: true },
+      { name: 'Subscribed At', value: new Date().toLocaleString(), inline: true },
+      { name: 'Source', value: 'Maison Nikolas Website', inline: true }
     ],
     timestamp: new Date().toISOString(),
-    footer: {
-      text: 'Newsletter Subscription'
-    }
+    footer: { text: 'Newsletter Subscription' }
   };
 
   try {
-    console.log('Sending newsletter webhook...', embed);
-    
     await fetch(webhookUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        embeds: [embed]
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ embeds: [embed] })
     });
-    
-    console.log('Newsletter webhook sent successfully');
   } catch (error) {
     console.error('Failed to send newsletter webhook:', error);
   }
