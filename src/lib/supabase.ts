@@ -249,10 +249,13 @@ export const api = {
 // Discord webhook function
 const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'order_id'>[]) => {
   const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
+  
+  console.log('Discord webhook URL:', webhookUrl ? 'Found' : 'Not found');
+  
   if (!webhookUrl) return;
 
   const itemsText = items.map(item => 
-    `• ${item.quantity}x Product (${item.color || 'N/A'}, ${item.size || 'N/A'}) - $${item.price}`
+    `• ${item.quantity}x ${item.product?.name || 'Product'} (${item.color || 'N/A'}, ${item.size || 'N/A'}) - $${item.price}`
   ).join('\n');
 
   const embed = {
@@ -294,16 +297,13 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
         value: itemsText,
         inline: false
       },
-      {
-        name: 'Review Link',
-        value: `${window.location.origin}/order/${order.order_number}`,
-        inline: false
-      }
     ],
     timestamp: new Date().toISOString()
   };
 
   try {
+    console.log('Sending Discord webhook...', embed);
+    
     await fetch(webhookUrl, {
       method: 'POST',
       headers: {
@@ -313,6 +313,8 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
         embeds: [embed]
       })
     });
+    
+    console.log('Discord webhook sent successfully');
   } catch (error) {
     console.error('Failed to send Discord webhook:', error);
   }
@@ -321,6 +323,9 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
 // Newsletter webhook function
 const sendNewsletterWebhook = async (email: string) => {
   const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
+  
+  console.log('Newsletter webhook URL:', webhookUrl ? 'Found' : 'Not found');
+  
   if (!webhookUrl) return;
 
   const embed = {
@@ -350,6 +355,8 @@ const sendNewsletterWebhook = async (email: string) => {
   };
 
   try {
+    console.log('Sending newsletter webhook...', embed);
+    
     await fetch(webhookUrl, {
       method: 'POST',
       headers: {
@@ -359,6 +366,8 @@ const sendNewsletterWebhook = async (email: string) => {
         embeds: [embed]
       })
     });
+    
+    console.log('Newsletter webhook sent successfully');
   } catch (error) {
     console.error('Failed to send newsletter webhook:', error);
   }
