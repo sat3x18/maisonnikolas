@@ -110,13 +110,8 @@ export const api = {
       `)
       .order('created_at', { ascending: false });
 
-    if (categoryId) {
-      query = query.eq('category_id', categoryId);
-    }
-
-    if (search) {
-      query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
-    }
+    if (categoryId) query = query.eq('category_id', categoryId);
+    if (search) query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
 
     const { data, error } = await query;
     if (error) throw error;
@@ -126,13 +121,9 @@ export const api = {
   getProduct: async (id: string): Promise<Product | null> => {
     const { data, error } = await supabase
       .from('products')
-      .select(`
-        *,
-        category:categories(*)
-      `)
+      .select(`*, category:categories(*)`)
       .eq('id', id)
       .single();
-
     if (error) throw error;
     return data;
   },
@@ -140,13 +131,9 @@ export const api = {
   getFeaturedProducts: async (): Promise<Product[]> => {
     const { data, error } = await supabase
       .from('products')
-      .select(`
-        *,
-        category:categories(*)
-      `)
+      .select(`*, category:categories(*)`)
       .eq('is_featured', true)
       .limit(6);
-
     if (error) throw error;
     return data || [];
   },
@@ -158,39 +145,22 @@ export const api = {
       .insert(orderData)
       .select()
       .single();
-
     if (orderError) throw orderError;
 
-    const orderItems = items.map(item => ({
-      ...item,
-      order_id: order.id
-    }));
-
-    const { error: itemsError } = await supabase
-      .from('order_items')
-      .insert(orderItems);
-
+    const orderItems = items.map(item => ({ ...item, order_id: order.id }));
+    const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
     if (itemsError) throw itemsError;
 
-    // Send Discord webhook
     await sendDiscordWebhook(order, items);
-
     return order;
   },
 
   getOrder: async (orderNumber: string): Promise<Order | null> => {
     const { data, error } = await supabase
       .from('orders')
-      .select(`
-        *,
-        order_items:order_items(
-          *,
-          product:products(*)
-        )
-      `)
+      .select(`*, order_items:order_items(*, product:products(*))`)
       .eq('order_number', orderNumber)
       .single();
-
     if (error) throw error;
     return data;
   },
@@ -202,7 +172,6 @@ export const api = {
       .select('*')
       .eq('product_id', productId)
       .order('created_at', { ascending: false });
-
     if (error) throw error;
     return data || [];
   },
@@ -213,24 +182,20 @@ export const api = {
       .insert(reviewData)
       .select()
       .single();
-
     if (error) throw error;
     return data;
   },
 
-  // Newsletter subscription
+  // Newsletter
   subscribeToNewsletter: async (email: string): Promise<NewsletterSubscriber> => {
     const { data, error } = await supabase
       .from('newsletter_subscribers')
       .insert({ email })
       .select()
       .single();
-
     if (error) throw error;
 
-    // Send Discord webhook
     await sendNewsletterWebhook(email);
-
     return data;
   },
 
@@ -240,7 +205,6 @@ export const api = {
       .select('*')
       .eq('is_active', true)
       .order('subscribed_at', { ascending: false });
-
     if (error) throw error;
     return data || [];
   },
@@ -249,20 +213,13 @@ export const api = {
   getAllOrders: async (): Promise<Order[]> => {
     const { data, error } = await supabase
       .from('orders')
-      .select(`
-        *,
-        order_items:order_items(
-          *,
-          product:products(*)
-        )
-      `)
+      .select(`*, order_items:order_items(*, product:products(*))`)
       .order('created_at', { ascending: false });
-
     if (error) throw error;
     return data || [];
   },
 
-  // ✅ Fixed updateOrderStatus
+  // ✅ Fixed updateOrderStatus with limit(1)
   updateOrderStatus: async (orderIdentifier: string, status: string): Promise<void> => {
     try {
       const { data, error } = await supabase
@@ -270,19 +227,16 @@ export const api = {
         .update({ status })
         .or(`id.eq.${orderIdentifier},order_number.eq.${orderIdentifier}`)
         .select()
-        .maybeSingle(); // safer than .single()
+        .limit(1);
 
-      if (error) {
-        console.error('Database update error:', error);
-        throw error;
-      }
+      if (error) throw error;
 
-      if (!data) {
+      if (!data || data.length === 0) {
         console.warn('⚠️ No order found with this ID or order_number:', orderIdentifier);
         return;
       }
 
-      console.log('✅ Order status updated successfully:', data);
+      console.log('✅ Order status updated successfully:', data[0]);
     } catch (err) {
       console.error('Failed to update order status:', err);
       throw err;
@@ -291,49 +245,23 @@ export const api = {
 
   sendOrderStatusUpdate: async (order: Order, newStatus: string): Promise<void> => {
     const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
-    
     if (!webhookUrl) return;
 
     const statusEmojis: { [key: string]: string } = {
-      pending: '⏳',
-      confirmed: '✅',
-      shipped: '🚚',
-      completed: '🎉',
-      cancelled: '❌'
+      pending: '⏳', confirmed: '✅', shipped: '🚚', completed: '🎉', cancelled: '❌'
     };
-
     const statusColors: { [key: string]: number } = {
-      pending: 0xFBBF24,
-      confirmed: 0x3B82F6,
-      shipped: 0x8B5CF6,
-      completed: 0x10B981,
-      cancelled: 0xEF4444
+      pending: 0xFBBF24, confirmed: 0x3B82F6, shipped: 0x8B5CF6, completed: 0x10B981, cancelled: 0xEF4444
     };
 
-    let embed: any = {
+    const embed: any = {
       title: `${statusEmojis[newStatus]} Order Status Updated`,
       color: statusColors[newStatus] || 0x6B7280,
       fields: [
-        {
-          name: 'Order Number',
-          value: order.order_number,
-          inline: true
-        },
-        {
-          name: 'Customer',
-          value: `${order.customer_name} ${order.customer_surname}`,
-          inline: true
-        },
-        {
-          name: 'New Status',
-          value: newStatus.charAt(0).toUpperCase() + newStatus.slice(1),
-          inline: true
-        },
-        {
-          name: 'Total Amount',
-          value: `$${order.total_amount}`,
-          inline: true
-        }
+        { name: 'Order Number', value: order.order_number, inline: true },
+        { name: 'Customer', value: `${order.customer_name} ${order.customer_surname}`, inline: true },
+        { name: 'New Status', value: newStatus.charAt(0).toUpperCase() + newStatus.slice(1), inline: true },
+        { name: 'Total Amount', value: `$${order.total_amount}`, inline: true }
       ],
       timestamp: new Date().toISOString()
     };
@@ -350,9 +278,7 @@ export const api = {
     try {
       await fetch(webhookUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ embeds: [embed] })
       });
     } catch (error) {
@@ -361,7 +287,7 @@ export const api = {
   }
 };
 
-// Discord webhook function
+// Discord webhook
 const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'order_id'>[]) => {
   const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
   if (!webhookUrl) return;
@@ -396,7 +322,7 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
   }
 };
 
-// Newsletter webhook function
+// Newsletter webhook
 const sendNewsletterWebhook = async (email: string) => {
   const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
   if (!webhookUrl) return;
