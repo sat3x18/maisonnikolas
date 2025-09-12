@@ -263,7 +263,7 @@ export const api = {
   },
 
   updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
-    try {
+      
       const { data, error } = await supabase
         .from('orders')
         .update({ status })
@@ -278,7 +278,6 @@ export const api = {
       
       console.log('Order status updated successfully:', data);
     } catch (err) {
-      console.error('Error updating order status:', err);
       throw err;
     }
   },
@@ -408,7 +407,7 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
         name: 'Items',
         value: itemsText,
         inline: false
-      }
+      },
     ],
     timestamp: new Date().toISOString()
   };
