@@ -15,9 +15,13 @@ import {
   Save,
   Grid,
   List,
-  Tag
+  Tag,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Truck
 } from 'lucide-react';
-import { Product, Category, api } from '../../lib/supabase';
+import { Product, Category, Order, api } from '../../lib/supabase';</parameter>
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -26,8 +30,9 @@ interface AdminDashboardProps {
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'products' | 'categories'>('products');
+  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'categories'>('orders');</parameter>
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showProductModal, setShowProductModal] = useState(false);
@@ -142,21 +147,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         console.log('Supabase not configured, using mock data');
         setProducts(mockProducts);
         setCategories(mockCategories);
+        setOrders([]);
         setLoading(false);
         return;
       }
 
-      const [productsData, categoriesData] = await Promise.all([
+      const [productsData, categoriesData, ordersData] = await Promise.all([
         api.getProducts(),
-        api.getCategories()
+        api.getCategories(),
+        api.getAllOrders()
       ]);
       
       setProducts(productsData.length > 0 ? productsData : mockProducts);
       setCategories(categoriesData.length > 0 ? categoriesData : mockCategories);
+      setOrders(ordersData || []);
     } catch (error) {
       console.error('Error loading data, using mock data:', error);
       setProducts(mockProducts);
       setCategories(mockCategories);
+      setOrders([]);
     } finally {
       setLoading(false);
     }
