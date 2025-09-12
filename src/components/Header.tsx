@@ -185,26 +185,27 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                   {state.items.map((item, index) => (
                     <div key={index} className="py-4 border-b border-gray-100">
                       <div className="flex items-center space-x-4 mb-3">
-                      <img
-                        src={item.product.images[0] || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'}
-                        alt={item.product.name}
-                        className="w-16 h-16 object-cover"
-                      />
-                      <div className="flex-1">
-                        <h3 className="font-medium text-navy-900">{item.product.name}</h3>
-                        <div className="text-sm text-gray-500 mt-1">
-                          {item.color && <span>{item.color}</span>}
-                          <span> • Qty: {item.quantity}</span>
+                        <img
+                          src={item.product.images[0] || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'}
+                          alt={item.product.name}
+                          className="w-16 h-16 object-cover"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-medium text-navy-900">{item.product.name}</h3>
+                          <div className="text-sm text-gray-500 mt-1">
+                            {item.color && <span>{item.color}</span>}
+                            <span> • Qty: {item.quantity}</span>
+                          </div>
+                          <div className="font-medium text-navy-900 mt-1">
+                            ${((item.product.discount_price || item.product.price) * item.quantity).toFixed(2)}
+                          </div>
+                          <button
+                            onClick={() => removeItem(index)}
+                            className="text-gray-400 hover:text-red-600 transition-colors duration-200 p-1"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
                         </div>
-                        <div className="font-medium text-navy-900 mt-1">
-                          ${((item.product.discount_price || item.product.price) * item.quantity).toFixed(2)}
-                        </div>
-                        <button
-                          onClick={() => removeItem(index)}
-                          className="text-gray-400 hover:text-red-600 transition-colors duration-200 p-1"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
                       </div>
                       
                       {/* Quantity Controls */}
