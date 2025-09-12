@@ -26,11 +26,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
   if (viewMode === 'list') {
     return (
       <div className="flex items-center space-x-6 p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-300">
-        <div className="relative w-32 h-32 flex-shrink-0">
+        <Link to={`/product/${product.id}`} className="relative w-32 h-32 flex-shrink-0">
           <img
             src={product.images[0] || 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'}
             alt={product.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover hover:opacity-90 transition-opacity duration-200"
           />
           
           {/* Badges */}
@@ -46,7 +46,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
               </span>
             )}
           </div>
-        </div>
+        </Link>
 
         <div className="flex-1">
           <Link to={`/product/${product.id}`}>
@@ -122,7 +122,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
 
   return (
     <div className="group relative bg-white">
-      <div className="relative overflow-hidden bg-gray-100 aspect-square">
+      <Link to={`/product/${product.id}`} className="relative overflow-hidden bg-gray-100 aspect-square block">
         <img
           src={product.images[0] || 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'}
           alt={product.name}
@@ -150,9 +150,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
             </span>
           </div>
         )}
-
+      </Link>
+      
+      <div className="relative">
         {/* Add to Cart Button */}
-        <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute -top-16 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button
             onClick={handleAddToCart}
             className="bg-navy-900 text-white p-3 hover:bg-navy-800 transition-colors duration-200 shadow-lg mr-2"
