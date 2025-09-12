@@ -100,10 +100,90 @@ const CategoryPage: React.FC = () => {
 
   const loadData = async () => {
     try {
-      const [categoriesData, productsData] = await Promise.all([
-        api.getCategories(),
-        api.getProducts()
-      ]);
+      // Mock data fallback
+      const mockCategories: Category[] = [
+        { id: '1', name: 'Shirts', slug: 'shirts', description: 'Premium shirts collection', created_at: new Date().toISOString(), gender: 'men' },
+        { id: '2', name: 'Suits', slug: 'suits', description: 'Luxury suits', created_at: new Date().toISOString(), gender: 'men' },
+        { id: '3', name: 'Casual Wear', slug: 'casual', description: 'Casual clothing', created_at: new Date().toISOString(), gender: 'men' },
+        { id: '4', name: 'Dresses', slug: 'dresses', description: 'Elegant dresses', created_at: new Date().toISOString(), gender: 'women' },
+        { id: '5', name: 'Blouses', slug: 'blouses', description: 'Designer blouses', created_at: new Date().toISOString(), gender: 'women' },
+        { id: '6', name: 'Skirts', slug: 'skirts', description: 'Premium skirts', created_at: new Date().toISOString(), gender: 'women' }
+      ];
+
+      const mockProducts: Product[] = [
+        {
+          id: '1',
+          name: 'Classic Oxford Shirt',
+          description: 'Premium cotton oxford shirt with button-down collar.',
+          category_id: '1',
+          price: 125,
+          discount_price: 95,
+          images: [
+            'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
+            'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
+          ],
+          colors: ['White', 'Light Blue', 'Navy'],
+          sizes: ['S', 'M', 'L', 'XL'],
+          stock: 25,
+          is_featured: true,
+          is_new: false,
+          is_limited: false,
+          created_at: new Date().toISOString(),
+          category: mockCategories[0]
+        },
+        {
+          id: '2',
+          name: 'Silk Midi Dress',
+          description: 'Elegant silk dress perfect for any occasion.',
+          category_id: '4',
+          price: 285,
+          images: [
+            'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
+          ],
+          colors: ['Black', 'Navy', 'Burgundy'],
+          sizes: ['XS', 'S', 'M', 'L'],
+          stock: 12,
+          is_featured: true,
+          is_new: true,
+          is_limited: false,
+          created_at: new Date().toISOString(),
+          category: mockCategories[3]
+        },
+        {
+          id: '3',
+          name: 'Wool Blazer',
+          description: 'Tailored wool blazer with classic fit.',
+          category_id: '2',
+          price: 395,
+          discount_price: 295,
+          images: [
+            'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+          ],
+          colors: ['Navy', 'Charcoal', 'Black'],
+          sizes: ['38', '40', '42', '44', '46'],
+          stock: 8,
+          is_featured: false,
+          is_new: true,
+          is_limited: false,
+          created_at: new Date().toISOString(),
+          category: mockCategories[1]
+        }
+      ];
+
+      let categoriesData = mockCategories;
+      let productsData = mockProducts;
+
+      try {
+        const [apiCategories, apiProducts] = await Promise.all([
+          api.getCategories(),
+          api.getProducts()
+        ]);
+        
+        if (apiCategories.length > 0) categoriesData = apiCategories;
+        if (apiProducts.length > 0) productsData = apiProducts;
+      } catch (error) {
+        console.log('Using mock data due to API error:', error);
+      }
       
       setCategories(categoriesData);
       
@@ -115,10 +195,12 @@ const CategoryPage: React.FC = () => {
       if (slug) {
         if (slug === 'men') {
           // Show category selection for men
+          console.log('Loading men categories page');
           shouldShowCategorySelection = true;
           filteredProducts = [];
         } else if (slug === 'women') {
           // Show category selection for women
+          console.log('Loading women categories page');
           shouldShowCategorySelection = true;
           filteredProducts = [];
         } else if (slug === 'new-arrivals') {
@@ -220,6 +302,9 @@ const CategoryPage: React.FC = () => {
         {/* Show Category Selection for Men/Women */}
         {showCategorySelection ? (
           <div className="mb-12">
+            {console.log('Rendering category selection for:', slug)}
+            {console.log('Available categories:', categories)}
+            {console.log('Filtered categories:', categories.filter(cat => cat.gender === slug))}
             <h2 className="text-3xl font-serif font-bold text-navy-900 mb-8 text-center">
               {slug === 'men' ? 'Men\'s Categories' : 'Women\'s Categories'}
             </h2>
