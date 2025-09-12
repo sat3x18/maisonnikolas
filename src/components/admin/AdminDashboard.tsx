@@ -264,24 +264,26 @@ export const api = {
 
   updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
     
-      // Update local state immediately after successful database update
+      .from('orders')
+      // Update local state after successful database update
       setOrders(prevOrders => 
-        prevOrders.map(o => 
-          o.id === order.id ? { ...o, status: newStatus } : o
+        prevOrders.map(order => 
+          order.id === orderId ? { ...order, status: newStatus } : order
         )
       );
       
-      console.log('Status updated successfully');
-      .from('orders')
-      .update({ status })
-      .eq('id', orderId);
+      // Send webhook notification for status update
 
-    if (error) {
-      console.error('Database update error:', error);
-      throw error;
+      if (error) {
+        console.error('Database update error:', error);
+        throw error;
+      }
+      
+      console.log('Order status updated successfully:', data);
+    } catch (err) {
+      console.error('Error updating order status:', err);
+      throw err;
     }
-    
-    console.log('Status updated successfully:', data.status);
   },
 
   sendOrderStatusUpdate: async (order: Order, newStatus: string): Promise<void> => {
@@ -349,10 +351,16 @@ export const api = {
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
           embeds: [embed]
         })
+      });
     } catch (error) {
-      console.error('Failed to update order status:', error);
+      console.error('Failed to send status update webhook:', error);
+    }
+  }
+};
+
 // Discord webhook function
 const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'order_id'>[]) => {
   const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
@@ -444,19 +452,8 @@ const sendNewsletterWebhook = async (email: string) => {
         value: email,
         inline: true
       },
-      {
-        name: 'Subscribed At',
-        value: new Date().toLocaleString(),
         inline: true
       },
-      {
-        name: 'Source',
-        value: 'Maison Nikolas Website',
-        inline: true
-      }
-    ],
-    timestamp: new Date().toISOString(),
-    footer: {
       text: 'Newsletter Subscription'
       // Refresh orders to ensure UI is in sync with database
       await loadOrders();

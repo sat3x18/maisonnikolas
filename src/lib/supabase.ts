@@ -267,15 +267,18 @@ export const api = {
     
     const { error } = await supabase
       .from('orders')
-      .update({ status })
       .eq('id', orderId);
 
-    if (error) {
-      console.error('Database update error:', error);
-      throw error;
+      if (error) {
+        console.error('Database update error:', error);
+        throw error;
+      }
+      
+      console.log('Order status updated successfully:', data);
+    } catch (err) {
+      console.error('Error updating order status:', err);
+      throw err;
     }
-    
-    console.log('Status updated successfully:', data.status);
   },
 
   sendOrderStatusUpdate: async (order: Order, newStatus: string): Promise<void> => {
