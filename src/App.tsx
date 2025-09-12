@@ -181,45 +181,6 @@ const MainApp: React.FC = () => {
       </section>
 
       {/* Category Banners */}
-      <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Men's Banner */}
-            <div className="relative h-64 bg-gray-100">
-              <img
-                src="https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg"
-                alt="Men's Collection"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <h2 className="text-3xl font-bold mb-4">MEN</h2>
-                  <Link to="/men" className="border border-white text-white px-6 py-2 hover:bg-white hover:text-black transition-colors duration-200 inline-block">
-                    SHOP MEN
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Women's Banner */}
-            <div className="relative h-64 bg-gray-100">
-              <img
-                src="https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg"
-                alt="Women's Collection"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <h2 className="text-3xl font-bold mb-4">WOMEN</h2>
-                  <Link to="/women" className="border border-white text-white px-6 py-2 hover:bg-white hover:text-black transition-colors duration-200 inline-block">
-                    SHOP WOMEN
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Featured Products */}
       {featuredProducts.length > 0 && (
