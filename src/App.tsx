@@ -14,7 +14,6 @@ import CategoryPage from './components/CategoryPage';
 import NewsletterForm from './components/NewsletterForm';
 import SalePage from './components/SalePage';
 import ReviewPage from './components/ReviewPage';
-import ReviewPage from './components/ReviewPage';
 
 const AdminApp: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
