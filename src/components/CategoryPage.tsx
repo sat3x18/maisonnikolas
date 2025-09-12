@@ -346,6 +346,78 @@ const CategoryPage: React.FC = () => {
                 ))}
             </div>
           </div>
+        )}
+
+        {!showCategorySelection && (
+          <>
+            {/* Filters and Sort */}
+            <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-200">
+              <div className="flex items-center space-x-4">
+                <h2 className="text-2xl font-serif font-bold text-navy-900">
+                  {marketingContent.title}
+                </h2>
+                <span className="text-gray-500">({sortedProducts.length} items)</span>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                {/* View Mode Toggle */}
+                <div className="flex items-center border border-gray-300">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`p-2 ${viewMode === 'grid' ? 'bg-navy-900 text-white' : 'text-navy-900 hover:bg-gray-50'} transition-colors duration-200`}
+                  >
+                    <Grid className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`p-2 ${viewMode === 'list' ? 'bg-navy-900 text-white' : 'text-navy-900 hover:bg-gray-50'} transition-colors duration-200`}
+                  >
+                    <List className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {/* Sort Dropdown */}
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="border border-gray-300 px-4 py-2 text-navy-900 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="name">Name A-Z</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Products Grid */}
+            {sortedProducts.length > 0 ? (
+              <div className={`grid gap-8 ${
+                viewMode === 'grid' 
+                  ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+                  : 'grid-cols-1'
+              }`}>
+                {sortedProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} viewMode={viewMode} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <div className="text-gray-400 mb-4">
+                  <Filter className="h-16 w-16 mx-auto" />
+                </div>
+                <h3 className="text-xl font-medium text-navy-900 mb-2">No products found</h3>
+                <p className="text-gray-500 mb-6">Try adjusting your filters or check back later for new arrivals.</p>
+                <Link
+                  to="/"
+                  className="bg-navy-900 text-white px-6 py-3 font-medium hover:bg-navy-800 transition-colors duration-200"
+                >
+                  Continue Shopping
+                </Link>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Newsletter Section */}
