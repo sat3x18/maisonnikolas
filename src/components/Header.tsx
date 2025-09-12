@@ -138,13 +138,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                   ))}
                 </div>
 
-                <Link 
-                  to="/new-arrivals" 
-                  className="text-navy-900 hover:bg-gray-50 font-medium py-2 px-4 transition-colors duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  NEW ARRIVALS
-                </Link>
+                
                 <Link 
                   to="/sale" 
                   className="text-red-600 hover:bg-gray-50 font-medium py-2 px-4 transition-colors duration-200"
