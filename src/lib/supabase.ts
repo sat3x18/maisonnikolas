@@ -263,29 +263,12 @@ export const api = {
   },
 
   updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
-    try {
-      const { data, error } = await supabase
-        .from('orders')
-        .update({ status })
-        .eq('id', orderId)
-        .select()
-        .single();
+    const { error } = await supabase
+      .from('orders')
+      .update({ status })
+      .eq('id', orderId);
 
-      if (error) {
-        throw error;
-      }
-      
-      if (!data) {
-        console.warn('⚠️ No order found with this ID:', orderId);
-        return;
-      }
-      
-      await api.sendOrderStatusUpdate(data, status);
-      
-      console.log('Order status updated successfully:', data);
-    } catch (err) {
-      throw err;
-    }
+    if (error) throw error;
   },
 
   sendOrderStatusUpdate: async (order: Order, newStatus: string): Promise<void> => {
@@ -413,7 +396,7 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
         name: 'Items',
         value: itemsText,
         inline: false
-      }
+      },
     ],
     timestamp: new Date().toISOString()
   };
