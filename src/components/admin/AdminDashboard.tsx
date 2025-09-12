@@ -82,15 +82,30 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
   const handleStatusChange = async (order: Order, newStatus: string) => {
     try {
-      console.log('Updating order status:', order.id, 'to', newStatus);
+      console.log('Updating order status:', order.id, 'from', order.status, 'to', newStatus);
+      
+      // Optimistically update the UI first
+      setOrders(prevOrders => 
+        prevOrders.map(o => 
+          o.id === order.id ? { ...o, status: newStatus } : o
+        )
+      );
+      
       await api.updateOrderStatus(order.id, newStatus);
       console.log('Status updated successfully, refreshing orders...');
-      await loadOrders(); // Refresh orders after status update
-      console.log('Orders refreshed, sending webhook...');
+      
+      // Refresh from database to ensure consistency
+      await loadOrders();
+      console.log('Orders refreshed from database, sending webhook...');
+      
       await api.sendOrderStatusUpdate(order, newStatus);
       console.log('Webhook sent successfully');
     } catch (error) {
       console.error('Error in handleStatusChange:', error);
+      
+      // Revert the optimistic update on error
+      await loadOrders();
+      
       alert('Failed to update order status: ' + (error as Error).message);
     }
   };
