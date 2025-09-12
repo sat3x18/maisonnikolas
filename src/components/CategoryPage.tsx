@@ -195,14 +195,28 @@ const CategoryPage: React.FC = () => {
       if (slug) {
         if (slug === 'men') {
           // Show category selection for men
-          console.log('Loading men categories page');
           shouldShowCategorySelection = true;
           filteredProducts = [];
+          category = { 
+            id: 'men', 
+            name: 'Men', 
+            slug: 'men', 
+            description: 'Men\'s Collection', 
+            created_at: new Date().toISOString(), 
+            gender: 'men' as 'men' | 'women'
+          };
         } else if (slug === 'women') {
           // Show category selection for women
-          console.log('Loading women categories page');
           shouldShowCategorySelection = true;
           filteredProducts = [];
+          category = { 
+            id: 'women', 
+            name: 'Women', 
+            slug: 'women', 
+            description: 'Women\'s Collection', 
+            created_at: new Date().toISOString(), 
+            gender: 'women' as 'men' | 'women'
+          };
         } else if (slug === 'new-arrivals') {
           filteredProducts = productsData.filter(p => p.is_new);
         } else if (slug === 'sale') {
@@ -302,9 +316,6 @@ const CategoryPage: React.FC = () => {
         {/* Show Category Selection for Men/Women */}
         {showCategorySelection ? (
           <div className="mb-12">
-            {console.log('Rendering category selection for:', slug)}
-            {console.log('Available categories:', categories)}
-            {console.log('Filtered categories:', categories.filter(cat => cat.gender === slug))}
             <h2 className="text-3xl font-serif font-bold text-navy-900 mb-8 text-center">
               {slug === 'men' ? 'Men\'s Categories' : 'Women\'s Categories'}
             </h2>
@@ -314,25 +325,24 @@ const CategoryPage: React.FC = () => {
                 : 'Explore our elegant women\'s collection across different categories'
               }
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {categories
                 .filter(cat => cat.gender === slug)
                 .map((category) => (
-                  <div key={category.id} className="text-center">
-                    <Link
-                      to={`/category/${category.slug}`}
-                      className="block py-4 px-6 border border-gray-200 hover:border-navy-900 hover:bg-gray-50 transition-all duration-200 group"
-                    >
-                      <h3 className="text-xl font-bold text-navy-900 group-hover:text-navy-700 transition-colors duration-200">
-                        {category.name}
-                      </h3>
-                      {category.description && (
-                        <p className="text-gray-600 text-sm mt-2">
-                          {category.description}
-                        </p>
-                      )}
-                    </Link>
-                  </div>
+                  <Link
+                    key={category.id}
+                    to={`/category/${category.slug}`}
+                    className="block py-6 px-8 border border-gray-200 hover:border-navy-900 hover:bg-gray-50 transition-all duration-200 group text-center"
+                  >
+                    <h3 className="text-xl font-bold text-navy-900 group-hover:text-navy-700 transition-colors duration-200">
+                      {category.name}
+                    </h3>
+                    {category.description && (
+                      <p className="text-gray-600 text-sm mt-2">
+                        {category.description}
+                      </p>
+                    )}
+                  </Link>
                 ))}
             </div>
           </div>
