@@ -280,6 +280,8 @@ export const api = {
         return;
       }
       
+      await api.sendOrderStatusUpdate(data, status);
+      
       console.log('Order status updated successfully:', data);
     } catch (err) {
       throw err;
