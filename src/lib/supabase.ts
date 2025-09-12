@@ -264,6 +264,7 @@ export const api = {
 
   updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
       if (error) {
+      }
     try {
       console.log('Updating order status:', { orderId, status });
       
