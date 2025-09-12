@@ -225,4 +225,4 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
   );
 };
 
-export default ProductCard
+export default ProductCard;
