@@ -481,4 +481,4 @@ const sendNewsletterWebhook = async (email: string) => {
   } catch (error) {
     console.error('Failed to send newsletter webhook:', error);
   }
-};
+}
