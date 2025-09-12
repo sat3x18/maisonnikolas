@@ -268,6 +268,7 @@ export const api = {
       .eq('id', orderId);
 
       if (error) {
+      }
     try {
       console.log('Updating order status:', { orderId, status });
       
