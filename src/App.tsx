@@ -194,7 +194,7 @@ const MainApp: React.FC = () => {
               <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
                 <div className="text-center text-white">
                   <h2 className="text-3xl font-bold mb-4">MEN</h2>
-                  <Link to="/men" className="border border-white text-white px-6 py-2 hover:bg-white hover:text-navy-900 transition-colors duration-200 inline-block">
+                  <Link to="/men" className="border border-white text-white px-6 py-2 hover:bg-white hover:text-black transition-colors duration-200 inline-block">
                     SHOP MEN
                   </Link>
                 </div>
@@ -211,7 +211,7 @@ const MainApp: React.FC = () => {
               <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
                 <div className="text-center text-white">
                   <h2 className="text-3xl font-bold mb-4">WOMEN</h2>
-                  <Link to="/women" className="border border-white text-white px-6 py-2 hover:bg-navy-900 hover:text-white transition-colors duration-200 inline-block">
+                  <Link to="/women" className="border border-white text-white px-6 py-2 hover:bg-white hover:text-black transition-colors duration-200 inline-block">
                     SHOP WOMEN
                   </Link>
                 </div>

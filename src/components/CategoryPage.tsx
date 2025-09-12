@@ -110,16 +110,16 @@ const CategoryPage: React.FC = () => {
       // Filter products and categories based on route
       let filteredProducts = [];
       let category = null;
-      let showCategorySelection = false;
+      let shouldShowCategorySelection = false;
 
       if (slug) {
         if (slug === 'men') {
-          // Show category selection for men instead of all products
-          showCategorySelection = true;
+          // Show category selection for men
+          shouldShowCategorySelection = true;
           filteredProducts = [];
         } else if (slug === 'women') {
-          // Show category selection for women instead of all products
-          showCategorySelection = true;
+          // Show category selection for women
+          shouldShowCategorySelection = true;
           filteredProducts = [];
         } else if (slug === 'new-arrivals') {
           filteredProducts = productsData.filter(p => p.is_new);
@@ -138,8 +138,7 @@ const CategoryPage: React.FC = () => {
       setCurrentCategory(category);
       setProducts(filteredProducts);
       
-      // Store whether to show category selection
-      setShowCategorySelection(showCategorySelection);
+      setShowCategorySelection(shouldShowCategorySelection);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -222,8 +221,14 @@ const CategoryPage: React.FC = () => {
         {showCategorySelection ? (
           <div className="mb-12">
             <h2 className="text-3xl font-serif font-bold text-navy-900 mb-8 text-center">
-              Choose a Category
+              {slug === 'men' ? 'Men\'s Categories' : 'Women\'s Categories'}
             </h2>
+            <p className="text-center text-gray-600 mb-12">
+              {slug === 'men' 
+                ? 'Discover our premium men\'s collection across different categories'
+                : 'Explore our elegant women\'s collection across different categories'
+              }
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {categories
                 .filter(cat => cat.gender === slug)
@@ -242,6 +247,7 @@ const CategoryPage: React.FC = () => {
                         alt={category.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
                     </div>
                     <div className="p-6 text-center">
                       <h3 className="text-xl font-bold text-navy-900 mb-2 group-hover:text-navy-700 transition-colors duration-200">
@@ -252,6 +258,11 @@ const CategoryPage: React.FC = () => {
                           {category.description}
                         </p>
                       )}
+                      <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span className="text-navy-900 font-medium text-sm uppercase tracking-wider">
+                          Shop Now →
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 ))}
