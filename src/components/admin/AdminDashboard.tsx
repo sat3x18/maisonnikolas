@@ -481,11 +481,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <div className="bg-white border border-gray-200 p-6">
             <div className="flex items-center">
               <div className="bg-navy-100 p-3">
+                <Clock className="h-6 w-6 text-navy-900" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 uppercase tracking-wider">Total Orders</p>
+                <p className="text-2xl font-bold text-navy-900">{orders.length}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white border border-gray-200 p-6">
+            <div className="flex items-center">
+              <div className="bg-navy-100 p-3">
                 <Package className="h-6 w-6 text-navy-900" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 uppercase tracking-wider">Total Products</p>
-                <p className="text-2xl font-bold text-navy-900">{products.length}</p>
+                <p className="text-sm font-medium text-gray-600 uppercase tracking-wider">Pending Orders</p>
+                <p className="text-2xl font-bold text-navy-900">{orders.filter(o => o.status === 'pending').length}</p>
               </div>
             </div>
           </div>
@@ -493,13 +505,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <div className="bg-white border border-gray-200 p-6">
             <div className="flex items-center">
               <div className="bg-navy-100 p-3">
-                <TrendingUp className="h-6 w-6 text-navy-900" />
+                <Truck className="h-6 w-6 text-navy-900" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 uppercase tracking-wider">Featured</p>
-                <p className="text-2xl font-bold text-navy-900">
-                  {products.filter(p => p.is_featured).length}
-                </p>
+                <p className="text-sm font-medium text-gray-600 uppercase tracking-wider">Shipped</p>
+                <p className="text-2xl font-bold text-navy-900">{orders.filter(o => o.status === 'shipped').length}</p>
               </div>
             </div>
           </div>
@@ -507,29 +517,106 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <div className="bg-white border border-gray-200 p-6">
             <div className="flex items-center">
               <div className="bg-navy-100 p-3">
-                <ShoppingCart className="h-6 w-6 text-navy-900" />
+                <CheckCircle className="h-6 w-6 text-navy-900" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 uppercase tracking-wider">New Arrivals</p>
-                <p className="text-2xl font-bold text-navy-900">
-                  {products.filter(p => p.is_new).length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="bg-navy-100 p-3">
-                <Tag className="h-6 w-6 text-navy-900" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 uppercase tracking-wider">Categories</p>
-                <p className="text-2xl font-bold text-navy-900">{categories.length}</p>
+                <p className="text-sm font-medium text-gray-600 uppercase tracking-wider">Completed</p>
+                <p className="text-2xl font-bold text-navy-900">{orders.filter(o => o.status === 'completed').length}</p>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Orders Section */}
+        {activeTab === 'orders' && (
+          <div className="bg-white border border-gray-200">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-serif font-bold text-navy-900">Orders Management</h2>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-navy-900 uppercase tracking-wider">
+                      Order
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-navy-900 uppercase tracking-wider">
+                      Customer
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-navy-900 uppercase tracking-wider">
+                      Total
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-navy-900 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-navy-900 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-navy-900 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {orders.map((order) => (
+                    <tr key={order.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-navy-900">{order.order_number}</div>
+                        <div className="text-sm text-gray-500">{order.payment_method}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-navy-900">
+                          {order.customer_name} {order.customer_surname}
+                        </div>
+                        <div className="text-sm text-gray-500">{order.customer_phone}</div>
+                        <div className="text-sm text-gray-500">{order.customer_city}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm font-medium text-navy-900">${order.total_amount}</span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <select
+                          value={order.status}
+                          onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                          className={`text-xs font-medium px-3 py-1 rounded-full border-0 focus:ring-2 focus:ring-navy-900 ${
+                            order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            order.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                            order.status === 'shipped' ? 'bg-purple-100 text-purple-800' :
+                            order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                            order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="confirmed">Confirmed</option>
+                          <option value="shipped">Shipped</option>
+                          <option value="completed">Completed</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm text-gray-500">
+                          {new Date(order.created_at).toLocaleDateString()}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <a
+                          href={`/order/${order.order_number}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-navy-900 hover:text-navy-700 transition-colors duration-200"
+                        >
+                          View Details
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* Products Section */}
         {activeTab === 'products' && (

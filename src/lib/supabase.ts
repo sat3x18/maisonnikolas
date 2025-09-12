@@ -243,6 +243,106 @@ export const api = {
 
     if (error) throw error;
     return data || [];
+  },
+
+  // Admin functions
+  getAllOrders: async (): Promise<Order[]> => {
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        order_items:order_items(
+          *,
+          product:products(*)
+        )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  },
+
+  updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
+    const { error } = await supabase
+      .from('orders')
+      .update({ status })
+      .eq('id', orderId);
+
+    if (error) throw error;
+  },
+
+  sendOrderStatusUpdate: async (order: Order, newStatus: string): Promise<void> => {
+    const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
+    
+    if (!webhookUrl) return;
+
+    const statusEmojis: { [key: string]: string } = {
+      pending: '⏳',
+      confirmed: '✅',
+      shipped: '🚚',
+      completed: '🎉',
+      cancelled: '❌'
+    };
+
+    const statusColors: { [key: string]: number } = {
+      pending: 0xFBBF24,
+      confirmed: 0x3B82F6,
+      shipped: 0x8B5CF6,
+      completed: 0x10B981,
+      cancelled: 0xEF4444
+    };
+
+    let embed: any = {
+      title: `${statusEmojis[newStatus]} Order Status Updated`,
+      color: statusColors[newStatus] || 0x6B7280,
+      fields: [
+        {
+          name: 'Order Number',
+          value: order.order_number,
+          inline: true
+        },
+        {
+          name: 'Customer',
+          value: `${order.customer_name} ${order.customer_surname}`,
+          inline: true
+        },
+        {
+          name: 'New Status',
+          value: newStatus.charAt(0).toUpperCase() + newStatus.slice(1),
+          inline: true
+        },
+        {
+          name: 'Total Amount',
+          value: `$${order.total_amount}`,
+          inline: true
+        }
+      ],
+      timestamp: new Date().toISOString()
+    };
+
+    // Add review link for completed orders
+    if (newStatus === 'completed') {
+      embed.fields.push({
+        name: '📝 Review Link',
+        value: `${window.location.origin}/review/${order.order_number}`,
+        inline: false
+      });
+      embed.description = '✨ Order completed! Customer can now leave a review using the link above.';
+    }
+
+    try {
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          embeds: [embed]
+        })
+      });
+    } catch (error) {
+      console.error('Failed to send status update webhook:', error);
+    }
   }
 };
 

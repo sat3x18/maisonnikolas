@@ -285,6 +285,7 @@ const App: React.FC = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order/:orderNumber" element={<OrderConfirmation />} />
+          <Route path="/review/:orderNumber" element={<ReviewPage />} />
           <Route path="/admin" element={<AdminApp />} />
         </Routes>
       </Router>
