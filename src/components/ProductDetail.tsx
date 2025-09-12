@@ -192,22 +192,22 @@ const ProductDetail: React.FC = () => {
                       className={`h-4 w-4 ${
                         star <= Math.round(averageRating) 
                           ? 'text-yellow-400 fill-current' 
-                          : 'text-gray-300'
-                      }`} 
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-gray-500">({reviews.length} reviews)</span>
-              </div>
-              
-              <div className="flex items-center space-x-4 mb-6">
+                      <span className="text-3xl font-bold text-navy-900">
+                        ₾{product.discount_price}
+                      </span>
+                      <span className="text-xl text-gray-500 line-through">
+                        ₾{product.price}
+                      </span>
+                      <span className="bg-red-100 text-red-800 px-2 py-1 text-sm font-medium">
+                        Save ₾{(product.price - product.discount_price).toFixed(2)}
+                      </span>
                 {product.discount_price ? (
                   <>
-                    <span className="text-3xl font-bold text-navy-900">
                       ${product.discount_price}
                     </span>
                     <span className="text-xl text-gray-500 line-through">
-                      ${product.price}
+                    <span className="text-3xl font-bold text-navy-900">
+                      ₾{product.price}
                     </span>
                     <span className="bg-red-100 text-red-800 px-2 py-1 text-sm font-medium">
                       Save ${(product.price - product.discount_price).toFixed(2)}

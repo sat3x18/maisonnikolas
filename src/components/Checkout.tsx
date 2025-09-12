@@ -248,7 +248,7 @@ const Checkout: React.FC = () => {
                       </div>
                     </div>
                     <span className="text-navy-900 font-bold">
-                      ${((item.product.discount_price || item.product.price) * item.quantity).toFixed(2)}
+                      ₾{((item.product.discount_price || item.product.price) * item.quantity).toFixed(2)}
                     </span>
                   </div>
                 ))}
@@ -259,6 +259,7 @@ const Checkout: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Subtotal</span>
                   <span className="text-navy-900 font-semibold">${getTotalPrice().toFixed(2)}</span>
+                  <span className="text-navy-900 font-semibold">₾{getTotalPrice().toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Shipping</span>
@@ -267,11 +268,13 @@ const Checkout: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Tax</span>
                   <span className="text-navy-900 font-semibold">$0.00</span>
+                  <span className="text-navy-900 font-semibold">₾0.00</span>
                 </div>
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xl font-bold text-navy-900">Total</span>
                     <span className="text-2xl font-bold text-navy-900">${getTotalPrice().toFixed(2)}</span>
+                    <span className="text-2xl font-bold text-navy-900">₾{getTotalPrice().toFixed(2)}</span>
                   </div>
                 </div>
               </div>

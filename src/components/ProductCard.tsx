@@ -64,15 +64,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
               {product.discount_price ? (
                 <>
                   <span className="text-xl font-medium text-navy-900">
-                    ${product.discount_price}
+                    ₾{product.discount_price}
                   </span>
                   <span className="text-sm text-gray-500 line-through">
-                    ${product.price}
+                    ₾{product.price}
                   </span>
                 </>
               ) : (
                 <span className="text-xl font-medium text-navy-900">
-                  ${product.price}
+                  ₾{product.price}
                 </span>
               )}
             </div>
@@ -185,15 +185,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
           {product.discount_price ? (
             <>
               <span className="text-lg font-medium text-navy-900">
-                ${product.discount_price}
+                ₾{product.discount_price}
               </span>
               <span className="text-sm text-gray-500 line-through">
-                ${product.price}
+                ₾{product.price}
               </span>
             </>
           ) : (
             <span className="text-lg font-medium text-navy-900">
-              ${product.price}
+              ₾{product.price}
             </span>
           )}
         </div>

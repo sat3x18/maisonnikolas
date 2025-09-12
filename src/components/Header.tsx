@@ -197,7 +197,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                             <span> • Qty: {item.quantity}</span>
                           </div>
                           <div className="font-medium text-navy-900 mt-1">
-                            ${((item.product.discount_price || item.product.price) * item.quantity).toFixed(2)}
+                            ₾{((item.product.discount_price || item.product.price) * item.quantity).toFixed(2)}
                           </div>
                           <button
                             onClick={() => removeItem(index)}
@@ -226,7 +226,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                           </button>
                         </div>
                         <span className="text-sm text-gray-500">
-                          ${(item.product.discount_price || item.product.price).toFixed(2)} each
+                          ₾{(item.product.discount_price || item.product.price).toFixed(2)} each
                         </span>
                       </div>
                     </div>
@@ -240,7 +240,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-lg font-medium text-navy-900">Total</span>
                   <span className="text-lg font-bold text-navy-900">
-                    ${state.items.reduce((total, item) => {
+                    ₾{state.items.reduce((total, item) => {
                       const price = item.product.discount_price || item.product.price;
                       return total + (price * item.quantity);
                     }, 0).toFixed(2)}

@@ -112,20 +112,20 @@ const Cart: React.FC = () => {
                             {item.product.discount_price ? (
                               <>
                                 <span className="text-2xl font-bold text-navy-900">
-                                  ${(item.product.discount_price * item.quantity).toFixed(2)}
+                                  ₾{(item.product.discount_price * item.quantity).toFixed(2)}
                                 </span>
                                 <span className="text-lg text-gray-500 line-through">
-                                  ${(item.product.price * item.quantity).toFixed(2)}
+                                  ₾{(item.product.price * item.quantity).toFixed(2)}
                                 </span>
                               </>
                             ) : (
                               <span className="text-2xl font-bold text-navy-900">
-                                ${(item.product.price * item.quantity).toFixed(2)}
+                                ₾{(item.product.price * item.quantity).toFixed(2)}
                               </span>
                             )}
                           </div>
                           <p className="text-gray-600 text-sm">
-                            ${(item.product.discount_price || item.product.price).toFixed(2)} each
+                            ₾{(item.product.discount_price || item.product.price).toFixed(2)} each
                           </p>
                         </div>
                       </div>
@@ -145,6 +145,7 @@ const Cart: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Subtotal</span>
                   <span className="text-navy-900 font-semibold">${getTotalPrice().toFixed(2)}</span>
+                  <span className="text-navy-900 font-semibold">₾{getTotalPrice().toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Shipping</span>
@@ -158,6 +159,7 @@ const Cart: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-xl font-bold text-navy-900">Total</span>
                     <span className="text-2xl font-bold text-navy-900">${getTotalPrice().toFixed(2)}</span>
+                    <span className="text-2xl font-bold text-navy-900">₾{getTotalPrice().toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -185,6 +187,7 @@ const Cart: React.FC = () => {
                 <div className="flex items-center space-x-3 text-sm text-gray-600 mt-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                   <span>Free shipping on orders over $100</span>
+                  <span>Free shipping on orders over ₾100</span>
                 </div>
                 <div className="flex items-center space-x-3 text-sm text-gray-600 mt-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full"></div>
