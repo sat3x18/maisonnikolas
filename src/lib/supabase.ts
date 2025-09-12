@@ -263,7 +263,7 @@ export const api = {
   },
 
   updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
-    console.log('Updating order status in database:', { orderId, status });
+      console.error('Error updating order status:', error);
     
     const { error } = await supabase
       .from('orders')
@@ -275,20 +275,7 @@ export const api = {
       throw error;
     }
     
-    console.log('Database update successful');
-    
-    // Verify the update worked by fetching the updated record
-    const { data: updatedOrder, error: fetchError } = await supabase
-      .from('orders')
-      .select('status')
-      .eq('id', orderId)
-      .single();
-    
-    if (fetchError) {
-      console.error('Error verifying update:', fetchError);
-    } else {
-      console.log('Verified status in database:', updatedOrder.status);
-    }
+    console.log('Status updated successfully:', data.status);
   },
 
   sendOrderStatusUpdate: async (order: Order, newStatus: string): Promise<void> => {
