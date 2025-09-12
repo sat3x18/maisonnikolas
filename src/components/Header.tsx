@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Menu, X, User } from 'lucide-react';
+import { ShoppingBag, Menu, X } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { Category } from '../lib/supabase';
 
@@ -95,12 +95,6 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 )}
               </button>
 
-              <Link
-                to="/admin"
-                className="text-navy-900 hover:text-navy-700 transition-colors duration-200"
-              >
-                <User className="h-5 w-5" />
-              </Link>
 
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
