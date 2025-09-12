@@ -137,7 +137,7 @@ const OrderConfirmation: React.FC = () => {
                   </span>
                 </p>
                 <p><span className="text-gray-400">Total:</span> 
-                  <span className="text-rolex-gold font-bold text-xl ml-2">${order.total_amount}</span>
+                  <span className="text-navy-900 font-bold text-xl ml-2">₾{order.total_amount}</span>
                 </p>
               </div>
             </div>
@@ -164,7 +164,7 @@ const OrderConfirmation: React.FC = () => {
                       </div>
                     </div>
                     <span className="text-rolex-gold font-bold">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      ₾{(item.price * item.quantity).toFixed(2)}
                     </span>
                   </div>
                 </div>
