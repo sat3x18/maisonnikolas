@@ -63,12 +63,12 @@ const Checkout: React.FC = () => {
 
   if (state.items.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black py-12 px-4">
+      <div className="min-h-screen bg-white py-12 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Your cart is empty</h2>
+          <h2 className="text-3xl font-bold text-navy-900 mb-4">Your cart is empty</h2>
           <Link
             to="/"
-            className="bg-gradient-to-r from-rolex-green to-rolex-green-dark text-white font-bold py-3 px-8 rounded-lg hover:from-rolex-green-dark hover:to-rolex-green transition-all duration-300"
+            className="bg-navy-900 text-white font-bold py-3 px-8 hover:bg-navy-800 transition-all duration-300"
           >
             Continue Shopping
           </Link>
@@ -78,11 +78,11 @@ const Checkout: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black py-12 px-4">
+    <div className="min-h-screen bg-white py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <Link
           to="/cart"
-          className="inline-flex items-center text-rolex-gold hover:text-rolex-gold-light transition-colors duration-300 mb-8"
+          className="inline-flex items-center text-navy-900 hover:text-navy-700 transition-colors duration-300 mb-8"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
           Back to Cart
@@ -91,19 +91,19 @@ const Checkout: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Checkout Form */}
           <div>
-            <h1 className="text-3xl font-serif font-bold text-white mb-8">Checkout</h1>
+            <h1 className="text-3xl font-serif font-bold text-navy-900 mb-8">Checkout</h1>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Customer Information */}
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-xl">
-                <h2 className="text-xl font-bold text-white mb-6 flex items-center">
-                  <Truck className="h-6 w-6 mr-3 text-rolex-gold" />
+              <div className="bg-gray-50 border border-gray-200 p-6">
+                <h2 className="text-xl font-bold text-navy-900 mb-6 flex items-center">
+                  <Truck className="h-6 w-6 mr-3 text-navy-900" />
                   Shipping Information
                 </h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">
+                    <label className="block text-navy-900 text-sm font-medium mb-2">
                       First Name *
                     </label>
                     <input
@@ -112,13 +112,13 @@ const Checkout: React.FC = () => {
                       value={formData.firstName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rolex-gold focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
                       placeholder="Enter your first name"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">
+                    <label className="block text-navy-900 text-sm font-medium mb-2">
                       Last Name *
                     </label>
                     <input
@@ -127,14 +127,14 @@ const Checkout: React.FC = () => {
                       value={formData.lastName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rolex-gold focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
                       placeholder="Enter your last name"
                     />
                   </div>
                 </div>
 
                 <div className="mt-4">
-                  <label className="block text-gray-300 text-sm font-medium mb-2">
+                  <label className="block text-navy-900 text-sm font-medium mb-2">
                     Phone Number *
                   </label>
                   <input
@@ -143,13 +143,13 @@ const Checkout: React.FC = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rolex-gold focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
                     placeholder="Enter your phone number"
                   />
                 </div>
 
                 <div className="mt-4">
-                  <label className="block text-gray-300 text-sm font-medium mb-2">
+                  <label className="block text-navy-900 text-sm font-medium mb-2">
                     City *
                   </label>
                   <input
@@ -158,13 +158,13 @@ const Checkout: React.FC = () => {
                     value={formData.city}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rolex-gold focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
                     placeholder="Enter your city"
                   />
                 </div>
 
                 <div className="mt-4">
-                  <label className="block text-gray-300 text-sm font-medium mb-2">
+                  <label className="block text-navy-900 text-sm font-medium mb-2">
                     Address *
                   </label>
                   <input
@@ -173,16 +173,16 @@ const Checkout: React.FC = () => {
                     value={formData.address}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rolex-gold focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
                     placeholder="Enter your full address"
                   />
                 </div>
               </div>
 
               {/* Payment Method */}
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-xl">
-                <h2 className="text-xl font-bold text-white mb-6 flex items-center">
-                  <CreditCard className="h-6 w-6 mr-3 text-rolex-gold" />
+              <div className="bg-gray-50 border border-gray-200 p-6">
+                <h2 className="text-xl font-bold text-navy-900 mb-6 flex items-center">
+                  <CreditCard className="h-6 w-6 mr-3 text-navy-900" />
                   Payment Method
                 </h2>
                 
@@ -194,9 +194,9 @@ const Checkout: React.FC = () => {
                       value="cash"
                       checked={formData.paymentMethod === 'cash'}
                       onChange={handleInputChange}
-                      className="text-rolex-gold focus:ring-rolex-gold"
+                      className="text-navy-900 focus:ring-navy-900"
                     />
-                    <span className="text-white">Cash on Delivery</span>
+                    <span className="text-navy-900">Cash on Delivery</span>
                   </label>
                   
                   <label className="flex items-center space-x-3 cursor-pointer">
@@ -206,9 +206,9 @@ const Checkout: React.FC = () => {
                       value="card"
                       checked={formData.paymentMethod === 'card'}
                       onChange={handleInputChange}
-                      className="text-rolex-gold focus:ring-rolex-gold"
+                      className="text-navy-900 focus:ring-navy-900"
                     />
-                    <span className="text-white">Credit/Debit Card</span>
+                    <span className="text-navy-900">Credit/Debit Card</span>
                   </label>
                 </div>
               </div>
@@ -217,7 +217,7 @@ const Checkout: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-rolex-green to-rolex-green-dark text-white font-bold py-4 px-8 rounded-lg hover:from-rolex-green-dark hover:to-rolex-green transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
+                className="w-full bg-navy-900 text-white font-bold py-4 px-8 hover:bg-navy-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
               >
                 <Lock className="h-5 w-5" />
                 <span>{loading ? 'Processing...' : 'Place Order'}</span>
@@ -227,8 +227,8 @@ const Checkout: React.FC = () => {
 
           {/* Order Summary */}
           <div>
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 shadow-xl sticky top-8">
-              <h2 className="text-2xl font-bold text-white mb-6">Order Summary</h2>
+            <div className="bg-gray-50 border border-gray-200 p-6 sticky top-8">
+              <h2 className="text-2xl font-bold text-navy-900 mb-6">Order Summary</h2>
               
               {/* Order Items */}
               <div className="space-y-4 mb-6">
@@ -240,14 +240,14 @@ const Checkout: React.FC = () => {
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                     <div className="flex-1">
-                      <h3 className="font-semibold text-white">{item.product.name}</h3>
-                      <div className="flex items-center space-x-2 text-sm text-gray-400">
+                      <h3 className="font-semibold text-navy-900">{item.product?.name}</h3>
+                      <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
                         {item.color && <span>{item.color}</span>}
                         {item.size && <span>• {item.size}</span>}
                         <span>• Qty: {item.quantity}</span>
                       </div>
                     </div>
-                    <span className="text-rolex-gold font-bold">
+                    <span className="text-navy-900 font-bold">
                       ${((item.product.discount_price || item.product.price) * item.quantity).toFixed(2)}
                     </span>
                   </div>
@@ -255,29 +255,29 @@ const Checkout: React.FC = () => {
               </div>
 
               {/* Totals */}
-              <div className="space-y-4 mb-6 pt-6 border-t border-gray-700">
+              <div className="space-y-4 mb-6 pt-6 border-t border-gray-200">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Subtotal</span>
-                  <span className="text-white font-semibold">${getTotalPrice().toFixed(2)}</span>
+                  <span className="text-gray-600">Subtotal</span>
+                  <span className="text-navy-900 font-semibold">${getTotalPrice().toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Shipping</span>
+                  <span className="text-gray-600">Shipping</span>
                   <span className="text-green-400 font-semibold">Free</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Tax</span>
-                  <span className="text-white font-semibold">$0.00</span>
+                  <span className="text-gray-600">Tax</span>
+                  <span className="text-navy-900 font-semibold">$0.00</span>
                 </div>
-                <div className="border-t border-gray-700 pt-4">
+                <div className="border-t border-gray-200 pt-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-xl font-bold text-white">Total</span>
-                    <span className="text-2xl font-bold text-rolex-gold">${getTotalPrice().toFixed(2)}</span>
+                    <span className="text-xl font-bold text-navy-900">Total</span>
+                    <span className="text-2xl font-bold text-navy-900">${getTotalPrice().toFixed(2)}</span>
                   </div>
                 </div>
               </div>
 
               {/* Security Features */}
-              <div className="space-y-3 text-sm text-gray-400">
+              <div className="space-y-3 text-sm text-gray-600">
                 <div className="flex items-center space-x-3">
                   <Shield className="h-4 w-4 text-green-400" />
                   <span>Secure checkout protected by SSL</span>

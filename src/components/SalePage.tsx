@@ -150,22 +150,22 @@ const SalePage: React.FC = () => {
       <Header categories={categories} />
       
       {/* Hero Section */}
-      <section className="relative h-96 bg-gradient-to-r from-red-600 to-red-700">
-        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-        <div className="absolute inset-0 flex items-center justify-center">
+      <section className="relative h-96 bg-gray-100">
+        <img
+          src="https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg"
+          alt="Sale Collection"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
           <div className="text-center text-white max-w-4xl px-4">
-            <div className="flex items-center justify-center mb-4">
-              <Tag className="h-12 w-12 mr-4" />
-              <h1 className="text-6xl font-serif font-bold">SALE</h1>
-            </div>
-            <p className="text-2xl mb-6">Up to 50% Off Selected Items</p>
+            <h1 className="text-5xl font-serif font-bold mb-4">SALE</h1>
+            <p className="text-xl mb-6">Selected Items at Special Prices</p>
             <p className="text-lg mb-8 leading-relaxed">
-              Discover exceptional value on our premium collection. Limited time offers on luxury pieces 
-              from our finest selections. Quality and style at unbeatable prices.
+              Discover exceptional value on our premium collection. Quality and style at special prices.
             </p>
-            <div className="bg-white text-red-600 px-6 py-2 font-bold text-lg inline-block">
-              LIMITED TIME ONLY
-            </div>
+            <button className="bg-navy-900 text-white px-8 py-3 font-medium hover:bg-navy-800 transition-colors duration-200">
+              SHOP NOW
+            </button>
           </div>
         </div>
       </section>
@@ -175,7 +175,7 @@ const SalePage: React.FC = () => {
         <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
           <Link to="/" className="hover:text-navy-900 transition-colors duration-200">Home</Link>
           <span>/</span>
-          <span className="text-red-600 font-medium">Sale</span>
+          <span className="text-navy-900 font-medium">Sale</span>
         </nav>
 
         {/* Filters and Sort */}
@@ -183,9 +183,6 @@ const SalePage: React.FC = () => {
           <div className="flex items-center space-x-4">
             <h2 className="text-2xl font-serif font-bold text-navy-900">Sale Items</h2>
             <span className="text-gray-500">({sortedProducts.length} items)</span>
-            <span className="bg-red-100 text-red-800 px-3 py-1 text-sm font-bold">
-              UP TO 50% OFF
-            </span>
           </div>
 
           <div className="flex items-center space-x-4">
@@ -234,22 +231,6 @@ const SalePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Sale Banner */}
-        <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 p-6 mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-xl font-bold text-red-800 mb-2">🔥 Flash Sale Alert!</h3>
-              <p className="text-red-700">
-                Don't miss out on these incredible deals. Sale ends soon - limited quantities available!
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold text-red-600">UP TO</div>
-              <div className="text-4xl font-bold text-red-800">50% OFF</div>
-            </div>
-          </div>
-        </div>
-
         {/* Products Grid */}
         {sortedProducts.length > 0 ? (
           <div className={`grid gap-8 ${
@@ -263,9 +244,7 @@ const SalePage: React.FC = () => {
           </div>
         ) : (
           <div className="text-center py-20">
-            <div className="text-gray-400 mb-4">
-              <Tag className="h-16 w-16 mx-auto" />
-            </div>
+            <Tag className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-medium text-navy-900 mb-2">No sale items available</h3>
             <p className="text-gray-500 mb-6">Check back later for new sale items and special offers.</p>
             <Link
@@ -276,42 +255,16 @@ const SalePage: React.FC = () => {
             </Link>
           </div>
         )}
-
-        {/* Sale Features */}
-        <div className="mt-16 bg-gray-50 p-8">
-          <h3 className="text-2xl font-serif font-bold text-navy-900 mb-6 text-center">Why Shop Our Sale?</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Tag className="h-8 w-8 text-red-600" />
-              </div>
-              <h4 className="font-bold text-navy-900 mb-2">Authentic Luxury</h4>
-              <p className="text-gray-600">Same premium quality, exceptional prices</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Filter className="h-8 w-8 text-red-600" />
-              </div>
-              <h4 className="font-bold text-navy-900 mb-2">Curated Selection</h4>
-              <p className="text-gray-600">Handpicked items from our finest collections</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ArrowLeft className="h-8 w-8 text-red-600" />
-              </div>
-              <h4 className="font-bold text-navy-900 mb-2">Limited Time</h4>
-              <p className="text-gray-600">Exclusive offers that won't last long</p>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Newsletter Section */}
-      <section className="bg-navy-900 py-16 mt-20">
+      <section className="bg-gray-50 py-16 mt-20">
         <div className="max-w-4xl mx-auto text-center px-4">
-          <h2 className="text-3xl font-serif font-bold text-white mb-4">Never Miss a Sale</h2>
-          <p className="text-gray-300 mb-8">Be the first to know about exclusive sales and special offers</p>
-          <NewsletterForm />
+          <h2 className="text-3xl font-serif font-bold text-navy-900 mb-4">Stay Updated</h2>
+          <p className="text-gray-600 mb-8">Be the first to know about new collections and exclusive offers</p>
+          <div className="bg-navy-900 py-8 px-6 rounded-lg">
+            <NewsletterForm />
+          </div>
         </div>
       </section>
     </div>

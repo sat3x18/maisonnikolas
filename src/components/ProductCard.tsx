@@ -155,10 +155,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
         <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button
             onClick={handleAddToCart}
-            className="bg-navy-900 text-white p-3 hover:bg-navy-800 transition-colors duration-200 shadow-lg"
+            className="bg-navy-900 text-white p-3 hover:bg-navy-800 transition-colors duration-200 shadow-lg mr-2"
           >
             <ShoppingBag className="h-4 w-4" />
           </button>
+          <Link
+            to={`/product/${product.id}`}
+            className="bg-white text-navy-900 p-3 hover:bg-gray-100 transition-colors duration-200 shadow-lg border border-navy-900 inline-block"
+          >
+            <span className="text-xs font-medium">BUY</span>
+          </Link>
         </div>
       </div>
 
