@@ -20,7 +20,7 @@ const AdminApp: React.FC = () => {
 
   const handleLogin = async (username: string, password: string): Promise<boolean> => {
     // Simple demo authentication
-    if (username === 'admin' && password === 'newpassword123') {
+    if (username === 'admin' && password === 'admin123') {
       setIsLoggedIn(true);
       return true;
     }
