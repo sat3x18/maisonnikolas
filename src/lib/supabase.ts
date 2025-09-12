@@ -264,6 +264,7 @@ export const api = {
 
   updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
     const { error } = await supabase
+    const { error } = await supabase
       .from('orders')
       .update({ status })
       .eq('id', orderId);
