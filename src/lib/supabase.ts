@@ -95,7 +95,7 @@ export const api = {
       .from('categories')
       .select('*')
       .order('name');
-    
+
     if (error) throw error;
     return data || [];
   },
@@ -121,9 +121,13 @@ export const api = {
   getProduct: async (id: string): Promise<Product | null> => {
     const { data, error } = await supabase
       .from('products')
-      .select(`*, category:categories(*)`)
+      .select(`
+        *,
+        category:categories(*)
+      `)
       .eq('id', id)
       .single();
+
     if (error) throw error;
     return data;
   },
@@ -131,23 +135,35 @@ export const api = {
   getFeaturedProducts: async (): Promise<Product[]> => {
     const { data, error } = await supabase
       .from('products')
-      .select(`*, category:categories(*)`)
+      .select(`
+        *,
+        category:categories(*)
+      `)
       .eq('is_featured', true)
       .limit(6);
+
     if (error) throw error;
     return data || [];
   },
 
   // Orders
-  createOrder: async (orderData: Omit<Order, 'id' | 'created_at'>, items: Omit<OrderItem, 'id' | 'order_id'>[]): Promise<Order> => {
+  createOrder: async (
+    orderData: Omit<Order, 'id' | 'created_at'>,
+    items: Omit<OrderItem, 'id' | 'order_id'>[]
+  ): Promise<Order> => {
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert(orderData)
       .select()
       .single();
+
     if (orderError) throw orderError;
 
-    const orderItems = items.map(item => ({ ...item, order_id: order.id }));
+    const orderItems = items.map(item => ({
+      ...item,
+      order_id: order.id
+    }));
+
     const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
     if (itemsError) throw itemsError;
 
@@ -158,9 +174,16 @@ export const api = {
   getOrder: async (orderNumber: string): Promise<Order | null> => {
     const { data, error } = await supabase
       .from('orders')
-      .select(`*, order_items:order_items(*, product:products(*))`)
+      .select(`
+        *,
+        order_items:order_items(
+          *,
+          product:products(*)
+        )
+      `)
       .eq('order_number', orderNumber)
       .single();
+
     if (error) throw error;
     return data;
   },
@@ -172,6 +195,7 @@ export const api = {
       .select('*')
       .eq('product_id', productId)
       .order('created_at', { ascending: false });
+
     if (error) throw error;
     return data || [];
   },
@@ -182,6 +206,7 @@ export const api = {
       .insert(reviewData)
       .select()
       .single();
+
     if (error) throw error;
     return data;
   },
@@ -193,8 +218,8 @@ export const api = {
       .insert({ email })
       .select()
       .single();
-    if (error) throw error;
 
+    if (error) throw error;
     await sendNewsletterWebhook(email);
     return data;
   },
@@ -205,40 +230,63 @@ export const api = {
       .select('*')
       .eq('is_active', true)
       .order('subscribed_at', { ascending: false });
+
     if (error) throw error;
     return data || [];
   },
 
-  // Admin functions
+  // Admin
   getAllOrders: async (): Promise<Order[]> => {
     const { data, error } = await supabase
       .from('orders')
-      .select(`*, order_items:order_items(*, product:products(*))`)
+      .select(`
+        *,
+        order_items:order_items(
+          *,
+          product:products(*)
+        )
+      `)
       .order('created_at', { ascending: false });
+
     if (error) throw error;
     return data || [];
   },
 
-  // ✅ Fixed updateOrderStatus with limit(1)
-  updateOrderStatus: async (orderIdentifier: string, status: string): Promise<void> => {
+  // Robust updateOrderStatus
+  updateOrderStatus: async (orderIdentifier: string, status: string): Promise<Order | null> => {
     try {
-      const { data, error } = await supabase
+      // Update by ID
+      let { data, error } = await supabase
         .from('orders')
         .update({ status })
-        .or(`id.eq.${orderIdentifier},order_number.eq.${orderIdentifier}`)
+        .eq('id', orderIdentifier)
         .select()
         .limit(1);
 
-      if (error) throw error;
+      // If not found, update by order_number
+      if (!data || data.length === 0) {
+        ({ data, error } = await supabase
+          .from('orders')
+          .update({ status })
+          .eq('order_number', orderIdentifier)
+          .select()
+          .limit(1));
+      }
+
+      if (error) {
+        console.error('Failed to update order status:', error);
+        throw error;
+      }
 
       if (!data || data.length === 0) {
         console.warn('⚠️ No order found with this ID or order_number:', orderIdentifier);
-        return;
+        return null;
       }
 
       console.log('✅ Order status updated successfully:', data[0]);
+      return data[0];
     } catch (err) {
-      console.error('Failed to update order status:', err);
+      console.error('Error in updateOrderStatus:', err);
       throw err;
     }
   },
@@ -248,10 +296,18 @@ export const api = {
     if (!webhookUrl) return;
 
     const statusEmojis: { [key: string]: string } = {
-      pending: '⏳', confirmed: '✅', shipped: '🚚', completed: '🎉', cancelled: '❌'
+      pending: '⏳',
+      confirmed: '✅',
+      shipped: '🚚',
+      completed: '🎉',
+      cancelled: '❌'
     };
     const statusColors: { [key: string]: number } = {
-      pending: 0xFBBF24, confirmed: 0x3B82F6, shipped: 0x8B5CF6, completed: 0x10B981, cancelled: 0xEF4444
+      pending: 0xFBBF24,
+      confirmed: 0x3B82F6,
+      shipped: 0x8B5CF6,
+      completed: 0x10B981,
+      cancelled: 0xEF4444
     };
 
     const embed: any = {
@@ -292,7 +348,7 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
   const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
   if (!webhookUrl) return;
 
-  const itemsText = items.map(item => 
+  const itemsText = items.map(item =>
     `• ${item.quantity}x ${item.product?.name || 'Product'} (${item.color || 'N/A'}, ${item.size || 'N/A'}) - $${item.price}`
   ).join('\n');
 
