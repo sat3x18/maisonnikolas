@@ -32,7 +32,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'categories'>('orders');</parameter>
+  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'categories'>('orders');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showProductModal, setShowProductModal] = useState(false);
