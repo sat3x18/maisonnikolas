@@ -38,6 +38,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [showProductModal, setShowProductModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const loadOrders = async () => {
+    try {
+      const ordersData = await api.getAllOrders();
+      setOrders(ordersData);
+    } catch (error) {
+      console.error('Error loading orders:', error);
+    }
+  };
+
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [productForm, setProductForm] = useState({
     name: '',
@@ -152,15 +161,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         return;
       }
 
-      const [productsData, categoriesData, ordersData] = await Promise.all([
+      const [productsData, categoriesData] = await Promise.all([
         api.getProducts(),
-        api.getCategories(),
-        api.getAllOrders()
+        api.getCategories()
       ]);
       
       setProducts(productsData.length > 0 ? productsData : mockProducts);
       setCategories(categoriesData.length > 0 ? categoriesData : mockCategories);
-      setOrders(ordersData || []);
+      await loadOrders();
     } catch (error) {
       console.error('Error loading data, using mock data:', error);
       setProducts(mockProducts);
