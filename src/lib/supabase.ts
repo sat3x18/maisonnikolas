@@ -262,29 +262,36 @@ export const api = {
     return data || [];
   },
 
-  updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
-    try {
-      const { data, error } = await supabase
-        .from('orders')
-        .update({ status })
-        .eq('id', orderId)
-        .select()
-        .single();
+  updateOrderStatus: async (
+  orderIdentifier: string,
+  status: string
+): Promise<void> => {
+  try {
+    // Try matching by ID first, then fallback to order_number
+    const { data, error } = await supabase
+      .from('orders')
+      .update({ status })
+      .or(`id.eq.${orderIdentifier},order_number.eq.${orderIdentifier}`)
+      .select()
+      .maybeSingle(); // safer than .single()
 
-      if (error) {
-        throw error;
-      }
-      
-      if (!data) {
-        console.warn('⚠️ No order found with this ID:', orderId);
-        return;
-      }
-      
-      console.log('Order status updated successfully:', data);
-    } catch (err) {
-      throw err;
+    if (error) {
+      console.error('Database update error:', error);
+      throw error;
     }
-  },
+
+    if (!data) {
+      console.warn('⚠️ No order found with this ID or order_number:', orderIdentifier);
+      return;
+    }
+
+    console.log('✅ Order status updated successfully:', data);
+  } catch (err) {
+    console.error('Failed to update order status:', err);
+    throw err;
+  }
+}
+
 
   sendOrderStatusUpdate: async (order: Order, newStatus: string): Promise<void> => {
     const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
@@ -411,7 +418,7 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
         name: 'Items',
         value: itemsText,
         inline: false
-      }
+      },
     ],
     timestamp: new Date().toISOString()
   };
