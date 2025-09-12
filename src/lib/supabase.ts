@@ -469,6 +469,6 @@ const sendNewsletterWebhook = async (email: string) => {
     
     console.log('Newsletter webhook sent successfully');
   } catch (error) {
-    console.error('Failed to send newsletter webhook:', error)
+    console.error('Failed to send newsletter webhook:', error);
   }
 };
