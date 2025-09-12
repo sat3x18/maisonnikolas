@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Menu, X, User } from 'lucide-react';
+import { ShoppingBag, Menu, X, User, Trash2, Plus, Minus } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { Category } from '../lib/supabase';
 
@@ -9,7 +9,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ categories }) => {
-  const { state, toggleCart, getTotalItems } = useCart();
+  const { state, toggleCart, getTotalItems, removeItem, updateQuantity } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menCategories = categories.filter(cat => cat.gender === 'men');
@@ -183,7 +183,8 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
               ) : (
                 <div className="space-y-4">
                   {state.items.map((item, index) => (
-                    <div key={index} className="flex items-center space-x-4 py-4 border-b border-gray-100">
+                    <div key={index} className="py-4 border-b border-gray-100">
+                      <div className="flex items-center space-x-4 mb-3">
                       <img
                         src={item.product.images[0] || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'}
                         alt={item.product.name}
@@ -193,12 +194,39 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                         <h3 className="font-medium text-navy-900">{item.product.name}</h3>
                         <div className="text-sm text-gray-500 mt-1">
                           {item.color && <span>{item.color}</span>}
-                          {item.size && <span> • {item.size}</span>}
                           <span> • Qty: {item.quantity}</span>
                         </div>
                         <div className="font-medium text-navy-900 mt-1">
                           ${((item.product.discount_price || item.product.price) * item.quantity).toFixed(2)}
                         </div>
+                        <button
+                          onClick={() => removeItem(index)}
+                          className="text-gray-400 hover:text-red-600 transition-colors duration-200 p-1"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                      
+                      {/* Quantity Controls */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <button
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.color, item.size)}
+                            className="bg-gray-200 text-navy-900 w-8 h-8 hover:bg-gray-300 transition-colors duration-200 flex items-center justify-center"
+                          >
+                            <Minus className="h-3 w-3" />
+                          </button>
+                          <span className="text-navy-900 font-semibold w-8 text-center">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.color, item.size)}
+                            className="bg-gray-200 text-navy-900 w-8 h-8 hover:bg-gray-300 transition-colors duration-200 flex items-center justify-center"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </button>
+                        </div>
+                        <span className="text-sm text-gray-500">
+                          ${(item.product.discount_price || item.product.price).toFixed(2)} each
+                        </span>
                       </div>
                     </div>
                   ))}
