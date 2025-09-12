@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Product, Category, api } from './lib/supabase';
 import { CartProvider } from './contexts/CartContext';
+import AdminLogin from './components/admin/AdminLogin';
+import AdminDashboard from './components/admin/AdminDashboard';
 import Header from './components/Header';
 import ProductCard from './components/ProductCard';
 import ProductDetail from './components/ProductDetail';
@@ -10,6 +12,29 @@ import Checkout from './components/Checkout';
 import OrderConfirmation from './components/OrderConfirmation';
 import CategoryPage from './components/CategoryPage';
 import NewsletterForm from './components/NewsletterForm';
+
+const AdminApp: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogin = async (username: string, password: string): Promise<boolean> => {
+    // Simple demo authentication
+    if (username === 'admin' && password === 'admin123') {
+      setIsLoggedIn(true);
+      return true;
+    }
+    return false;
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
+  if (!isLoggedIn) {
+    return <AdminLogin onLogin={handleLogin} />;
+  }
+
+  return <AdminDashboard onLogout={handleLogout} />;
+};
 
 const MainApp: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -298,6 +323,7 @@ const App: React.FC = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order/:orderNumber" element={<OrderConfirmation />} />
+          <Route path="/admin" element={<AdminApp />} />
         </Routes>
       </Router>
     </CartProvider>
