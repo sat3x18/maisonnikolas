@@ -318,38 +318,21 @@ const CategoryPage: React.FC = () => {
               {categories
                 .filter(cat => cat.gender === slug)
                 .map((category) => (
-                  <Link
-                    key={category.id}
-                    to={`/category/${category.slug}`}
-                    className="group relative bg-white border border-gray-200 hover:shadow-lg transition-all duration-300"
-                  >
-                    <div className="aspect-square bg-gray-100 overflow-hidden">
-                      <img
-                        src={category.gender === 'women' 
-                          ? 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
-                          : 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
-                        }
-                        alt={category.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
-                    </div>
-                    <div className="p-6 text-center">
-                      <h3 className="text-xl font-bold text-navy-900 mb-2 group-hover:text-navy-700 transition-colors duration-200">
+                  <div key={category.id} className="text-center">
+                    <Link
+                      to={`/category/${category.slug}`}
+                      className="block py-4 px-6 border border-gray-200 hover:border-navy-900 hover:bg-gray-50 transition-all duration-200 group"
+                    >
+                      <h3 className="text-xl font-bold text-navy-900 group-hover:text-navy-700 transition-colors duration-200">
                         {category.name}
                       </h3>
                       {category.description && (
-                        <p className="text-gray-600 text-sm">
+                        <p className="text-gray-600 text-sm mt-2">
                           {category.description}
                         </p>
                       )}
-                      <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <span className="text-navy-900 font-medium text-sm uppercase tracking-wider">
-                          Shop Now →
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
+                    </Link>
+                  </div>
                 ))}
             </div>
           </div>
