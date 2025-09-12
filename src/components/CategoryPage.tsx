@@ -354,4 +354,4 @@ const CategoryPage: React.FC = () => {
   );
 };
 
-export default CategoryPage
+export default CategoryPage;
