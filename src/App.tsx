@@ -12,6 +12,7 @@ import Checkout from './components/Checkout';
 import OrderConfirmation from './components/OrderConfirmation';
 import CategoryPage from './components/CategoryPage';
 import NewsletterForm from './components/NewsletterForm';
+import SalePage from './components/SalePage';
 
 const AdminApp: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -280,7 +281,7 @@ const App: React.FC = () => {
           <Route path="/men" element={<CategoryPage key="men" />} />
           <Route path="/women" element={<CategoryPage key="women" />} />
           <Route path="/new-arrivals" element={<CategoryPage />} />
-          <Route path="/sale" element={<CategoryPage />} />
+          <Route path="/sale" element={<SalePage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order/:orderNumber" element={<OrderConfirmation />} />
