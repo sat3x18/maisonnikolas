@@ -263,6 +263,7 @@ export const api = {
   },
 
   updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
+    try {
       const { data, error } = await supabase
         .from('orders')
         .update({ status })
@@ -410,7 +411,7 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
         name: 'Items',
         value: itemsText,
         inline: false
-      },
+      }
     ],
     timestamp: new Date().toISOString()
   };
