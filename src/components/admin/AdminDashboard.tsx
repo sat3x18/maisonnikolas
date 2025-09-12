@@ -352,19 +352,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
                     {/* Status Update */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
+                      <div className="flex flex-col space-y-2">
                         <label className="text-sm font-medium text-navy-900">Update Status:</label>
-                        <select
-                          value={order.status}
-                          onChange={(e) => handleStatusChange(order, e.target.value)}
-                          className="px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent text-sm"
-                        >
-                          <option value="pending">Pending</option>
-                          <option value="confirmed">Confirmed</option>
-                          <option value="shipped">Shipped</option>
-                          <option value="completed">Completed</option>
-                          <option value="cancelled">Cancelled</option>
-                        </select>
+                        <div className="flex flex-wrap gap-2">
+                          {[
+                            { value: 'pending', label: 'Pending', color: 'bg-yellow-500 hover:bg-yellow-600' },
+                            { value: 'confirmed', label: 'Confirmed', color: 'bg-blue-500 hover:bg-blue-600' },
+                            { value: 'shipped', label: 'Shipped', color: 'bg-purple-500 hover:bg-purple-600' },
+                            { value: 'completed', label: 'Completed', color: 'bg-green-500 hover:bg-green-600' },
+                            { value: 'cancelled', label: 'Cancelled', color: 'bg-red-500 hover:bg-red-600' }
+                          ].map((status) => (
+                            <button
+                              key={status.value}
+                              onClick={() => handleStatusChange(order, status.value)}
+                              disabled={order.status === status.value}
+                              className={`px-3 py-1 text-white text-sm font-medium rounded transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+                                order.status === status.value 
+                                  ? 'bg-gray-400' 
+                                  : status.color
+                              }`}
+                            >
+                              {status.label}
+                              {order.status === status.value && ' (Current)'}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
