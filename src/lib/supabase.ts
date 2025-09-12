@@ -263,7 +263,6 @@ export const api = {
   },
 
   updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
-    try {
       console.log('Updating order status:', { orderId, status });
       
       const { data, error } = await supabase
