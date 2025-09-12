@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Star, Package, Truck, Shield } from 'lucide-react';
-import { Product, Review, api } from '../lib/supabase';
+import { Product, Review, Category, api } from '../lib/supabase';
 import { useCart } from '../contexts/CartContext';
+import Header from './Header';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { addItem, openCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState('');
@@ -19,8 +21,18 @@ const ProductDetail: React.FC = () => {
     if (id) {
       loadProduct();
       loadReviews();
+      loadCategories();
     }
   }, [id]);
+
+  const loadCategories = async () => {
+    try {
+      const data = await api.getCategories();
+      setCategories(data);
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    }
+  };
 
   const loadProduct = async () => {
     try {
@@ -89,6 +101,7 @@ const ProductDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <Header categories={categories} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
