@@ -246,6 +246,78 @@ export const api = {
   },
 
   // Admin functions
+  // Products CRUD
+  createProduct: async (productData: Omit<Product, 'id' | 'created_at' | 'category'>): Promise<Product> => {
+    const { data, error } = await supabase
+      .from('products')
+      .insert(productData)
+      .select(`
+        *,
+        category:categories(*)
+      `)
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  updateProduct: async (id: string, productData: Partial<Omit<Product, 'id' | 'created_at' | 'category'>>): Promise<Product> => {
+    const { data, error } = await supabase
+      .from('products')
+      .update(productData)
+      .eq('id', id)
+      .select(`
+        *,
+        category:categories(*)
+      `)
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  deleteProduct: async (id: string): Promise<void> => {
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  },
+
+  // Categories CRUD
+  createCategory: async (categoryData: Omit<Category, 'id' | 'created_at'>): Promise<Category> => {
+    const { data, error } = await supabase
+      .from('categories')
+      .insert(categoryData)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  updateCategory: async (id: string, categoryData: Partial<Omit<Category, 'id' | 'created_at'>>): Promise<Category> => {
+    const { data, error } = await supabase
+      .from('categories')
+      .update(categoryData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  deleteCategory: async (id: string): Promise<void> => {
+    const { error } = await supabase
+      .from('categories')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  },
+
   getAllOrders: async (): Promise<Order[]> => {
     const { data, error } = await supabase
       .from('orders')

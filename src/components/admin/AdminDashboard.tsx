@@ -16,7 +16,9 @@ import {
   MapPin,
   Calendar,
   DollarSign,
-  Truck
+  Truck,
+  X,
+  Save
 } from 'lucide-react';
 import { Product, Category, Order, api } from '../../lib/supabase';
 
@@ -32,8 +34,30 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'categories'>('orders');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [showProductModal, setShowProductModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [productForm, setProductForm] = useState({
+    name: '',
+    description: '',
+    category_id: '',
+    price: '',
+    discount_price: '',
+    images: [''],
+    colors: [''],
+    sizes: [''],
+    stock: '',
+    is_featured: false,
+    is_new: false,
+    is_limited: false
+  });
+  const [categoryForm, setCategoryForm] = useState({
+    name: '',
+    slug: '',
+    description: '',
+    gender: ''
+  });
 
   useEffect(() => {
     loadData();
@@ -88,6 +112,177 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     } catch (error) {
       console.error('Error updating order status:', error);
     }
+  };
+
+  const resetProductForm = () => {
+    setProductForm({
+      name: '',
+      description: '',
+      category_id: '',
+      price: '',
+      discount_price: '',
+      images: [''],
+      colors: [''],
+      sizes: [''],
+      stock: '',
+      is_featured: false,
+      is_new: false,
+      is_limited: false
+    });
+    setEditingProduct(null);
+  };
+
+  const resetCategoryForm = () => {
+    setCategoryForm({
+      name: '',
+      slug: '',
+      description: '',
+      gender: ''
+    });
+    setEditingCategory(null);
+  };
+
+  const openProductModal = (product?: Product) => {
+    if (product) {
+      setEditingProduct(product);
+      setProductForm({
+        name: product.name,
+        description: product.description || '',
+        category_id: product.category_id,
+        price: product.price.toString(),
+        discount_price: product.discount_price?.toString() || '',
+        images: product.images.length > 0 ? product.images : [''],
+        colors: product.colors.length > 0 ? product.colors : [''],
+        sizes: product.sizes.length > 0 ? product.sizes : [''],
+        stock: product.stock.toString(),
+        is_featured: product.is_featured,
+        is_new: product.is_new,
+        is_limited: product.is_limited
+      });
+    } else {
+      resetProductForm();
+    }
+    setShowProductModal(true);
+  };
+
+  const openCategoryModal = (category?: Category) => {
+    if (category) {
+      setEditingCategory(category);
+      setCategoryForm({
+        name: category.name,
+        slug: category.slug,
+        description: category.description || '',
+        gender: category.gender || ''
+      });
+    } else {
+      resetCategoryForm();
+    }
+    setShowCategoryModal(true);
+  };
+
+  const handleProductSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const productData = {
+        name: productForm.name,
+        description: productForm.description || null,
+        category_id: productForm.category_id,
+        price: parseFloat(productForm.price),
+        discount_price: productForm.discount_price ? parseFloat(productForm.discount_price) : null,
+        images: productForm.images.filter(img => img.trim() !== ''),
+        colors: productForm.colors.filter(color => color.trim() !== ''),
+        sizes: productForm.sizes.filter(size => size.trim() !== ''),
+        stock: parseInt(productForm.stock),
+        is_featured: productForm.is_featured,
+        is_new: productForm.is_new,
+        is_limited: productForm.is_limited
+      };
+
+      if (editingProduct) {
+        await api.updateProduct(editingProduct.id, productData);
+      } else {
+        await api.createProduct(productData);
+      }
+
+      await loadProducts();
+      setShowProductModal(false);
+      resetProductForm();
+    } catch (error) {
+      console.error('Error saving product:', error);
+      alert('Failed to save product. Please try again.');
+    }
+  };
+
+  const handleCategorySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const categoryData = {
+        name: categoryForm.name,
+        slug: categoryForm.slug,
+        description: categoryForm.description || null,
+        gender: categoryForm.gender || null
+      };
+
+      if (editingCategory) {
+        await api.updateCategory(editingCategory.id, categoryData);
+      } else {
+        await api.createCategory(categoryData);
+      }
+
+      await loadCategories();
+      setShowCategoryModal(false);
+      resetCategoryForm();
+    } catch (error) {
+      console.error('Error saving category:', error);
+      alert('Failed to save category. Please try again.');
+    }
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    
+    try {
+      await api.deleteProduct(productId);
+      await loadProducts();
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Failed to delete product. Please try again.');
+    }
+  };
+
+  const handleDeleteCategory = async (categoryId: string) => {
+    if (!confirm('Are you sure you want to delete this category?')) return;
+    
+    try {
+      await api.deleteCategory(categoryId);
+      await loadCategories();
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      alert('Failed to delete category. Please try again.');
+    }
+  };
+
+  const updateProductFormArray = (field: 'images' | 'colors' | 'sizes', index: number, value: string) => {
+    setProductForm(prev => ({
+      ...prev,
+      [field]: prev[field].map((item, i) => i === index ? value : item)
+    }));
+  };
+
+  const addProductFormArrayItem = (field: 'images' | 'colors' | 'sizes') => {
+    setProductForm(prev => ({
+      ...prev,
+      [field]: [...prev[field], '']
+    }));
+  };
+
+  const removeProductFormArrayItem = (field: 'images' | 'colors' | 'sizes', index: number) => {
+    setProductForm(prev => ({
+      ...prev,
+      [field]: prev[field].filter((_, i) => i !== index)
+    }));
   };
 
   const filteredOrders = orders.filter(order => {
@@ -260,11 +455,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
               {activeTab === 'products' && (
                 <button
-                  onClick={() => setShowProductModal(true)}
+                  onClick={() => openProductModal()}
                   className="flex items-center space-x-2 bg-navy-900 text-white px-4 py-2 rounded-lg hover:bg-navy-800 transition-colors duration-200"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Add Product</span>
+                </button>
+              )}
+
+              {activeTab === 'categories' && (
+                <button
+                  onClick={() => openCategoryModal()}
+                  className="flex items-center space-x-2 bg-navy-900 text-white px-4 py-2 rounded-lg hover:bg-navy-800 transition-colors duration-200"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Add Category</span>
                 </button>
               )}
             </div>
@@ -467,10 +672,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-semibold text-navy-900">{category.name}</h3>
                         <div className="flex items-center space-x-1">
-                          <button className="p-1 text-gray-400 hover:text-gray-600">
-                            <Edit className="h-4 w-4" />
+                          <button 
+                            onClick={() => openCategoryModal(category)}
+                            className="p-1 text-gray-400 hover:text-gray-600"
+                          >
+                            onClick={() => openProductModal(product)}
                           </button>
-                          <button className="p-1 text-gray-400 hover:text-red-600">
+                          <button 
+                            onClick={() => handleDeleteProduct(product.id)}
+                            className="p-1 text-gray-400 hover:text-red-600"
+                          <button 
+                            onClick={() => handleDeleteCategory(category.id)}
+                            className="p-1 text-gray-400 hover:text-red-600"
+                          >
                             <Trash2 className="h-4 w-4" />
                           </button>
                         </div>
@@ -500,6 +714,342 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           </div>
         </div>
       </div>
+
+      {/* Product Modal */}
+      {showProductModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-navy-900">
+                {editingProduct ? 'Edit Product' : 'Add Product'}
+              </h2>
+              <button
+                onClick={() => {
+                  setShowProductModal(false);
+                  resetProductForm();
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleProductSubmit} className="p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-navy-900 mb-2">Name *</label>
+                  <input
+                    type="text"
+                    value={productForm.name}
+                    onChange={(e) => setProductForm(prev => ({ ...prev, name: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-navy-900 mb-2">Category *</label>
+                  <select
+                    value={productForm.category_id}
+                    onChange={(e) => setProductForm(prev => ({ ...prev, category_id: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map(category => (
+                      <option key={category.id} value={category.id}>
+                        {category.name} ({category.gender})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-navy-900 mb-2">Description</label>
+                <textarea
+                  value={productForm.description}
+                  onChange={(e) => setProductForm(prev => ({ ...prev, description: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
+                  rows={3}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-navy-900 mb-2">Price *</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={productForm.price}
+                    onChange={(e) => setProductForm(prev => ({ ...prev, price: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-navy-900 mb-2">Discount Price</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={productForm.discount_price}
+                    onChange={(e) => setProductForm(prev => ({ ...prev, discount_price: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-navy-900 mb-2">Stock *</label>
+                  <input
+                    type="number"
+                    value={productForm.stock}
+                    onChange={(e) => setProductForm(prev => ({ ...prev, stock: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Images */}
+              <div>
+                <label className="block text-sm font-medium text-navy-900 mb-2">Images</label>
+                {productForm.images.map((image, index) => (
+                  <div key={index} className="flex items-center space-x-2 mb-2">
+                    <input
+                      type="url"
+                      value={image}
+                      onChange={(e) => updateProductFormArray('images', index, e.target.value)}
+                      placeholder="Image URL"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
+                    />
+                    {productForm.images.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeProductFormArrayItem('images', index)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => addProductFormArrayItem('images')}
+                  className="text-navy-900 hover:text-navy-700 text-sm"
+                >
+                  + Add Image
+                </button>
+              </div>
+
+              {/* Colors */}
+              <div>
+                <label className="block text-sm font-medium text-navy-900 mb-2">Colors</label>
+                {productForm.colors.map((color, index) => (
+                  <div key={index} className="flex items-center space-x-2 mb-2">
+                    <input
+                      type="text"
+                      value={color}
+                      onChange={(e) => updateProductFormArray('colors', index, e.target.value)}
+                      placeholder="Color name"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
+                    />
+                    {productForm.colors.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeProductFormArrayItem('colors', index)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => addProductFormArrayItem('colors')}
+                  className="text-navy-900 hover:text-navy-700 text-sm"
+                >
+                  + Add Color
+                </button>
+              </div>
+
+              {/* Sizes */}
+              <div>
+                <label className="block text-sm font-medium text-navy-900 mb-2">Sizes</label>
+                {productForm.sizes.map((size, index) => (
+                  <div key={index} className="flex items-center space-x-2 mb-2">
+                    <input
+                      type="text"
+                      value={size}
+                      onChange={(e) => updateProductFormArray('sizes', index, e.target.value)}
+                      placeholder="Size"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
+                    />
+                    {productForm.sizes.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeProductFormArrayItem('sizes', index)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => addProductFormArrayItem('sizes')}
+                  className="text-navy-900 hover:text-navy-700 text-sm"
+                >
+                  + Add Size
+                </button>
+              </div>
+
+              {/* Checkboxes */}
+              <div className="flex items-center space-x-6">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={productForm.is_featured}
+                    onChange={(e) => setProductForm(prev => ({ ...prev, is_featured: e.target.checked }))}
+                    className="mr-2"
+                  />
+                  Featured
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={productForm.is_new}
+                    onChange={(e) => setProductForm(prev => ({ ...prev, is_new: e.target.checked }))}
+                    className="mr-2"
+                  />
+                  New
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={productForm.is_limited}
+                    onChange={(e) => setProductForm(prev => ({ ...prev, is_limited: e.target.checked }))}
+                    className="mr-2"
+                  />
+                  Limited
+                </label>
+              </div>
+
+              <div className="flex items-center justify-end space-x-4 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowProductModal(false);
+                    resetProductForm();
+                  }}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex items-center space-x-2 bg-navy-900 text-white px-6 py-2 rounded-lg hover:bg-navy-800"
+                >
+                  <Save className="h-4 w-4" />
+                  <span>{editingProduct ? 'Update' : 'Create'} Product</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Category Modal */}
+      {showCategoryModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-navy-900">
+                {editingCategory ? 'Edit Category' : 'Add Category'}
+              </h2>
+              <button
+                onClick={() => {
+                  setShowCategoryModal(false);
+                  resetCategoryForm();
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCategorySubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-navy-900 mb-2">Name *</label>
+                <input
+                  type="text"
+                  value={categoryForm.name}
+                  onChange={(e) => setCategoryForm(prev => ({ ...prev, name: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-navy-900 mb-2">Slug *</label>
+                <input
+                  type="text"
+                  value={categoryForm.slug}
+                  onChange={(e) => setCategoryForm(prev => ({ ...prev, slug: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-navy-900 mb-2">Description</label>
+                <textarea
+                  value={categoryForm.description}
+                  onChange={(e) => setCategoryForm(prev => ({ ...prev, description: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
+                  rows={3}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-navy-900 mb-2">Gender</label>
+                <select
+                  value={categoryForm.gender}
+                  onChange={(e) => setCategoryForm(prev => ({ ...prev, gender: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="men">Men</option>
+                  <option value="women">Women</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-end space-x-4 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCategoryModal(false);
+                    resetCategoryForm();
+                  }}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex items-center space-x-2 bg-navy-900 text-white px-6 py-2 rounded-lg hover:bg-navy-800"
+                >
+                  <Save className="h-4 w-4" />
+                  <span>{editingCategory ? 'Update' : 'Create'} Category</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
