@@ -312,4 +312,4 @@ const ReviewPage: React.FC = () => {
   );
 };
 
-export default ReviewPage;
+export default ReviewPage
