@@ -427,7 +427,7 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
   if (!webhookUrl) return;
 
   const itemsText = items.map(item => 
-    `• ${item.quantity}x ${item.product?.name || 'Product'} (${item.color || 'N/A'}, ${item.size || 'N/A'}) - $${item.price}`
+    `• ${item.quantity}x ${item.product?.name || 'Product'} (${item.color || 'N/A'}, ${item.size || 'N/A'}) - ₾${item.price}`
   ).join('\n');
 
   const embed = {
@@ -446,7 +446,7 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
       },
       {
         name: 'Total Amount',
-        value: `$${order.total_amount}`,
+        value: `₾${order.total_amount}`,
         inline: true
       },
       {

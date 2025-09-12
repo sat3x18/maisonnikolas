@@ -376,7 +376,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Revenue</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  ${orders.reduce((sum, order) => sum + order.total_amount, 0).toFixed(2)}
+                  ₾{orders.reduce((sum, order) => sum + order.total_amount, 0).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -489,7 +489,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                         </span>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-bold text-navy-900">${order.total_amount}</p>
+                        <p className="text-lg font-bold text-navy-900">₾{order.total_amount}</p>
                         <p className="text-sm text-gray-500">
                           {new Date(order.created_at).toLocaleDateString()}
                         </p>
@@ -547,7 +547,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                                 </div>
                               </div>
                               <span className="font-medium text-navy-900">
-                                ${(item.price * item.quantity).toFixed(2)}
+                                ₾{(item.price * item.quantity).toFixed(2)}
                               </span>
                             </div>
                           ))}
@@ -631,11 +631,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                           <div className="flex items-center space-x-2">
                             {product.discount_price ? (
                               <>
-                                <span className="font-bold text-navy-900">${product.discount_price}</span>
-                                <span className="text-sm text-gray-500 line-through">${product.price}</span>
+                                <span className="font-bold text-navy-900">₾{product.discount_price}</span>
+                                <span className="text-sm text-gray-500 line-through">₾{product.price}</span>
                               </>
                             ) : (
-                              <span className="font-bold text-navy-900">${product.price}</span>
+                              <span className="font-bold text-navy-900">₾{product.price}</span>
                             )}
                           </div>
                           <span className="text-sm text-gray-500">Stock: {product.stock}</span>
