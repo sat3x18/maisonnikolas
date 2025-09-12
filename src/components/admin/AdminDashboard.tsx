@@ -21,7 +21,7 @@ import {
   XCircle,
   Truck
 } from 'lucide-react';
-import { Product, Category, Order, api } from '../../lib/supabase';</parameter>
+import { Product, Category, Order, api } from '../../lib/supabase';
 
 interface AdminDashboardProps {
   onLogout: () => void;
