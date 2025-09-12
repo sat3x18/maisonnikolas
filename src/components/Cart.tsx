@@ -7,27 +7,32 @@ const Cart: React.FC = () => {
   const { state, removeItem, updateQuantity, clearCart, getTotalPrice } = useCart();
 
   if (state.items.length === 0) {
-          <ShoppingBag className="h-24 w-24 text-gray-400 mx-auto mb-6" />
-          <h2 className="text-3xl font-bold text-navy-900 mb-4">Your Cart is Empty</h2>
-          <p className="text-gray-600 mb-8">Discover our luxury collection and add items to your cart.</p>
-          <Link
-            to="/"
-            className="bg-navy-900 text-white font-bold py-3 px-8 hover:bg-navy-800 transition-all duration-300"
-          >
-            <ArrowLeft className="h-5 w-5 mr-2" />
-            Back to Collection
-          </Link>
-
+    return (
+      <div className="min-h-screen bg-white py-12 px-4">
+        <div className="max-w-4xl mx-auto">
           <div className="text-center py-16">
-            <ShoppingBag className="h-24 w-24 text-gray-600 mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-white mb-4">Your Cart is Empty</h2>
-            <p className="text-gray-400 mb-8">Discover our luxury collection and add items to your cart.</p>
+            <ShoppingBag className="h-24 w-24 text-gray-400 mx-auto mb-6" />
+            <h2 className="text-3xl font-bold text-navy-900 mb-4">Your Cart is Empty</h2>
+            <p className="text-gray-600 mb-8">Discover our luxury collection and add items to your cart.</p>
             <Link
               to="/"
-              className="bg-gradient-to-r from-rolex-green to-rolex-green-dark text-white font-bold py-3 px-8 rounded-lg hover:from-rolex-green-dark hover:to-rolex-green transition-all duration-300"
+              className="bg-navy-900 text-white font-bold py-3 px-8 hover:bg-navy-800 transition-all duration-300"
             >
-              Continue Shopping
+              <ArrowLeft className="h-5 w-5 mr-2" />
+              Back to Collection
             </Link>
+
+            <div className="text-center py-16">
+              <ShoppingBag className="h-24 w-24 text-gray-600 mx-auto mb-6" />
+              <h2 className="text-3xl font-bold text-white mb-4">Your Cart is Empty</h2>
+              <p className="text-gray-400 mb-8">Discover our luxury collection and add items to your cart.</p>
+              <Link
+                to="/"
+                className="bg-gradient-to-r from-rolex-green to-rolex-green-dark text-white font-bold py-3 px-8 rounded-lg hover:from-rolex-green-dark hover:to-rolex-green transition-all duration-300"
+              >
+                Continue Shopping
+              </Link>
+            </div>
           </div>
         </div>
       </div>
