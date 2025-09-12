@@ -83,8 +83,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const handleStatusChange = async (order: Order, newStatus: string) => {
     try {
       await api.updateOrderStatus(order.id, newStatus);
-      await api.sendOrderStatusUpdate(order, newStatus);
       await loadOrders(); // Refresh orders after status update
+      await api.sendOrderStatusUpdate(order, newStatus);
     } catch (error) {
       console.error('Error updating order status:', error);
     }
