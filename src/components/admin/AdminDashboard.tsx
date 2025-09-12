@@ -263,8 +263,10 @@ export const api = {
   },
 
   updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
-    
+    const { data, error } = await supabase
       .from('orders')
+      .update({ status })
+      .eq('id', orderId);
       // Update local state after successful database update
       setOrders(prevOrders => 
         prevOrders.map(order => 
@@ -280,10 +282,6 @@ export const api = {
       }
       
       console.log('Order status updated successfully:', data);
-    } catch (err) {
-      console.error('Error updating order status:', err);
-      throw err;
-    }
   },
 
   sendOrderStatusUpdate: async (order: Order, newStatus: string): Promise<void> => {
@@ -411,7 +409,7 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
         name: 'Items',
         value: itemsText,
         inline: false
-      },
+      }
     ],
     timestamp: new Date().toISOString()
   };
@@ -452,12 +450,18 @@ const sendNewsletterWebhook = async (email: string) => {
         value: email,
         inline: true
       },
+      {
+        name: 'Subscribed At',
+        value: new Date().toISOString(),
         inline: true
-      },
+      }
+    ],
+    footer: {
       text: 'Newsletter Subscription'
+    },
+    timestamp: new Date().toISOString()
       // Refresh orders to ensure UI is in sync with database
-      await loadOrders();
-    }
+      // await loadOrders();
   };
 
   try {
