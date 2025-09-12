@@ -578,7 +578,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <select
                           value={order.status}
-                          onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                          onChange={async (e) => {
+                            const newStatus = e.target.value;
+                            try {
+                              await api.updateOrderStatus(order.id, newStatus);
+                              await api.sendOrderStatusUpdate(order, newStatus);
+                              loadOrders(); // Refresh the orders list
+                            } catch (error) {
+                              console.error('Error updating order status:', error);
+                            }
+                          }}
                           className={`text-xs font-medium px-3 py-1 rounded-full border-0 focus:ring-2 focus:ring-navy-900 ${
                             order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                             order.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
