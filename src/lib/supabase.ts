@@ -95,7 +95,7 @@ export const api = {
       .from('categories')
       .select('*')
       .order('name');
-
+    
     if (error) throw error;
     return data || [];
   },
@@ -110,8 +110,13 @@ export const api = {
       `)
       .order('created_at', { ascending: false });
 
-    if (categoryId) query = query.eq('category_id', categoryId);
-    if (search) query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
+    if (categoryId) {
+      query = query.eq('category_id', categoryId);
+    }
+
+    if (search) {
+      query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
+    }
 
     const { data, error } = await query;
     if (error) throw error;
@@ -147,10 +152,7 @@ export const api = {
   },
 
   // Orders
-  createOrder: async (
-    orderData: Omit<Order, 'id' | 'created_at'>,
-    items: Omit<OrderItem, 'id' | 'order_id'>[]
-  ): Promise<Order> => {
+  createOrder: async (orderData: Omit<Order, 'id' | 'created_at'>, items: Omit<OrderItem, 'id' | 'order_id'>[]): Promise<Order> => {
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert(orderData)
@@ -164,10 +166,15 @@ export const api = {
       order_id: order.id
     }));
 
-    const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
+    const { error: itemsError } = await supabase
+      .from('order_items')
+      .insert(orderItems);
+
     if (itemsError) throw itemsError;
 
+    // Send Discord webhook
     await sendDiscordWebhook(order, items);
+
     return order;
   },
 
@@ -211,7 +218,7 @@ export const api = {
     return data;
   },
 
-  // Newsletter
+  // Newsletter subscription
   subscribeToNewsletter: async (email: string): Promise<NewsletterSubscriber> => {
     const { data, error } = await supabase
       .from('newsletter_subscribers')
@@ -220,7 +227,10 @@ export const api = {
       .single();
 
     if (error) throw error;
+
+    // Send Discord webhook
     await sendNewsletterWebhook(email);
+
     return data;
   },
 
@@ -235,7 +245,7 @@ export const api = {
     return data || [];
   },
 
-  // Admin
+  // Admin functions
   getAllOrders: async (): Promise<Order[]> => {
     const { data, error } = await supabase
       .from('orders')
@@ -252,47 +262,33 @@ export const api = {
     return data || [];
   },
 
-  // Robust updateOrderStatus
-  updateOrderStatus: async (orderIdentifier: string, status: string): Promise<Order | null> => {
+  updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
     try {
-      // Update by ID
-      let { data, error } = await supabase
+      const { data, error } = await supabase
         .from('orders')
         .update({ status })
-        .eq('id', orderIdentifier)
+        .eq('id', orderId)
         .select()
-        .limit(1);
-
-      // If not found, update by order_number
-      if (!data || data.length === 0) {
-        ({ data, error } = await supabase
-          .from('orders')
-          .update({ status })
-          .eq('order_number', orderIdentifier)
-          .select()
-          .limit(1));
-      }
+        .single();
 
       if (error) {
-        console.error('Failed to update order status:', error);
         throw error;
       }
-
-      if (!data || data.length === 0) {
-        console.warn('⚠️ No order found with this ID or order_number:', orderIdentifier);
-        return null;
+      
+      if (!data) {
+        console.warn('⚠️ No order found with this ID:', orderId);
+        return;
       }
-
-      console.log('✅ Order status updated successfully:', data[0]);
-      return data[0];
+      
+      console.log('Order status updated successfully:', data);
     } catch (err) {
-      console.error('Error in updateOrderStatus:', err);
       throw err;
     }
   },
 
   sendOrderStatusUpdate: async (order: Order, newStatus: string): Promise<void> => {
     const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
+    
     if (!webhookUrl) return;
 
     const statusEmojis: { [key: string]: string } = {
@@ -302,6 +298,7 @@ export const api = {
       completed: '🎉',
       cancelled: '❌'
     };
+
     const statusColors: { [key: string]: number } = {
       pending: 0xFBBF24,
       confirmed: 0x3B82F6,
@@ -310,18 +307,35 @@ export const api = {
       cancelled: 0xEF4444
     };
 
-    const embed: any = {
+    let embed: any = {
       title: `${statusEmojis[newStatus]} Order Status Updated`,
       color: statusColors[newStatus] || 0x6B7280,
       fields: [
-        { name: 'Order Number', value: order.order_number, inline: true },
-        { name: 'Customer', value: `${order.customer_name} ${order.customer_surname}`, inline: true },
-        { name: 'New Status', value: newStatus.charAt(0).toUpperCase() + newStatus.slice(1), inline: true },
-        { name: 'Total Amount', value: `$${order.total_amount}`, inline: true }
+        {
+          name: 'Order Number',
+          value: order.order_number,
+          inline: true
+        },
+        {
+          name: 'Customer',
+          value: `${order.customer_name} ${order.customer_surname}`,
+          inline: true
+        },
+        {
+          name: 'New Status',
+          value: newStatus.charAt(0).toUpperCase() + newStatus.slice(1),
+          inline: true
+        },
+        {
+          name: 'Total Amount',
+          value: `$${order.total_amount}`,
+          inline: true
+        }
       ],
       timestamp: new Date().toISOString()
     };
 
+    // Add review link for completed orders
     if (newStatus === 'completed') {
       embed.fields.push({
         name: '📝 Review Link',
@@ -334,8 +348,12 @@ export const api = {
     try {
       await fetch(webhookUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ embeds: [embed] })
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          embeds: [embed]
+        })
       });
     } catch (error) {
       console.error('Failed to send status update webhook:', error);
@@ -343,12 +361,15 @@ export const api = {
   }
 };
 
-// Discord webhook
+// Discord webhook function
 const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'order_id'>[]) => {
   const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
+  
+  console.log('Discord webhook URL:', webhookUrl ? 'Found' : 'Not found');
+  
   if (!webhookUrl) return;
 
-  const itemsText = items.map(item =>
+  const itemsText = items.map(item => 
     `• ${item.quantity}x ${item.product?.name || 'Product'} (${item.color || 'N/A'}, ${item.size || 'N/A'}) - $${item.price}`
   ).join('\n');
 
@@ -356,51 +377,112 @@ const sendDiscordWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'o
     title: '🛍️ New Order Received!',
     color: 0xD4AF37,
     fields: [
-      { name: 'Order Number', value: order.order_number, inline: true },
-      { name: 'Customer', value: `${order.customer_name} ${order.customer_surname}`, inline: true },
-      { name: 'Total Amount', value: `$${order.total_amount}`, inline: true },
-      { name: 'Contact', value: `📞 ${order.customer_phone}\n🏙️ ${order.customer_city}`, inline: true },
-      { name: 'Payment Method', value: order.payment_method, inline: true },
-      { name: 'Address', value: order.customer_address, inline: false },
-      { name: 'Items', value: itemsText, inline: false }
+      {
+        name: 'Order Number',
+        value: order.order_number,
+        inline: true
+      },
+      {
+        name: 'Customer',
+        value: `${order.customer_name} ${order.customer_surname}`,
+        inline: true
+      },
+      {
+        name: 'Total Amount',
+        value: `$${order.total_amount}`,
+        inline: true
+      },
+      {
+        name: 'Contact',
+        value: `📞 ${order.customer_phone}\n🏙️ ${order.customer_city}`,
+        inline: true
+      },
+      {
+        name: 'Payment Method',
+        value: order.payment_method,
+        inline: true
+      },
+      {
+        name: 'Address',
+        value: order.customer_address,
+        inline: false
+      },
+      {
+        name: 'Items',
+        value: itemsText,
+        inline: false
+      }
     ],
     timestamp: new Date().toISOString()
   };
 
   try {
+    console.log('Sending Discord webhook...', embed);
+    
     await fetch(webhookUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ embeds: [embed] })
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        embeds: [embed]
+      })
     });
+    
+    console.log('Discord webhook sent successfully');
   } catch (error) {
     console.error('Failed to send Discord webhook:', error);
   }
 };
 
-// Newsletter webhook
+// Newsletter webhook function
 const sendNewsletterWebhook = async (email: string) => {
   const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
+  
+  console.log('Newsletter webhook URL:', webhookUrl ? 'Found' : 'Not found');
+  
   if (!webhookUrl) return;
 
   const embed = {
     title: '📧 New Newsletter Subscription!',
-    color: 0x1e3a8a,
+    color: 0x1e3a8a, // Navy blue
     fields: [
-      { name: 'Email', value: email, inline: true },
-      { name: 'Subscribed At', value: new Date().toLocaleString(), inline: true },
-      { name: 'Source', value: 'Maison Nikolas Website', inline: true }
+      {
+        name: 'Email',
+        value: email,
+        inline: true
+      },
+      {
+        name: 'Subscribed At',
+        value: new Date().toLocaleString(),
+        inline: true
+      },
+      {
+        name: 'Source',
+        value: 'Maison Nikolas Website',
+        inline: true
+      }
     ],
     timestamp: new Date().toISOString(),
-    footer: { text: 'Newsletter Subscription' }
+    footer: {
+      text: 'Newsletter Subscription'
+    }
   };
 
   try {
+    console.log('Sending newsletter webhook...', embed);
+    
     await fetch(webhookUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ embeds: [embed] })
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        embeds: [embed]
+      })
     });
+    
+    console.log('Newsletter webhook sent successfully');
   } catch (error) {
     console.error('Failed to send newsletter webhook:', error);
   }
