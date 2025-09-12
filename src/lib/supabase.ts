@@ -263,12 +263,10 @@ export const api = {
   },
 
   updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
-    const { error } = await supabase
       .from('orders')
       .eq('id', orderId);
 
       if (error) {
-      }
     try {
       console.log('Updating order status:', { orderId, status });
       
