@@ -263,10 +263,8 @@ export const api = {
   },
 
   updateOrderStatus: async (orderId: string, status: string): Promise<void> => {
-      .eq('id', orderId);
 
       if (error) {
-      }
     try {
       console.log('Updating order status:', { orderId, status });
       
