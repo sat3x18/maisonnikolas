@@ -67,12 +67,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 </div>
               </div>
 
-              <Link 
-                to="/new-arrivals" 
-                className="text-navy-900 hover:text-navy-700 font-medium transition-colors duration-200 uppercase tracking-wide"
-              >
-                NEW ARRIVALS
-              </Link>
+             
               <Link 
                 to="/sale" 
                 className="text-navy-900 hover:text-navy-700 font-medium transition-colors duration-200 uppercase tracking-wide"
