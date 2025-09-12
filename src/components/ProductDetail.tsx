@@ -129,12 +129,12 @@ const ProductDetail: React.FC = () => {
               {/* Badges */}
               <div className="absolute top-4 left-4 flex flex-col space-y-2">
                 {product.is_new && (
-                  <span className="bg-navy-900 text-white px-3 py-1 text-xs font-medium">
+                  <span className="bg-navy-900 text-white px-3 py-1 text-xs font-medium tracking-wider shadow-lg">
                     NEW
                   </span>
                 )}
                 {product.is_limited && (
-                  <span className="bg-red-600 text-white px-3 py-1 text-xs font-medium">
+                  <span className="bg-red-600 text-white px-3 py-1 text-xs font-medium tracking-wider shadow-lg">
                     LIMITED
                   </span>
                 )}
@@ -142,7 +142,7 @@ const ProductDetail: React.FC = () => {
 
               {discountPercentage > 0 && (
                 <div className="absolute top-4 right-4">
-                  <span className="bg-red-600 text-white px-3 py-1 text-xs font-medium">
+                  <span className="bg-red-600 text-white px-3 py-1 text-xs font-medium tracking-wider shadow-lg">
                     -{discountPercentage}% OFF
                   </span>
                 </div>

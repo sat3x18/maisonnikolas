@@ -34,14 +34,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
           />
           
           {/* Badges */}
-          <div className="absolute top-2 left-2 flex flex-col space-y-1">
+          <div className="absolute top-3 left-3 flex flex-col space-y-1">
             {product.is_new && (
-              <span className="bg-navy-900 text-white px-2 py-1 text-xs font-medium">
+              <span className="bg-navy-900 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
                 NEW
               </span>
             )}
             {discountPercentage > 0 && (
-              <span className="bg-red-600 text-white px-2 py-1 text-xs font-medium">
+              <span className="bg-red-600 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
                 -{discountPercentage}%
               </span>
             )}
@@ -130,22 +130,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
         />
         
         {/* Badges */}
-        <div className="absolute top-4 left-4 flex flex-col space-y-2">
+        <div className="absolute top-3 left-3 flex flex-col space-y-1">
           {product.is_new && (
-            <span className="bg-navy text-white px-3 py-1 text-xs font-medium">
+            <span className="bg-navy-900 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
               NEW
             </span>
           )}
           {product.is_limited && (
-            <span className="bg-red-600 text-white px-3 py-1 text-xs font-medium">
+            <span className="bg-red-600 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
               LIMITED
             </span>
           )}
         </div>
 
         {discountPercentage > 0 && (
-          <div className="absolute top-4 right-4">
-            <span className="bg-red-600 text-white px-3 py-1 text-xs font-medium">
+          <div className="absolute top-3 right-3">
+            <span className="bg-red-600 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
               -{discountPercentage}% OFF
             </span>
           </div>
