@@ -259,9 +259,7 @@ const CategoryPage: React.FC = () => {
             <h1 className="text-3xl sm:text-5xl font-serif font-bold mb-4">{marketingContent.title}</h1>
             <p className="text-lg sm:text-xl mb-6">{marketingContent.subtitle}</p>
             <p className="text-sm sm:text-lg mb-8 leading-relaxed">{marketingContent.description}</p>
-            <button className="bg-navy-900 text-white px-6 sm:px-8 py-2 sm:py-3 font-medium hover:bg-navy-800 transition-colors duration-200">
-              SHOP NOW
-            </button>
+           
           </div>
         </div>
       </section>
