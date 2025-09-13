@@ -196,7 +196,7 @@ const Checkout: React.FC = () => {
                       onChange={handleInputChange}
                       className="text-navy-900 focus:ring-navy-900"
                     />
-                    <span className="text-navy-900">Cash on Delivery</span>
+                    <span className="text-navy-900">TBC Bank</span>
                   </label>
                   
                   <label className="flex items-center space-x-3 cursor-pointer">
@@ -208,7 +208,7 @@ const Checkout: React.FC = () => {
                       onChange={handleInputChange}
                       className="text-navy-900 focus:ring-navy-900"
                     />
-                    <span className="text-navy-900">Credit/Debit Card</span>
+                    <span className="text-navy-900">Bank Of Georgia</span>
                   </label>
                 </div>
               </div>
