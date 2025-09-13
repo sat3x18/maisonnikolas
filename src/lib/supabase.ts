@@ -212,7 +212,7 @@ export const api = {
       .insert(orderItems);
     if (itemsError) throw itemsError;
 
-    await api.sendOrderWebhook(order, items);
+  
     return order;
   },
 
