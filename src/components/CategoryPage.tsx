@@ -16,82 +16,92 @@ const CategoryPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showCategorySelection, setShowCategorySelection] = useState(false);
 
-  // Marketing content for different categories
+  // Marketing content for categories
   const getMarketingContent = (categoryName: string, gender?: string) => {
     const marketingData: { [key: string]: { title: string; subtitle: string; description: string; image: string } } = {
-      'men': {
-        title: 'Men\'s Collection',
+      men: {
+        title: "Men's Collection",
         subtitle: 'Timeless Elegance for the Modern Gentleman',
-        description: 'Discover our curated selection of premium menswear, crafted with the finest materials and attention to detail. From classic dress shirts to tailored suits, each piece embodies sophistication and style.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
+        description:
+          'Discover our curated selection of premium menswear, crafted with the finest materials and attention to detail. From classic dress shirts to tailored suits, each piece embodies sophistication and style.',
+        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
       },
-      'women': {
-        title: 'Women\'s Collection',
+      women: {
+        title: "Women's Collection",
         subtitle: 'Sophisticated Style for the Modern Woman',
-        description: 'Explore our exquisite women\'s collection featuring elegant dresses, luxurious blouses, and timeless pieces that celebrate femininity and grace. Each garment is designed to empower and inspire.',
-        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+        description:
+          "Explore our exquisite women's collection featuring elegant dresses, luxurious blouses, and timeless pieces that celebrate femininity and grace. Each garment is designed to empower and inspire.",
+        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
       },
-      'shirts': {
+      shirts: {
         title: 'Premium Shirts',
         subtitle: 'Crafted for Perfection',
-        description: 'Our shirt collection features the finest cotton and silk fabrics, expertly tailored for the perfect fit. From business meetings to casual weekends, find your perfect shirt.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
+        description:
+          'Our shirt collection features the finest cotton and silk fabrics, expertly tailored for the perfect fit. From business meetings to casual weekends, find your perfect shirt.',
+        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
       },
-      'suits': {
+      suits: {
         title: 'Tailored Suits',
         subtitle: 'Bespoke Excellence',
-        description: 'Experience the pinnacle of menswear with our collection of tailored suits. Each piece is crafted with precision and attention to detail for the discerning gentleman.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
+        description:
+          'Experience the pinnacle of menswear with our collection of tailored suits. Each piece is crafted with precision and attention to detail for the discerning gentleman.',
+        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
       },
-      'dresses': {
+      dresses: {
         title: 'Elegant Dresses',
         subtitle: 'Grace and Sophistication',
-        description: 'From cocktail parties to formal events, our dress collection offers timeless elegance and contemporary style for every occasion.',
-        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+        description:
+          'From cocktail parties to formal events, our dress collection offers timeless elegance and contemporary style for every occasion.',
+        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
       },
-      'blouses': {
+      blouses: {
         title: 'Designer Blouses',
         subtitle: 'Refined Femininity',
-        description: 'Discover our collection of silk and cotton blouses, designed to complement the modern woman\'s wardrobe with elegance and versatility.',
-        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+        description:
+          "Discover our collection of silk and cotton blouses, designed to complement the modern woman's wardrobe with elegance and versatility.",
+        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
       },
-      'casual': {
+      casual: {
         title: 'Casual Wear',
         subtitle: 'Effortless Style',
-        description: 'Comfortable yet sophisticated pieces for your everyday wardrobe. Quality craftsmanship meets relaxed elegance.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
+        description:
+          'Comfortable yet sophisticated pieces for your everyday wardrobe. Quality craftsmanship meets relaxed elegance.',
+        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
       },
-      'skirts': {
+      skirts: {
         title: 'Premium Skirts',
         subtitle: 'Classic Silhouettes',
-        description: 'Timeless skirts crafted from the finest fabrics, designed to flatter and enhance your natural elegance.',
-        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+        description:
+          'Timeless skirts crafted from the finest fabrics, designed to flatter and enhance your natural elegance.',
+        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
       },
       'new-arrivals': {
         title: 'New Arrivals',
         subtitle: 'Latest from Maison Nikolas',
-        description: 'Be the first to discover our newest pieces. Fresh designs that embody our commitment to timeless elegance and modern sophistication.',
-        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+        description:
+          'Be the first to discover our newest pieces. Fresh designs that embody our commitment to timeless elegance and modern sophistication.',
+        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
       },
-      'sale': {
+      sale: {
         title: 'Sale Collection',
         subtitle: 'Exceptional Value on Premium Pieces',
-        description: 'Discover our carefully selected sale items featuring the same exceptional quality and timeless style at special prices. Limited time offers on luxury pieces from our premium collections.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
-      }
+        description:
+          'Discover our carefully selected sale items featuring the same exceptional quality and timeless style at special prices. Limited time offers on luxury pieces from our premium collections.',
+        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
+      },
     };
 
-    // Default marketing content for new categories
     const defaultContent = {
       title: categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
       subtitle: 'Premium Quality & Timeless Style',
       description: `Discover our exquisite ${categoryName.toLowerCase()} collection, featuring carefully curated pieces that embody the essence of luxury and sophistication. Each item is crafted with attention to detail and premium materials.`,
-      image: gender === 'women' 
-        ? 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
-        : 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
+      image:
+        gender === 'women'
+          ? 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+          : 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
     };
 
-    return marketingData[categoryName.toLowerCase()] || marketingData[slug || ''] || defaultContent;
+    return marketingData[categoryName.toLowerCase()] || defaultContent;
   };
 
   useEffect(() => {
@@ -100,14 +110,13 @@ const CategoryPage: React.FC = () => {
 
   const loadData = async () => {
     try {
-      // Mock data fallback
       const mockCategories: Category[] = [
         { id: '1', name: 'Shirts', slug: 'shirts', description: 'Premium shirts collection', created_at: new Date().toISOString(), gender: 'men' },
         { id: '2', name: 'Suits', slug: 'suits', description: 'Luxury suits', created_at: new Date().toISOString(), gender: 'men' },
         { id: '3', name: 'Casual Wear', slug: 'casual', description: 'Casual clothing', created_at: new Date().toISOString(), gender: 'men' },
         { id: '4', name: 'Dresses', slug: 'dresses', description: 'Elegant dresses', created_at: new Date().toISOString(), gender: 'women' },
         { id: '5', name: 'Blouses', slug: 'blouses', description: 'Designer blouses', created_at: new Date().toISOString(), gender: 'women' },
-        { id: '6', name: 'Skirts', slug: 'skirts', description: 'Premium skirts', created_at: new Date().toISOString(), gender: 'women' }
+        { id: '6', name: 'Skirts', slug: 'skirts', description: 'Premium skirts', created_at: new Date().toISOString(), gender: 'women' },
       ];
 
       const mockProducts: Product[] = [
@@ -118,10 +127,7 @@ const CategoryPage: React.FC = () => {
           category_id: '1',
           price: 125,
           discount_price: 95,
-          images: [
-            'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
-            'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
-          ],
+          images: ['https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg', 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'],
           colors: ['White', 'Light Blue', 'Navy'],
           sizes: ['S', 'M', 'L', 'XL'],
           stock: 25,
@@ -129,7 +135,7 @@ const CategoryPage: React.FC = () => {
           is_new: false,
           is_limited: false,
           created_at: new Date().toISOString(),
-          category: mockCategories[0]
+          category: mockCategories[0],
         },
         {
           id: '2',
@@ -137,9 +143,7 @@ const CategoryPage: React.FC = () => {
           description: 'Elegant silk dress perfect for any occasion.',
           category_id: '4',
           price: 285,
-          images: [
-            'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
-          ],
+          images: ['https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'],
           colors: ['Black', 'Navy', 'Burgundy'],
           sizes: ['XS', 'S', 'M', 'L'],
           stock: 12,
@@ -147,7 +151,7 @@ const CategoryPage: React.FC = () => {
           is_new: true,
           is_limited: false,
           created_at: new Date().toISOString(),
-          category: mockCategories[3]
+          category: mockCategories[3],
         },
         {
           id: '3',
@@ -156,9 +160,7 @@ const CategoryPage: React.FC = () => {
           category_id: '2',
           price: 395,
           discount_price: 295,
-          images: [
-            'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
-          ],
+          images: ['https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'],
           colors: ['Navy', 'Charcoal', 'Black'],
           sizes: ['38', '40', '42', '44', '46'],
           stock: 8,
@@ -166,66 +168,39 @@ const CategoryPage: React.FC = () => {
           is_new: true,
           is_limited: false,
           created_at: new Date().toISOString(),
-          category: mockCategories[1]
-        }
+          category: mockCategories[1],
+        },
       ];
 
       let categoriesData = mockCategories;
       let productsData = mockProducts;
 
       try {
-        const [apiCategories, apiProducts] = await Promise.all([
-          api.getCategories(),
-          api.getProducts()
-        ]);
-        
+        const [apiCategories, apiProducts] = await Promise.all([api.getCategories(), api.getProducts()]);
         if (apiCategories.length > 0) categoriesData = apiCategories;
         if (apiProducts.length > 0) productsData = apiProducts;
       } catch (error) {
         console.log('Using mock data due to API error:', error);
       }
-      
+
       setCategories(categoriesData);
-      
-      // Filter products and categories based on route
-      let filteredProducts = [];
-      let category = null;
+
+      let filteredProducts: Product[] = [];
+      let category: Category | null = null;
       let shouldShowCategorySelection = false;
 
       if (slug) {
-        if (slug === 'men') {
-          // Show category selection for men
+        if (slug === 'men' || slug === 'women') {
           shouldShowCategorySelection = true;
-          filteredProducts = []; // No products, only categories
-          category = { 
-            id: 'men', 
-            name: 'Men', 
-            slug: 'men', 
-            description: 'Men\'s Collection', 
-            created_at: new Date().toISOString(), 
-            gender: 'men' as 'men' | 'women'
-          };
-        } else if (slug === 'women') {
-          // Show category selection for women
-          shouldShowCategorySelection = true;
-          filteredProducts = []; // No products, only categories
-          category = { 
-            id: 'women', 
-            name: 'Women', 
-            slug: 'women', 
-            description: 'Women\'s Collection', 
-            created_at: new Date().toISOString(), 
-            gender: 'women' as 'men' | 'women'
-          };
+          filteredProducts = [];
+          category = { id: slug, name: slug.charAt(0).toUpperCase() + slug.slice(1), slug, description: `${slug.charAt(0).toUpperCase() + slug.slice(1)}'s Collection`, created_at: new Date().toISOString(), gender: slug as 'men' | 'women' };
         } else if (slug === 'new-arrivals') {
           filteredProducts = productsData.filter(p => p.is_new);
         } else if (slug === 'sale') {
           filteredProducts = productsData.filter(p => p.discount_price);
         } else {
-          category = categoriesData.find(c => c.slug === slug);
-          if (category) {
-            filteredProducts = productsData.filter(p => p.category_id === category.id);
-          }
+          category = categoriesData.find(c => c.slug === slug) || null;
+          if (category) filteredProducts = productsData.filter(p => p.category_id === category.id);
         }
       } else {
         filteredProducts = productsData;
@@ -233,7 +208,6 @@ const CategoryPage: React.FC = () => {
 
       setCurrentCategory(category);
       setProducts(shouldShowCategorySelection ? [] : filteredProducts);
-      
       setShowCategorySelection(shouldShowCategorySelection);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -245,28 +219,19 @@ const CategoryPage: React.FC = () => {
   const sortProducts = (products: Product[]) => {
     switch (sortBy) {
       case 'price-low':
-        return [...products].sort((a, b) => 
-          (a.discount_price || a.price) - (b.discount_price || b.price)
-        );
+        return [...products].sort((a, b) => (a.discount_price || a.price) - (b.discount_price || b.price));
       case 'price-high':
-        return [...products].sort((a, b) => 
-          (b.discount_price || b.price) - (a.discount_price || a.price)
-        );
+        return [...products].sort((a, b) => (b.discount_price || b.price) - (a.discount_price || a.price));
       case 'name':
         return [...products].sort((a, b) => a.name.localeCompare(b.name));
       default:
-        return [...products].sort((a, b) => 
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
+        return [...products].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     }
   };
 
   const sortedProducts = sortProducts(products);
   const categoryName = currentCategory?.name || slug || 'Products';
-  const marketingContent = getMarketingContent(
-    currentCategory?.name || slug || 'products',
-    currentCategory?.gender
-  );
+  const marketingContent = getMarketingContent(currentCategory?.name || slug || 'products', currentCategory?.gender);
 
   if (loading) {
     return (
@@ -285,20 +250,16 @@ const CategoryPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header categories={categories} />
-      
+
       {/* Hero Section */}
       <section className="relative h-96 bg-gray-100">
-        <img
-          src={marketingContent.image}
-          alt={marketingContent.title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-          <div className="text-center text-white max-w-4xl px-4">
-            <h1 className="text-5xl font-serif font-bold mb-4">{marketingContent.title}</h1>
-            <p className="text-xl mb-6">{marketingContent.subtitle}</p>
-            <p className="text-lg mb-8 leading-relaxed">{marketingContent.description}</p>
-            <button className="bg-navy-900 text-white px-8 py-3 font-medium hover:bg-navy-800 transition-colors duration-200">
+        <img src={marketingContent.image} alt={marketingContent.title} className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center px-4 sm:px-6">
+          <div className="text-center text-white max-w-3xl">
+            <h1 className="text-3xl sm:text-5xl font-serif font-bold mb-4">{marketingContent.title}</h1>
+            <p className="text-lg sm:text-xl mb-6">{marketingContent.subtitle}</p>
+            <p className="text-sm sm:text-lg mb-8 leading-relaxed">{marketingContent.description}</p>
+            <button className="bg-navy-900 text-white px-6 sm:px-8 py-2 sm:py-3 font-medium hover:bg-navy-800 transition-colors duration-200">
               SHOP NOW
             </button>
           </div>
@@ -308,40 +269,37 @@ const CategoryPage: React.FC = () => {
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-          <Link to="/" className="hover:text-navy-900 transition-colors duration-200">Home</Link>
+          <Link to="/" className="hover:text-navy-900 transition-colors duration-200">
+            Home
+          </Link>
           <span>/</span>
           <span className="text-navy-900 font-medium">{marketingContent.title}</span>
         </nav>
 
-        {/* Show Category Selection for Men/Women */}
+        {/* Category Selection for Men/Women */}
         {showCategorySelection && (
           <div className="mb-12">
             <h2 className="text-3xl font-serif font-bold text-navy-900 mb-8 text-center">
-              {slug === 'men' ? 'Men\'s Categories' : 'Women\'s Categories'}
+              {slug === 'men' ? "Men's Categories" : "Women's Categories"}
             </h2>
             <p className="text-center text-gray-600 mb-12">
-              {slug === 'men' 
-                ? 'Discover our premium men\'s collection across different categories'
-                : 'Explore our elegant women\'s collection across different categories'
-              }
+              {slug === 'men'
+                ? "Discover our premium men's collection across different categories"
+                : "Explore our elegant women's collection across different categories"}
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {categories
                 .filter(cat => cat.gender === slug)
-                .map((category) => (
+                .map(category => (
                   <Link
                     key={category.id}
                     to={`/category/${category.slug}`}
-                    className="block py-6 px-8 border border-gray-200 hover:border-navy-900 hover:bg-gray-50 transition-all duration-200 group text-center"
+                    className="block py-6 px-6 sm:px-8 border border-gray-200 hover:border-navy-900 hover:bg-gray-50 transition-all duration-200 group text-center rounded-lg"
                   >
                     <h3 className="text-xl font-bold text-navy-900 group-hover:text-navy-700 transition-colors duration-200">
                       {category.name}
                     </h3>
-                    {category.description && (
-                      <p className="text-gray-600 text-sm mt-2">
-                        {category.description}
-                      </p>
-                    )}
+                    {category.description && <p className="text-gray-600 text-sm mt-2">{category.description}</p>}
                   </Link>
                 ))}
             </div>
@@ -351,17 +309,14 @@ const CategoryPage: React.FC = () => {
         {!showCategorySelection && (
           <>
             {/* Filters and Sort */}
-            <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-200">
-              <div className="flex items-center space-x-4">
-                <h2 className="text-2xl font-serif font-bold text-navy-900">
-                  {marketingContent.title}
-                </h2>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 pb-6 border-b border-gray-200 gap-4">
+              <div className="flex items-center space-x-2">
+                <h2 className="text-2xl font-serif font-bold text-navy-900">{marketingContent.title}</h2>
                 <span className="text-gray-500">({sortedProducts.length} items)</span>
               </div>
 
-              <div className="flex items-center space-x-4">
-                {/* View Mode Toggle */}
-                <div className="flex items-center border border-gray-300">
+              <div className="flex items-center space-x-2 sm:space-x-4 flex-wrap">
+                <div className="flex border border-gray-300 rounded overflow-hidden">
                   <button
                     onClick={() => setViewMode('grid')}
                     className={`p-2 ${viewMode === 'grid' ? 'bg-navy-900 text-white' : 'text-navy-900 hover:bg-gray-50'} transition-colors duration-200`}
@@ -376,11 +331,10 @@ const CategoryPage: React.FC = () => {
                   </button>
                 </div>
 
-                {/* Sort Dropdown */}
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="border border-gray-300 px-4 py-2 text-navy-900 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
+                  onChange={e => setSortBy(e.target.value)}
+                  className="border border-gray-300 px-4 py-2 rounded text-navy-900 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
                 >
                   <option value="newest">Newest First</option>
                   <option value="price-low">Price: Low to High</option>
@@ -392,12 +346,12 @@ const CategoryPage: React.FC = () => {
 
             {/* Products Grid */}
             {sortedProducts.length > 0 ? (
-              <div className={`grid gap-8 ${
-                viewMode === 'grid' 
-                  ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-                  : 'grid-cols-1'
-              }`}>
-                {sortedProducts.map((product) => (
+              <div
+                className={`grid gap-6 sm:gap-8 ${
+                  viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'
+                }`}
+              >
+                {sortedProducts.map(product => (
                   <ProductCard key={product.id} product={product} viewMode={viewMode} />
                 ))}
               </div>
