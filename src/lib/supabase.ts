@@ -98,119 +98,9 @@ export interface NewsletterSubscriber {
 }
 
 // -----------------------------
-// Discord Webhook functions
+// Discord Webhook URL
 // -----------------------------
 const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
-
-export const sendOrderWebhook = async (order: Order, items: Omit<OrderItem, 'id' | 'order_id'>[]) => {
-  if (!webhookUrl) return;
-
-  const itemsText = items.map(item =>
-    `• ${item.quantity}x ${item.product?.name || 'Product'} (${item.color || 'N/A'}, ${item.size || 'N/A'}) - ₾${item.price}`
-  ).join('\n');
-
-  const embed = {
-    title: '🛍️ New Order Received!',
-    color: 0xD4AF37,
-    fields: [
-      { name: 'Order Number', value: order.order_number, inline: true },
-      { name: 'Customer', value: `${order.customer_name} ${order.customer_surname}`, inline: true },
-      { name: 'Total Amount', value: `₾${order.total_amount}`, inline: true },
-      { name: 'Contact', value: `📞 ${order.customer_phone}\n🏙️ ${order.customer_city}`, inline: true },
-      { name: 'Payment Method', value: order.payment_method, inline: true },
-      { name: 'Address', value: order.customer_address, inline: false },
-      { name: 'Items', value: itemsText, inline: false }
-    ],
-    timestamp: new Date().toISOString()
-  };
-
-  try {
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ embeds: [embed] })
-    });
-  } catch (error) {
-    console.error('Failed to send order webhook:', error);
-  }
-};
-
-export const sendNewsletterWebhook = async (email: string) => {
-  if (!webhookUrl) return;
-
-  const embed = {
-    title: '📧 New Newsletter Subscription!',
-    color: 0x1e3a8a,
-    fields: [
-      { name: 'Email', value: email, inline: true },
-      { name: 'Subscribed At', value: new Date().toLocaleString(), inline: true },
-      { name: 'Source', value: 'Maison Nikolas Website', inline: true }
-    ],
-    timestamp: new Date().toISOString(),
-    footer: { text: 'Newsletter Subscription' }
-  };
-
-  try {
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ embeds: [embed] })
-    });
-  } catch (error) {
-    console.error('Failed to send newsletter webhook:', error);
-  }
-};
-
-export const sendOrderStatusUpdate = async (order: Order, newStatus: string) => {
-  if (!webhookUrl) return;
-
-  const statusEmojis: { [key: string]: string } = {
-    pending: '⏳',
-    confirmed: '✅',
-    shipped: '🚚',
-    completed: '🎉',
-    cancelled: '❌'
-  };
-
-  const statusColors: { [key: string]: number } = {
-    pending: 0xFBBF24,
-    confirmed: 0x3B82F6,
-    shipped: 0x8B5CF6,
-    completed: 0x10B981,
-    cancelled: 0xEF4444
-  };
-
-  const embed: any = {
-    title: `${statusEmojis[newStatus]} Order Status Updated`,
-    color: statusColors[newStatus] || 0x6B7280,
-    fields: [
-      { name: 'Order Number', value: order.order_number, inline: true },
-      { name: 'Customer', value: `${order.customer_name} ${order.customer_surname}`, inline: true },
-      { name: 'New Status', value: newStatus.charAt(0).toUpperCase() + newStatus.slice(1), inline: true },
-      { name: 'Total Amount', value: `$${order.total_amount}`, inline: true }
-    ],
-    timestamp: new Date().toISOString()
-  };
-
-  if (newStatus === 'completed') {
-    embed.fields.push({
-      name: '📝 Review Link',
-      value: `${window.location.origin}/review/${order.order_number}`,
-      inline: false
-    });
-    embed.description = '✨ Order completed! Customer can now leave a review using the link above.';
-  }
-
-  try {
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ embeds: [embed] })
-    });
-  } catch (error) {
-    console.error('Failed to send status update webhook:', error);
-  }
-};
 
 // -----------------------------
 // API Functions
@@ -322,7 +212,7 @@ export const api = {
       .insert(orderItems);
     if (itemsError) throw itemsError;
 
-    await sendOrderWebhook(order, items);
+    await api.sendOrderWebhook(order, items);
     return order;
   },
 
@@ -346,11 +236,15 @@ export const api = {
   },
 
   updateOrderStatus: async (orderId: string, newStatus: string): Promise<void> => {
-    const { error } = await supabaseAdmin
+    const { data: order, error } = await supabaseAdmin
       .from('orders')
       .update({ status: newStatus })
-      .eq('id', orderId);
+      .eq('id', orderId)
+      .select()
+      .single();
     if (error) throw error;
+
+    await api.sendOrderStatusUpdate(order, newStatus);
   },
 
   // -------- Reviews --------
@@ -383,7 +277,7 @@ export const api = {
       .single();
     if (error) throw error;
 
-    await sendNewsletterWebhook(email);
+    await api.sendNewsletterWebhook(email);
     return data;
   },
 
@@ -395,5 +289,116 @@ export const api = {
       .order('subscribed_at', { ascending: false });
     if (error) throw error;
     return data || [];
+  },
+
+  // -------- Discord Webhooks --------
+  sendOrderWebhook: async (order: Order, items: Omit<OrderItem, 'id' | 'order_id'>[]) => {
+    if (!webhookUrl) return;
+
+    const itemsText = items.map(item =>
+      `• ${item.quantity}x ${item.product?.name || 'Product'} (${item.color || 'N/A'}, ${item.size || 'N/A'}) - ₾${item.price}`
+    ).join('\n');
+
+    const embed = {
+      title: '🛍️ New Order Received!',
+      color: 0xD4AF37,
+      fields: [
+        { name: 'Order Number', value: order.order_number, inline: true },
+        { name: 'Customer', value: `${order.customer_name} ${order.customer_surname}`, inline: true },
+        { name: 'Total Amount', value: `₾${order.total_amount}`, inline: true },
+        { name: 'Contact', value: `📞 ${order.customer_phone}\n🏙️ ${order.customer_city}`, inline: true },
+        { name: 'Payment Method', value: order.payment_method, inline: true },
+        { name: 'Address', value: order.customer_address, inline: false },
+        { name: 'Items', value: itemsText, inline: false }
+      ],
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ embeds: [embed] })
+      });
+    } catch (error) {
+      console.error('Failed to send order webhook:', error);
+    }
+  },
+
+  sendNewsletterWebhook: async (email: string) => {
+    if (!webhookUrl) return;
+
+    const embed = {
+      title: '📧 New Newsletter Subscription!',
+      color: 0x1e3a8a,
+      fields: [
+        { name: 'Email', value: email, inline: true },
+        { name: 'Subscribed At', value: new Date().toLocaleString(), inline: true },
+        { name: 'Source', value: 'Maison Nikolas Website', inline: true }
+      ],
+      timestamp: new Date().toISOString(),
+      footer: { text: 'Newsletter Subscription' }
+    };
+
+    try {
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ embeds: [embed] })
+      });
+    } catch (error) {
+      console.error('Failed to send newsletter webhook:', error);
+    }
+  },
+
+  sendOrderStatusUpdate: async (order: Order, newStatus: string) => {
+    if (!webhookUrl) return;
+
+    const statusEmojis: { [key: string]: string } = {
+      pending: '⏳',
+      confirmed: '✅',
+      shipped: '🚚',
+      completed: '🎉',
+      cancelled: '❌'
+    };
+
+    const statusColors: { [key: string]: number } = {
+      pending: 0xFBBF24,
+      confirmed: 0x3B82F6,
+      shipped: 0x8B5CF6,
+      completed: 0x10B981,
+      cancelled: 0xEF4444
+    };
+
+    const embed: any = {
+      title: `${statusEmojis[newStatus]} Order Status Updated`,
+      color: statusColors[newStatus] || 0x6B7280,
+      fields: [
+        { name: 'Order Number', value: order.order_number, inline: true },
+        { name: 'Customer', value: `${order.customer_name} ${order.customer_surname}`, inline: true },
+        { name: 'New Status', value: newStatus.charAt(0).toUpperCase() + newStatus.slice(1), inline: true },
+        { name: 'Total Amount', value: `$${order.total_amount}`, inline: true }
+      ],
+      timestamp: new Date().toISOString()
+    };
+
+    if (newStatus === 'completed') {
+      embed.fields.push({
+        name: '📝 Review Link',
+        value: `${window.location.origin}/review/${order.order_number}`,
+        inline: false
+      });
+      embed.description = '✨ Order completed! Customer can now leave a review using the link above.';
+    }
+
+    try {
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ embeds: [embed] })
+      });
+    } catch (error) {
+      console.error('Failed to send status update webhook:', error);
+    }
   }
 };
