@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ShoppingBag } from 'lucide-react';
 import { Product } from '../lib/supabase';
 import { useCart } from '../contexts/CartContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ProductCardProps {
   product: Product;
@@ -11,6 +12,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' }) => {
   const { addItem, openCart } = useCart();
+  const { t } = useLanguage();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -37,7 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
           <div className="absolute top-3 left-3 flex flex-col space-y-1">
             {product.is_new && (
               <span className="bg-navy-900 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
-                NEW
+                {t('badges.new')}
               </span>
             )}
             {discountPercentage > 0 && (
@@ -113,7 +115,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
             onClick={handleAddToCart}
             className="bg-navy-900 text-white px-6 py-2 font-medium hover:bg-navy-800 transition-colors duration-200"
           >
-            ADD TO CART
+            {t('product.add_to_cart')}
           </button>
         </div>
       </div>
@@ -133,12 +135,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
         <div className="absolute top-3 left-3 flex flex-col space-y-1">
           {product.is_new && (
             <span className="bg-navy-900 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
-              NEW
+              {t('badges.new')}
             </span>
           )}
           {product.is_limited && (
             <span className="bg-red-600 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
-              LIMITED
+              {t('badges.limited')}
             </span>
           )}
         </div>
@@ -146,7 +148,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
         {discountPercentage > 0 && (
           <div className="absolute top-3 right-3">
             <span className="bg-red-600 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
-              -{discountPercentage}% OFF
+              -{discountPercentage}% {t('badges.off')}
             </span>
           </div>
         )}
@@ -165,7 +167,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
             to={`/product/${product.id}`}
             className="bg-white text-navy-900 p-3 hover:bg-gray-100 transition-colors duration-200 shadow-lg border border-navy-900 inline-block"
           >
-            <span className="text-xs font-medium">BUY</span>
+            <span className="text-xs font-medium">{t('product.buy')}</span>
           </Link>
         </div>
       </div>

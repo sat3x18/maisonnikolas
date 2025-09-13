@@ -2,9 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Cart: React.FC = () => {
   const { state, removeItem, updateQuantity, clearCart, getTotalPrice } = useCart();
+  const { t } = useLanguage();
 
   if (state.items.length === 0) {
     return (
@@ -12,27 +14,16 @@ const Cart: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center py-16">
             <ShoppingBag className="h-24 w-24 text-gray-400 mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-navy-900 mb-4">Your Cart is Empty</h2>
-            <p className="text-gray-600 mb-8">Discover our luxury collection and add items to your cart.</p>
+            <h2 className="text-3xl font-bold text-navy-900 mb-4">{t('cart.empty_title')}</h2>
+            <p className="text-gray-600 mb-8">{t('cart.empty_subtitle')}</p>
             <Link
               to="/"
               className="bg-navy-900 text-white font-bold py-3 px-8 hover:bg-navy-800 transition-all duration-300"
             >
               <ArrowLeft className="h-5 w-5 mr-2" />
-              Back to Collection
+              {t('cart.back_to_collection')}
             </Link>
 
-            <div className="text-center py-16">
-              <ShoppingBag className="h-24 w-24 text-gray-600 mx-auto mb-6" />
-              <h2 className="text-3xl font-bold text-white mb-4">Your Cart is Empty</h2>
-              <p className="text-gray-400 mb-8">Discover our luxury collection and add items to your cart.</p>
-              <Link
-                to="/"
-                className="bg-gradient-to-r from-rolex-green to-rolex-green-dark text-white font-bold py-3 px-8 rounded-lg hover:from-rolex-green-dark hover:to-rolex-green transition-all duration-300"
-              >
-                Continue Shopping
-              </Link>
-            </div>
           </div>
         </div>
       </div>
@@ -47,19 +38,19 @@ const Cart: React.FC = () => {
           className="inline-flex items-center text-navy-900 hover:text-navy-700 transition-colors duration-300 mb-8"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
-          Back to Collection
+          {t('cart.back_to_collection')}
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-8">
-              <h1 className="text-3xl font-serif font-bold text-navy-900">Shopping Cart</h1>
+              <h1 className="text-3xl font-serif font-bold text-navy-900">{t('cart.shopping_cart')}</h1>
               <button
                 onClick={clearCart}
                 className="text-gray-500 hover:text-gray-700 transition-colors duration-300 text-sm font-medium"
               >
-                Clear Cart
+                {t('cart.clear_cart')}
               </button>
             </div>
 
@@ -78,8 +69,8 @@ const Cart: React.FC = () => {
                         <div>
                           <h3 className="text-xl font-bold text-navy-900 mb-2">{item.product.name}</h3>
                           <div className="flex items-center space-x-4 text-sm text-gray-600">
-                            {item.color && <span>Color: {item.color}</span>}
-                            {item.size && <span>Size: {item.size}</span>}
+                            {item.color && <span>{t('product.color')}: {item.color}</span>}
+                            {item.size && <span>{t('product.size')}: {item.size}</span>}
                           </div>
                         </div>
                         <button
@@ -125,7 +116,7 @@ const Cart: React.FC = () => {
                             )}
                           </div>
                           <p className="text-gray-600 text-sm">
-                            ₾{(item.product.discount_price || item.product.price).toFixed(2)} each
+                            ₾{(item.product.discount_price || item.product.price).toFixed(2)} {t('header.each')}
                           </p>
                         </div>
                       </div>
@@ -139,25 +130,25 @@ const Cart: React.FC = () => {
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-gray-50 border border-gray-200 p-6 sticky top-8">
-              <h2 className="text-2xl font-bold text-navy-900 mb-6">Order Summary</h2>
+              <h2 className="text-2xl font-bold text-navy-900 mb-6">{t('cart.order_summary')}</h2>
               
               <div className="space-y-4 mb-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Subtotal</span>
+                  <span className="text-gray-600">{t('cart.subtotal')}</span>
                   <span className="text-navy-900 font-semibold">${getTotalPrice().toFixed(2)}</span>
                   <span className="text-navy-900 font-semibold">₾{getTotalPrice().toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Shipping</span>
-                  <span className="text-green-400 font-semibold">Free</span>
+                  <span className="text-gray-600">{t('cart.shipping')}</span>
+                  <span className="text-green-400 font-semibold">{t('cart.free')}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Tax</span>
-                  <span className="text-navy-900 font-semibold">Calculated at checkout</span>
+                  <span className="text-gray-600">{t('cart.tax')}</span>
+                  <span className="text-navy-900 font-semibold">{t('cart.calculated_at_checkout')}</span>
                 </div>
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-xl font-bold text-navy-900">Total</span>
+                    <span className="text-xl font-bold text-navy-900">{t('cart.total')}</span>
                     <span className="text-2xl font-bold text-navy-900">${getTotalPrice().toFixed(2)}</span>
                     <span className="text-2xl font-bold text-navy-900">₾{getTotalPrice().toFixed(2)}</span>
                   </div>
@@ -168,30 +159,30 @@ const Cart: React.FC = () => {
                 to="/checkout"
                 className="w-full bg-navy-900 text-white font-bold py-4 px-6 hover:bg-navy-800 transition-all duration-300 text-center block mb-4"
               >
-                Proceed to Checkout
+                {t('cart.proceed_to_checkout')}
               </Link>
 
               <Link
                 to="/"
                 className="w-full bg-gray-200 text-navy-900 font-medium py-3 px-6 hover:bg-gray-300 transition-all duration-300 text-center block"
               >
-                Continue Shopping
+                {t('cart.continue_shopping')}
               </Link>
 
               {/* Security Features */}
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <div className="flex items-center space-x-3 text-sm text-gray-600">
                   <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <span>Secure checkout</span>
+                  <span>{t('cart.secure_checkout')}</span>
                 </div>
                 <div className="flex items-center space-x-3 text-sm text-gray-600 mt-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                   <span>Free shipping on orders over $100</span>
-                  <span>Free shipping on orders over ₾100</span>
+                  <span>{t('cart.free_shipping_over')}</span>
                 </div>
                 <div className="flex items-center space-x-3 text-sm text-gray-600 mt-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <span>30-day return policy</span>
+                  <span>{t('cart.return_policy')}</span>
                 </div>
               </div>
             </div>
