@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Ensure full width containers */
+.container-full {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+/* Fix any potential image gaps */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Ensure hero sections take full width */
+section {
+  width: 100%;
+}

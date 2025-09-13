@@ -165,11 +165,11 @@ const MainApp: React.FC = () => {
       <Header categories={categories} />
       
       {/* Hero Banner */}
-      <section className="relative h-96 bg-gray-100">
+      <section className="relative h-[500px] bg-gray-100 overflow-hidden">
         <img
           src="https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg"
           alt="Hero Banner"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
           <div className="text-center text-white">
@@ -181,8 +181,6 @@ const MainApp: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Category Banners */}
 
       {/* Featured Products */}
       {featuredProducts.length > 0 && (
