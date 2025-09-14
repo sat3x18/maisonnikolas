@@ -3,13 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Star, Package, Truck, Shield } from 'lucide-react';
 import { Product, Review, Category, api } from '../lib/supabase';
 import { useCart } from '../contexts/CartContext';
-import { useLanguage } from '../contexts/LanguageContext';
 import Header from './Header';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { addItem, openCart } = useCart();
-  const { t } = useLanguage();
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -73,7 +71,7 @@ const ProductDetail: React.FC = () => {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-2 border-navy-900 border-t-transparent mx-auto mb-4"></div>
-          <p className="text-navy-900">{t('product.loading')}</p>
+          <p className="text-navy-900">Loading product details...</p>
         </div>
       </div>
     );
@@ -84,13 +82,13 @@ const ProductDetail: React.FC = () => {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-navy-900 mb-2">{t('product.not_found')}</h2>
-          <p className="text-gray-600 mb-6">{t('product.not_found_desc')}</p>
+          <h2 className="text-2xl font-bold text-navy-900 mb-2">Product Not Found</h2>
+          <p className="text-gray-600 mb-6">The product you're looking for doesn't exist.</p>
           <Link
             to="/"
             className="bg-navy-900 text-white px-6 py-3 hover:bg-navy-800 transition-colors duration-200"
           >
-            {t('product.back_to_home')}
+            Back to Home
           </Link>
         </div>
       </div>
@@ -107,7 +105,7 @@ const ProductDetail: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-          <Link to="/" className="hover:text-navy-900">{t('common.home')}</Link>
+          <Link to="/" className="hover:text-navy-900">Home</Link>
           <span>/</span>
           {product.category && (
             <>

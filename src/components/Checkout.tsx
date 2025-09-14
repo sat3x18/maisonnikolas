@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CreditCard, Truck, Shield, Lock } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
-import { useLanguage } from '../contexts/LanguageContext';
 import { api } from '../lib/supabase';
 
 const Checkout: React.FC = () => {
   const { state, clearCart, getTotalPrice } = useCart();
   const navigate = useNavigate();
-  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -67,12 +65,12 @@ const Checkout: React.FC = () => {
     return (
       <div className="min-h-screen bg-white py-12 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-navy-900 mb-4">{t('checkout.cart_empty')}</h2>
+          <h2 className="text-3xl font-bold text-navy-900 mb-4">Your cart is empty</h2>
           <Link
             to="/"
             className="bg-navy-900 text-white font-bold py-3 px-8 hover:bg-navy-800 transition-all duration-300"
           >
-            {t('cart.continue_shopping')}
+            Continue Shopping
           </Link>
         </div>
       </div>
@@ -87,26 +85,26 @@ const Checkout: React.FC = () => {
           className="inline-flex items-center text-navy-900 hover:text-navy-700 transition-colors duration-300 mb-8"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
-          {t('checkout.back_to_cart')}
+          Back to Cart
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Checkout Form */}
           <div>
-            <h1 className="text-3xl font-serif font-bold text-navy-900 mb-8">{t('checkout.title')}</h1>
+            <h1 className="text-3xl font-serif font-bold text-navy-900 mb-8">Checkout</h1>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Customer Information */}
               <div className="bg-gray-50 border border-gray-200 p-6">
                 <h2 className="text-xl font-bold text-navy-900 mb-6 flex items-center">
                   <Truck className="h-6 w-6 mr-3 text-navy-900" />
-                  {t('checkout.shipping_info')}
+                  Shipping Information
                 </h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-navy-900 text-sm font-medium mb-2">
-                      {t('checkout.first_name')} *
+                      First Name *
                     </label>
                     <input
                       type="text"
@@ -115,13 +113,13 @@ const Checkout: React.FC = () => {
                       onChange={handleInputChange}
                       required
                       className="w-full px-4 py-3 bg-white border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
-                      placeholder={t('checkout.enter_first_name')}
+                      placeholder="Enter your first name"
                     />
                   </div>
                   
                   <div>
                     <label className="block text-navy-900 text-sm font-medium mb-2">
-                      {t('checkout.last_name')} *
+                      Last Name *
                     </label>
                     <input
                       type="text"
@@ -130,14 +128,14 @@ const Checkout: React.FC = () => {
                       onChange={handleInputChange}
                       required
                       className="w-full px-4 py-3 bg-white border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
-                      placeholder={t('checkout.enter_last_name')}
+                      placeholder="Enter your last name"
                     />
                   </div>
                 </div>
 
                 <div className="mt-4">
                   <label className="block text-navy-900 text-sm font-medium mb-2">
-                    {t('checkout.phone')} *
+                    Phone Number *
                   </label>
                   <input
                     type="tel"
@@ -146,13 +144,13 @@ const Checkout: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-3 bg-white border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
-                    placeholder={t('checkout.enter_phone')}
+                    placeholder="Enter your phone number"
                   />
                 </div>
 
                 <div className="mt-4">
                   <label className="block text-navy-900 text-sm font-medium mb-2">
-                    {t('checkout.city')} *
+                    City *
                   </label>
                   <input
                     type="text"
@@ -161,13 +159,13 @@ const Checkout: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-3 bg-white border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
-                    placeholder={t('checkout.enter_city')}
+                    placeholder="Enter your city"
                   />
                 </div>
 
                 <div className="mt-4">
                   <label className="block text-navy-900 text-sm font-medium mb-2">
-                    {t('checkout.address')} *
+                    Address *
                   </label>
                   <input
                     type="text"
@@ -176,7 +174,7 @@ const Checkout: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-3 bg-white border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
-                    placeholder={t('checkout.enter_address')}
+                    placeholder="Enter your full address"
                   />
                 </div>
               </div>
@@ -185,7 +183,7 @@ const Checkout: React.FC = () => {
               <div className="bg-gray-50 border border-gray-200 p-6">
                 <h2 className="text-xl font-bold text-navy-900 mb-6 flex items-center">
                   <CreditCard className="h-6 w-6 mr-3 text-navy-900" />
-                  {t('checkout.payment_method')}
+                  Payment Method
                 </h2>
                 
                 <div className="space-y-4">
@@ -198,7 +196,7 @@ const Checkout: React.FC = () => {
                       onChange={handleInputChange}
                       className="text-navy-900 focus:ring-navy-900"
                     />
-                    <span className="text-navy-900">{t('checkout.tbc_bank')}</span>
+                    <span className="text-navy-900">TBC Bank</span>
                   </label>
                   
                   <label className="flex items-center space-x-3 cursor-pointer">
@@ -210,7 +208,7 @@ const Checkout: React.FC = () => {
                       onChange={handleInputChange}
                       className="text-navy-900 focus:ring-navy-900"
                     />
-                    <span className="text-navy-900">{t('checkout.bog_bank')}</span>
+                    <span className="text-navy-900">Bank Of Georgia</span>
                   </label>
                 </div>
               </div>
@@ -222,7 +220,7 @@ const Checkout: React.FC = () => {
                 className="w-full bg-navy-900 text-white font-bold py-4 px-8 hover:bg-navy-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
               >
                 <Lock className="h-5 w-5" />
-                <span>{loading ? t('checkout.processing') : t('checkout.place_order')}</span>
+                <span>{loading ? 'Processing...' : 'Place Order'}</span>
               </button>
             </form>
           </div>
@@ -230,7 +228,7 @@ const Checkout: React.FC = () => {
           {/* Order Summary */}
           <div>
             <div className="bg-gray-50 border border-gray-200 p-6 sticky top-8">
-              <h2 className="text-2xl font-bold text-navy-900 mb-6">{t('cart.order_summary')}</h2>
+              <h2 className="text-2xl font-bold text-navy-900 mb-6">Order Summary</h2>
               
               {/* Order Items */}
               <div className="space-y-4 mb-6">
@@ -246,7 +244,7 @@ const Checkout: React.FC = () => {
                       <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
                         {item.color && <span>{item.color}</span>}
                         {item.size && <span>• {item.size}</span>}
-                        <span>• {t('product.quantity')}: {item.quantity}</span>
+                        <span>• Qty: {item.quantity}</span>
                       </div>
                     </div>
                     <span className="text-navy-900 font-bold">
@@ -259,22 +257,22 @@ const Checkout: React.FC = () => {
               {/* Totals */}
               <div className="space-y-4 mb-6 pt-6 border-t border-gray-200">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">{t('cart.subtotal')}</span>
+                  <span className="text-gray-600">Subtotal</span>
                   <span className="text-navy-900 font-semibold">${getTotalPrice().toFixed(2)}</span>
                   <span className="text-navy-900 font-semibold">₾{getTotalPrice().toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">{t('cart.shipping')}</span>
-                  <span className="text-green-400 font-semibold">{t('cart.free')}</span>
+                  <span className="text-gray-600">Shipping</span>
+                  <span className="text-green-400 font-semibold">Free</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">{t('cart.tax')}</span>
+                  <span className="text-gray-600">Tax</span>
                   <span className="text-navy-900 font-semibold">$0.00</span>
                   <span className="text-navy-900 font-semibold">₾0.00</span>
                 </div>
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-xl font-bold text-navy-900">{t('cart.total')}</span>
+                    <span className="text-xl font-bold text-navy-900">Total</span>
                     <span className="text-2xl font-bold text-navy-900">${getTotalPrice().toFixed(2)}</span>
                     <span className="text-2xl font-bold text-navy-900">₾{getTotalPrice().toFixed(2)}</span>
                   </div>
@@ -285,15 +283,15 @@ const Checkout: React.FC = () => {
               <div className="space-y-3 text-sm text-gray-600">
                 <div className="flex items-center space-x-3">
                   <Shield className="h-4 w-4 text-green-400" />
-                  <span>{t('checkout.ssl_protected')}</span>
+                  <span>Secure checkout protected by SSL</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Truck className="h-4 w-4 text-green-400" />
-                  <span>{t('cart.free_shipping_over')}</span>
+                  <span>Free shipping on all orders</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <CreditCard className="h-4 w-4 text-green-400" />
-                  <span>{t('checkout.multiple_payment')}</span>
+                  <span>Multiple payment options available</span>
                 </div>
               </div>
             </div>

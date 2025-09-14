@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Mail, CheckCircle } from 'lucide-react';
 import { api } from '../lib/supabase';
-import { useLanguage } from '../contexts/LanguageContext';
 
 const NewsletterForm: React.FC = () => {
-  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -27,9 +25,9 @@ const NewsletterForm: React.FC = () => {
     } catch (error: any) {
       console.error('Newsletter subscription error:', error);
       if (error.message?.includes('duplicate key')) {
-        setError(t('newsletter.already_subscribed'));
+        setError('This email is already subscribed to our newsletter.');
       } else {
-        setError(t('newsletter.error'));
+        setError('Failed to subscribe. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -40,7 +38,7 @@ const NewsletterForm: React.FC = () => {
     return (
       <div className="flex items-center justify-center space-x-3 text-green-400">
         <CheckCircle className="h-6 w-6" />
-        <span className="font-medium">{t('newsletter.success')}</span>
+        <span className="font-medium">Successfully subscribed to our newsletter!</span>
       </div>
     );
   }
@@ -54,7 +52,7 @@ const NewsletterForm: React.FC = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder={t('newsletter.enter_email')}
+            placeholder="Enter your email"
             required
             className="w-full pl-10 pr-4 py-3 border border-white bg-transparent text-white placeholder-gray-300 focus:outline-none focus:border-gray-300 transition-colors duration-200"
           />
@@ -64,7 +62,7 @@ const NewsletterForm: React.FC = () => {
           disabled={loading || !email.trim()}
           className="bg-white text-navy-900 px-6 py-3 font-medium hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? t('newsletter.subscribing') : t('newsletter.subscribe')}
+          {loading ? 'SUBSCRIBING...' : 'SUBSCRIBE'}
         </button>
       </div>
       

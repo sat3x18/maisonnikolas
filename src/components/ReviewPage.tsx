@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Star, CheckCircle, ArrowLeft } from 'lucide-react';
 import { Order, api } from '../lib/supabase';
-import { useLanguage } from '../contexts/LanguageContext';
 
 const ReviewPage: React.FC = () => {
   const { orderNumber } = useParams<{ orderNumber: string }>();
-  const { t } = useLanguage();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState<{ [key: string]: { rating: number; comment: string; customerName: string } }>({});
@@ -82,7 +80,7 @@ const ReviewPage: React.FC = () => {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-2 border-navy-900 border-t-transparent mx-auto mb-4"></div>
-          <p className="text-navy-900">{t('order.loading')}</p>
+          <p className="text-navy-900">Loading order details...</p>
         </div>
       </div>
     );
@@ -92,13 +90,13 @@ const ReviewPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-navy-900 mb-2">{t('order.not_found')}</h2>
-          <p className="text-gray-600 mb-6">{t('order.not_found_desc')}</p>
+          <h2 className="text-2xl font-bold text-navy-900 mb-2">Order Not Found</h2>
+          <p className="text-gray-600 mb-6">The order you're looking for doesn't exist.</p>
           <Link
             to="/"
             className="bg-navy-900 text-white px-6 py-3 hover:bg-navy-800 transition-colors duration-200"
           >
-            {t('common.back_to_home')}
+            Back to Home
           </Link>
         </div>
       </div>
@@ -109,13 +107,13 @@ const ReviewPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-navy-900 mb-2">{t('review.not_ready')}</h2>
-          <p className="text-gray-600 mb-6">{t('review.completed_only')}</p>
+          <h2 className="text-2xl font-bold text-navy-900 mb-2">Order Not Ready for Review</h2>
+          <p className="text-gray-600 mb-6">You can only review completed orders.</p>
           <Link
             to="/"
             className="bg-navy-900 text-white px-6 py-3 hover:bg-navy-800 transition-colors duration-200"
           >
-            {t('common.back_to_home')}
+            Back to Home
           </Link>
         </div>
       </div>
@@ -136,25 +134,25 @@ const ReviewPage: React.FC = () => {
           className="inline-flex items-center text-navy-900 hover:text-navy-700 transition-colors duration-300 mb-8"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
-          {t('common.back_to_home')}
+          Back to Home
         </Link>
 
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-serif font-bold text-navy-900 mb-4">{t('review.leave_review')}</h1>
-          <p className="text-xl text-gray-600 mb-2">{t('order.order_number')} #{order.order_number}</p>
-          <p className="text-gray-500">{t('review.share_experience')}</p>
+          <h1 className="text-4xl font-serif font-bold text-navy-900 mb-4">Leave a Review</h1>
+          <p className="text-xl text-gray-600 mb-2">Order #{order.order_number}</p>
+          <p className="text-gray-500">Share your experience with the products you purchased</p>
         </div>
 
         {allReviewsSubmitted ? (
           <div className="text-center py-16">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-navy-900 mb-4">{t('review.thank_you')}</h2>
-            <p className="text-xl text-gray-600 mb-8">{t('review.all_submitted')}</p>
+            <h2 className="text-3xl font-bold text-navy-900 mb-4">Thank You!</h2>
+            <p className="text-xl text-gray-600 mb-8">All reviews have been submitted successfully.</p>
             <Link
               to="/"
               className="bg-navy-900 text-white px-8 py-3 hover:bg-navy-800 transition-colors duration-200 font-medium"
             >
-              {t('common.continue_shopping')}
+              Continue Shopping
             </Link>
           </div>
         ) : (
@@ -179,7 +177,7 @@ const ReviewPage: React.FC = () => {
                       </div>
                       <div className="flex items-center text-green-600">
                         <CheckCircle className="h-5 w-5 mr-2" />
-                        <span className="font-medium">{t('review.submitted')}</span>
+                        <span className="font-medium">Review Submitted</span>
                       </div>
                     </div>
                   </div>
@@ -209,7 +207,7 @@ const ReviewPage: React.FC = () => {
                         onClick={() => updateReview(item.product_id, 'rating', 5)}
                         className="bg-navy-900 text-white px-6 py-2 hover:bg-navy-800 transition-colors duration-200 font-medium"
                       >
-                        {t('review.write_review')}
+                        Write Review
                       </button>
                     )}
                   </div>
@@ -219,14 +217,14 @@ const ReviewPage: React.FC = () => {
                       {/* Customer Name */}
                       <div>
                         <label className="block text-sm font-medium text-navy-900 mb-2">
-                          {t('review.your_name')} *
+                          Your Name *
                         </label>
                         <input
                           type="text"
                           value={reviews[item.product_id]?.customerName || ''}
                           onChange={(e) => updateReview(item.product_id, 'customerName', e.target.value)}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
-                          placeholder={t('review.enter_name')}
+                          placeholder="Enter your name"
                           required
                         />
                       </div>
@@ -234,7 +232,7 @@ const ReviewPage: React.FC = () => {
                       {/* Star Rating */}
                       <div>
                         <label className="block text-sm font-medium text-navy-900 mb-3">
-                          {t('review.rating')} *
+                          Rating *
                         </label>
                         <div className="flex items-center space-x-2">
                           {[1, 2, 3, 4, 5].map((star) => (
@@ -253,7 +251,7 @@ const ReviewPage: React.FC = () => {
                             </button>
                           ))}
                           <span className="ml-4 text-sm text-gray-600">
-                            {reviews[item.product_id]?.rating ? `${reviews[item.product_id].rating} ${reviews[item.product_id].rating !== 1 ? t('review.stars') : t('review.star')}` : t('review.click_to_rate')}
+                            {reviews[item.product_id]?.rating ? `${reviews[item.product_id].rating} star${reviews[item.product_id].rating !== 1 ? 's' : ''}` : 'Click to rate'}
                           </span>
                         </div>
                       </div>
@@ -261,14 +259,14 @@ const ReviewPage: React.FC = () => {
                       {/* Comment */}
                       <div>
                         <label className="block text-sm font-medium text-navy-900 mb-2">
-                          {t('review.your_review')}
+                          Your Review (Optional)
                         </label>
                         <textarea
                           value={reviews[item.product_id]?.comment || ''}
                           onChange={(e) => updateReview(item.product_id, 'comment', e.target.value)}
                           rows={4}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent resize-none"
-                          placeholder={t('review.share_thoughts')}
+                          placeholder="Share your thoughts about this product..."
                         />
                       </div>
 
@@ -279,7 +277,7 @@ const ReviewPage: React.FC = () => {
                           disabled={!reviews[item.product_id]?.rating || !reviews[item.product_id]?.customerName.trim() || submitting === item.product_id}
                           className="bg-navy-900 text-white px-8 py-3 hover:bg-navy-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                         >
-                          {submitting === item.product_id ? t('review.submitting') : t('review.submit')}
+                          {submitting === item.product_id ? 'Submitting...' : 'Submit Review'}
                         </button>
                         <button
                           onClick={() => setReviews(prev => {
@@ -289,7 +287,7 @@ const ReviewPage: React.FC = () => {
                           })}
                           className="text-gray-600 hover:text-gray-800 transition-colors duration-200 px-4 py-3"
                         >
-                          {t('review.cancel')}
+                          Cancel
                         </button>
                       </div>
                     </div>
@@ -304,7 +302,7 @@ const ReviewPage: React.FC = () => {
                 to="/"
                 className="text-gray-600 hover:text-gray-800 transition-colors duration-200"
               >
-                {t('review.skip')}
+                Skip reviews and continue shopping
               </Link>
             </div>
           </div>
