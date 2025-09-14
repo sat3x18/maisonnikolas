@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { CheckCircle, Star, Package, Truck, CreditCard } from 'lucide-react';
 import { Order, api } from '../lib/supabase';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const OrderConfirmation: React.FC = () => {
   const { orderNumber } = useParams<{ orderNumber: string }>();
+  const { t } = useLanguage();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [reviewData, setReviewData] = useState<{ [key: string]: { rating: number; comment: string } }>({});
@@ -74,7 +76,7 @@ const OrderConfirmation: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-yellow-400 mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading order details...</p>
+          <p className="text-gray-400">{t('order.loading')}</p>
         </div>
       </div>
     );
@@ -85,8 +87,8 @@ const OrderConfirmation: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
         <div className="text-center">
           <Package className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Order Not Found</h2>
-          <p className="text-gray-400">The order you're looking for doesn't exist or has been removed.</p>
+          <h2 className="text-2xl font-bold text-white mb-2">{t('order.not_found')}</h2>
+          <p className="text-gray-400">{t('order.not_found_desc')}</p>
         </div>
       </div>
     );
@@ -100,19 +102,19 @@ const OrderConfirmation: React.FC = () => {
           <div className="bg-gradient-to-r from-green-400 to-green-600 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="h-10 w-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-white mb-4">Order Confirmed!</h1>
-          <p className="text-xl text-gray-300 mb-2">Thank you for your purchase</p>
-          <p className="text-gray-400">Order #{order.order_number}</p>
+          <h1 className="text-4xl font-bold text-white mb-4">{t('order.confirmed')}</h1>
+          <p className="text-xl text-gray-300 mb-2">{t('order.thank_you')}</p>
+          <p className="text-gray-400">{t('order.order_number')} #{order.order_number}</p>
         </div>
 
         {/* Order Details */}
         <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 mb-8 shadow-2xl">
-          <h2 className="text-2xl font-bold text-white mb-6">Order Details</h2>
+          <h2 className="text-2xl font-bold text-white mb-6">{t('order.details')}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             {/* Customer Info */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Customer Information</h3>
+              <h3 className="text-lg font-semibold text-white mb-4">{t('order.customer_info')}</h3>
               <div className="space-y-2 text-gray-300">
                 <p><span className="text-gray-400">Name:</span> {order.customer_name} {order.customer_surname}</p>
                 <p><span className="text-gray-400">Phone:</span> {order.customer_phone}</p>
@@ -123,11 +125,11 @@ const OrderConfirmation: React.FC = () => {
 
             {/* Order Info */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Order Information</h3>
+              <h3 className="text-lg font-semibold text-white mb-4">{t('order.order_info')}</h3>
               <div className="space-y-2 text-gray-300">
-                <p><span className="text-gray-400">Order Date:</span> {new Date(order.created_at).toLocaleDateString()}</p>
-                <p><span className="text-gray-400">Payment Method:</span> {order.payment_method}</p>
-                <p><span className="text-gray-400">Status:</span> 
+                <p><span className="text-gray-400">{t('order.order_date')}:</span> {new Date(order.created_at).toLocaleDateString()}</p>
+                <p><span className="text-gray-400">{t('order.payment')}:</span> {order.payment_method}</p>
+                <p><span className="text-gray-400">{t('order.status')}:</span> 
                   <span className={`ml-2 px-3 py-1 rounded-full text-xs font-bold ${
                     order.status === 'completed' ? 'bg-green-500 text-white' :
                     order.status === 'pending' ? 'bg-yellow-500 text-black' :
@@ -145,7 +147,7 @@ const OrderConfirmation: React.FC = () => {
 
           {/* Order Items */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Items Ordered</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">{t('order.items_ordered')}</h3>
             <div className="space-y-4">
               {order.order_items?.map((item) => (
                 <div key={item.id} className="bg-gray-700 rounded-lg p-4">
@@ -175,14 +177,14 @@ const OrderConfirmation: React.FC = () => {
 
         {/* Order Status Timeline */}
         <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 shadow-2xl">
-          <h2 className="text-2xl font-bold text-white mb-6">Order Status</h2>
+          <h2 className="text-2xl font-bold text-white mb-6">{t('order.order_status')}</h2>
           
           <div className="flex items-center justify-between">
             <div className="flex flex-col items-center space-y-2">
               <div className="bg-green-500 rounded-full p-3">
                 <CreditCard className="h-6 w-6 text-white" />
               </div>
-              <span className="text-sm text-green-400 font-medium">Order Placed</span>
+              <span className="text-sm text-green-400 font-medium">{t('order.order_placed')}</span>
             </div>
             
             <div className="flex-1 h-1 bg-gray-700 mx-4">

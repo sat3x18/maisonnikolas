@@ -21,12 +21,14 @@ import {
   Save
 } from 'lucide-react';
 import { Product, Category, Order, api } from '../../lib/supabase';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface AdminDashboardProps {
   onLogout: () => void;
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
+  const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -314,7 +316,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-2 border-navy-900 border-t-transparent mx-auto mb-4"></div>
-          <p className="text-navy-900">Loading dashboard...</p>
+          <p className="text-navy-900">{t('admin.loading_dashboard')}</p>
         </div>
       </div>
     );
@@ -327,7 +329,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-navy-900">ADMIN DASHBOARD</h1>
+              <h1 className="text-2xl font-bold text-navy-900">{t('admin.dashboard')}</h1>
               <span className="ml-4 text-sm text-gray-500">MAISON NIKOLAS</span>
             </div>
             <button
@@ -335,7 +337,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
             >
               <LogOut className="h-5 w-5" />
-              <span>Logout</span>
+              <span>{t('admin.logout')}</span>
             </button>
           </div>
         </div>
@@ -350,7 +352,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 <ShoppingCart className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Orders</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.total_orders')}</p>
                 <p className="text-2xl font-bold text-gray-900">{orders.length}</p>
               </div>
             </div>
@@ -362,7 +364,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 <Package className="h-6 w-6 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Products</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.products')}</p>
                 <p className="text-2xl font-bold text-gray-900">{products.length}</p>
               </div>
             </div>
@@ -374,7 +376,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 <DollarSign className="h-6 w-6 text-yellow-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Revenue</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.revenue')}</p>
                 <p className="text-2xl font-bold text-gray-900">
                   ₾{orders.reduce((sum, order) => sum + order.total_amount, 0).toFixed(2)}
                 </p>
@@ -388,7 +390,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 <TrendingUp className="h-6 w-6 text-purple-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Pending Orders</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.pending_orders')}</p>
                 <p className="text-2xl font-bold text-gray-900">
                   {orders.filter(order => order.status === 'pending').length}
                 </p>
@@ -402,9 +404,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6">
               {[
-                { id: 'orders', label: 'Orders', icon: ShoppingCart },
-                { id: 'products', label: 'Products', icon: Package },
-                { id: 'categories', label: 'Categories', icon: Filter }
+                { id: 'orders', label: t('admin.orders'), icon: ShoppingCart },
+                { id: 'products', label: t('admin.products'), icon: Package },
+                { id: 'categories', label: t('admin.categories'), icon: Filter }
               ].map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
@@ -430,7 +432,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     type="text"
-                    placeholder={`Search ${activeTab}...`}
+                    placeholder={`${t('admin.search')} ${activeTab}...`}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
@@ -443,7 +445,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
                   >
-                    <option value="">All Categories</option>
+                    <option value="">{t('common.all_categories')}</option>
                     {categories.map(category => (
                       <option key={category.id} value={category.id}>
                         {category.name}
@@ -459,7 +461,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                   className="flex items-center space-x-2 bg-navy-900 text-white px-4 py-2 rounded-lg hover:bg-navy-800 transition-colors duration-200"
                 >
                   <Plus className="h-4 w-4" />
-                  <span>Add Product</span>
+                  <span>{t('admin.add_product')}</span>
                 </button>
               )}
 
@@ -469,7 +471,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                   className="flex items-center space-x-2 bg-navy-900 text-white px-4 py-2 rounded-lg hover:bg-navy-800 transition-colors duration-200"
                 >
                   <Plus className="h-4 w-4" />
-                  <span>Add Category</span>
+                  <span>{t('admin.add_category')}</span>
                 </button>
               )}
             </div>

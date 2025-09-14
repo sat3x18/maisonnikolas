@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Lock, User, Eye, EyeOff } from 'lucide-react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface AdminLoginProps {
   onLogin: (username: string, password: string) => Promise<boolean>;
 }
 
 const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
+  const { t } = useLanguage();
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -19,10 +21,10 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     try {
       const success = await onLogin(credentials.username, credentials.password);
       if (!success) {
-        setError('Invalid credentials');
+        setError(t('admin.invalid_credentials'));
       }
     } catch (err) {
-      setError('Login failed. Please try again.');
+      setError(t('admin.login_failed'));
     } finally {
       setLoading(false);
     }
@@ -42,14 +44,14 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             <div className="bg-navy-900 w-16 h-16 flex items-center justify-center mx-auto mb-6">
               <Lock className="h-8 w-8 text-white" />
             </div>
-            <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2">ADMIN PORTAL</h1>
+            <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2">{t('admin.portal')}</h1>
             <p className="text-gray-600 uppercase tracking-wider text-sm">MAISON NIKOLAS</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-navy-900 mb-2 uppercase tracking-wider">
-                Username
+                {t('admin.username')}
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -58,7 +60,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                   value={credentials.username}
                   onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent transition-all duration-200"
-                  placeholder="Enter username"
+                  placeholder={t('admin.enter_username')}
                   required
                 />
               </div>
@@ -66,7 +68,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
 
             <div>
               <label className="block text-sm font-medium text-navy-900 mb-2 uppercase tracking-wider">
-                Password
+                {t('admin.password')}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -75,7 +77,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                   value={credentials.password}
                   onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                   className="w-full pl-10 pr-12 py-3 border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent transition-all duration-200"
-                  placeholder="Enter password"
+                  placeholder={t('admin.enter_password')}
                   required
                 />
                 <button
@@ -99,7 +101,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
               disabled={loading}
               className="w-full bg-navy-900 text-white py-3 px-4 font-medium hover:bg-navy-800 focus:ring-2 focus:ring-navy-900 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
             >
-              {loading ? 'SIGNING IN...' : 'SIGN IN'}
+              {loading ? t('admin.signing_in') : t('admin.sign_in')}
             </button>
           </form>
 

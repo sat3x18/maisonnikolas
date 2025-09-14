@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Filter, Grid, List, Tag } from 'lucide-react';
 import { Product, Category, api } from '../lib/supabase';
+import { useLanguage } from '../contexts/LanguageContext';
 import Header from './Header';
 import ProductCard from './ProductCard';
 import NewsletterForm from './NewsletterForm';
 
 const SalePage: React.FC = () => {
+  const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -138,7 +140,7 @@ const SalePage: React.FC = () => {
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-2 border-navy-900 border-t-transparent mx-auto mb-4"></div>
-            <p className="text-navy-900">Loading sale items...</p>
+            <p className="text-navy-900">{t('sale.loading_items')}</p>
           </div>
         </div>
       </div>
@@ -158,13 +160,13 @@ const SalePage: React.FC = () => {
         />
         <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
           <div className="text-center text-white max-w-4xl px-4">
-            <h1 className="text-5xl font-serif font-bold mb-4">SALE</h1>
-            <p className="text-xl mb-6">Selected Items at Special Prices</p>
+            <h1 className="text-5xl font-serif font-bold mb-4">{t('sale.title')}</h1>
+            <p className="text-xl mb-6">{t('sale.subtitle')}</p>
             <p className="text-lg mb-8 leading-relaxed">
-              Discover exceptional value on our premium collection. Quality and style at special prices.
+              {t('sale.description')}
             </p>
             <button className="bg-navy-900 text-white px-8 py-3 font-medium hover:bg-navy-800 transition-colors duration-200">
-              SHOP NOW
+              {t('sale.shop_now')}
             </button>
           </div>
         </div>
@@ -173,16 +175,16 @@ const SalePage: React.FC = () => {
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-          <Link to="/" className="hover:text-navy-900 transition-colors duration-200">Home</Link>
+          <Link to="/" className="hover:text-navy-900 transition-colors duration-200">{t('common.home')}</Link>
           <span>/</span>
-          <span className="text-navy-900 font-medium">Sale</span>
+          <span className="text-navy-900 font-medium">{t('sale.title')}</span>
         </nav>
 
         {/* Filters and Sort */}
         <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-200">
           <div className="flex items-center space-x-4">
-            <h2 className="text-2xl font-serif font-bold text-navy-900">Sale Items</h2>
-            <span className="text-gray-500">({sortedProducts.length} items)</span>
+            <h2 className="text-2xl font-serif font-bold text-navy-900">{t('sale.title')} {t('category.items')}</h2>
+            <span className="text-gray-500">({sortedProducts.length} {t('category.items')})</span>
           </div>
 
           <div className="flex items-center space-x-4">
@@ -208,7 +210,7 @@ const SalePage: React.FC = () => {
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="px-4 py-2 border border-gray-300 text-navy-900 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
             >
-              <option value="">All Categories</option>
+              <option value="">{t('common.all_categories')}</option>
               {categories.map(category => (
                 <option key={category.id} value={category.id}>
                   {category.name} ({category.gender})
@@ -222,11 +224,11 @@ const SalePage: React.FC = () => {
               onChange={(e) => setSortBy(e.target.value)}
               className="px-4 py-2 border border-gray-300 text-navy-900 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
             >
-              <option value="discount">Highest Discount</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="name">Name A-Z</option>
-              <option value="newest">Newest First</option>
+              <option value="discount">{t('sale.highest_discount')}</option>
+              <option value="price-low">{t('common.price_low_high')}</option>
+              <option value="price-high">{t('common.price_high_low')}</option>
+              <option value="name">{t('common.name_az')}</option>
+              <option value="newest">{t('common.newest_first')}</option>
             </select>
           </div>
         </div>
@@ -245,13 +247,13 @@ const SalePage: React.FC = () => {
         ) : (
           <div className="text-center py-20">
             <Tag className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-navy-900 mb-2">No sale items available</h3>
-            <p className="text-gray-500 mb-6">Check back later for new sale items and special offers.</p>
+            <h3 className="text-xl font-medium text-navy-900 mb-2">{t('sale.no_sale_items')}</h3>
+            <p className="text-gray-500 mb-6">{t('sale.check_back')}</p>
             <Link
               to="/"
               className="bg-navy-900 text-white px-6 py-3 font-medium hover:bg-navy-800 transition-colors duration-200"
             >
-              Continue Shopping
+              {t('common.continue_shopping')}
             </Link>
           </div>
         )}
@@ -260,8 +262,8 @@ const SalePage: React.FC = () => {
       {/* Newsletter Section */}
       <section className="bg-gray-50 py-16 mt-20">
         <div className="max-w-4xl mx-auto text-center px-4">
-          <h2 className="text-3xl font-serif font-bold text-navy-900 mb-4">Stay Updated</h2>
-          <p className="text-gray-600 mb-8">Be the first to know about new collections and exclusive offers</p>
+          <h2 className="text-3xl font-serif font-bold text-navy-900 mb-4">{t('category.stay_updated')}</h2>
+          <p className="text-gray-600 mb-8">{t('category.newsletter_description')}</p>
           <div className="bg-navy-900 py-8 px-6 rounded-lg">
             <NewsletterForm />
           </div>
