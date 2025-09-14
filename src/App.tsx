@@ -247,7 +247,7 @@ const MainApp: React.FC = () => {
               </ul>
             </div>
 
-            <div>
+            {/*<div>
               <h4 className="text-lg font-medium text-navy-900 mb-6">Company</h4>
               <ul className="space-y-3 text-gray-600">
                 <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">About Us</a></li>
@@ -255,7 +255,7 @@ const MainApp: React.FC = () => {
                 <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Press</a></li>
                 <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Sustainability</a></li>
               </ul>
-            </div>
+            </div> */}
           </div>
 
           <div className="border-t border-gray-100 pt-8 text-center">
