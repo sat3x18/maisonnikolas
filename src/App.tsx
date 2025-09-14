@@ -240,9 +240,7 @@ const MainApp: React.FC = () => {
             <div>
               <h4 className="text-lg font-medium text-navy-900 mb-6">Customer Care</h4>
               <ul className="space-y-3 text-gray-600">
-                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Size Guide</a></li>
-                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Shipping & Returns</a></li>
-                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Care Instructions</a></li>
+               
                 <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Contact Us</a></li>
               </ul>
             </div>
