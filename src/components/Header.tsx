@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
             {/* Logo */}
             <Link to="/" className="flex items-center">
               <div className="text-2xl font-bold text-navy-900 tracking-tight font-serif">
-                MAISON NIKOLAS
+                NIKOLAS MAISON
               </div>
             </Link>
 
