@@ -334,7 +334,7 @@ export const api = {
       fields: [
         { name: 'Email', value: email, inline: true },
         { name: 'Subscribed At', value: new Date().toLocaleString(), inline: true },
-        { name: 'Source', value: 'Maison Nikolas Website', inline: true }
+        { name: 'Source', value: 'Nikolas Maison Website', inline: true }
       ],
       timestamp: new Date().toISOString(),
       footer: { text: 'Newsletter Subscription' }
