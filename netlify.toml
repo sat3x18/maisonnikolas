@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# If you use React Router or any client-side routing, make sure all routes fallback to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
