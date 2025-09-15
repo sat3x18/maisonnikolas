@@ -186,12 +186,12 @@ const Cart: React.FC = () => {
                 </div>
                 <div className="flex items-center space-x-3 text-sm text-gray-600 mt-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <span>Free shipping on orders over $100</span>
-                  <span>Free shipping on orders over ₾100</span>
+               
+                  <span>Free shipping in Tbilisi</span>
                 </div>
                 <div className="flex items-center space-x-3 text-sm text-gray-600 mt-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <span>30-day return policy</span>
+                  
                 </div>
               </div>
             </div>
