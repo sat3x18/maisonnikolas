@@ -314,22 +314,16 @@ const ProductDetail: React.FC = () => {
                   <Truck className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-sm font-medium text-navy-900">Free Shipping</p>
-                    <p className="text-xs text-gray-500">On orders over ₾100</p>
+                    <p className="text-xs text-gray-500">In Tbilisi</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Shield className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm font-medium text-navy-900">2 Year Warranty</p>
-                    <p className="text-xs text-gray-500">Quality guarantee</p>
-                  </div>
+                  
                 </div>
                 <div className="flex items-center space-x-3">
                   <Package className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm font-medium text-navy-900">Easy Returns</p>
-                    <p className="text-xs text-gray-500">30 day return policy</p>
-                  </div>
+                 
                 </div>
               </div>
             </div>
