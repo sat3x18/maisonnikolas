@@ -328,7 +328,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-navy-900">ADMIN DASHBOARD</h1>
-              <span className="ml-4 text-sm text-gray-500">NIKOLAS MAISON</span>
+              <span className="ml-4 text-sm text-gray-500">Tbilisi Wear</span>
             </div>
             <button
               onClick={onLogout}
