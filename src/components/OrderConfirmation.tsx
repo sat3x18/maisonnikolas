@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { CheckCircle, Package, Truck, CreditCard } from 'lucide-react';
-import { Order, api } from '../lib/supabase';
+import { Order, api, Category } from '../lib/supabase';
 import Header from './Header';
 import NewsletterForm from './NewsletterForm';
 
@@ -9,10 +9,22 @@ const OrderConfirmation: React.FC = () => {
   const { orderNumber } = useParams<{ orderNumber: string }>();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>([]); // load categories for Header
 
   useEffect(() => {
+    loadCategories();
     if (orderNumber) loadOrder();
   }, [orderNumber]);
+
+  const loadCategories = async () => {
+    try {
+      const cats = await api.getCategories();
+      setCategories(cats);
+    } catch (error) {
+      console.error('Error loading categories:', error);
+      setCategories([]);
+    }
+  };
 
   const loadOrder = async () => {
     try {
@@ -28,6 +40,7 @@ const OrderConfirmation: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
+        <Header categories={categories} />
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-2 border-navy-900 border-t-transparent mx-auto mb-4"></div>
@@ -40,17 +53,20 @@ const OrderConfirmation: React.FC = () => {
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <Package className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-          <h2 className="text-2xl font-bold text-navy-900 mb-2">Order Not Found</h2>
-          <p className="text-gray-500">The order you're looking for doesn't exist or has been removed.</p>
-          <Link
-            to="/"
-            className="mt-6 inline-block bg-navy-900 text-white px-6 py-3 font-medium hover:bg-navy-800 transition-colors duration-200"
-          >
-            Continue Shopping
-          </Link>
+      <div className="min-h-screen bg-white">
+        <Header categories={categories} />
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <Package className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+            <h2 className="text-2xl font-bold text-navy-900 mb-2">Order Not Found</h2>
+            <p className="text-gray-500">The order you're looking for doesn't exist or has been removed.</p>
+            <Link
+              to="/"
+              className="mt-6 inline-block bg-navy-900 text-white px-6 py-3 font-medium hover:bg-navy-800 transition-colors duration-200"
+            >
+              Continue Shopping
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -58,7 +74,7 @@ const OrderConfirmation: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <Header categories={categories} />
 
       {/* Hero Section */}
       <section className="relative h-[300px] bg-gray-100 flex items-center justify-center">
@@ -105,15 +121,15 @@ const OrderConfirmation: React.FC = () => {
               {order.order_items?.map(item => (
                 <div key={item.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col items-center text-center">
                   <img
-                    src={item.product?.images[0] || 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'}
-                    alt={item.product?.name}
+                    src={item.product?.images?.[0] || 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'}
+                    alt={item.product?.name || 'Product'}
                     className="w-32 h-32 object-cover rounded-lg mb-4"
                   />
                   <h4 className="text-navy-900 font-semibold">{item.product?.name}</h4>
-                  <p className="text-gray-500 text-sm mt-1">{item.color} {item.size} • Qty: {item.quantity}</p>
+                  <p className="text-gray-500 text-sm mt-1">{item.color || ''} {item.size || ''} • Qty: {item.quantity}</p>
                   <p className="text-navy-900 font-bold mt-2">₾{(item.price * item.quantity).toFixed(2)}</p>
                 </div>
-              ))}
+              )) || <p className="text-gray-400 text-center">No items in this order.</p>}
             </div>
           </div>
         </div>
