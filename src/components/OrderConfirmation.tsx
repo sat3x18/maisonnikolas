@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { CheckCircle, Star, Package, Truck, CreditCard } from 'lucide-react';
+import { useParams, Link } from 'react-router-dom';
+import { CheckCircle, Package, Truck, CreditCard } from 'lucide-react';
 import { Order, api } from '../lib/supabase';
+import Header from './Header';
+import NewsletterForm from './NewsletterForm';
 
 const OrderConfirmation: React.FC = () => {
   const { orderNumber } = useParams<{ orderNumber: string }>();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
-  const [reviewData, setReviewData] = useState<{ [key: string]: { rating: number; comment: string } }>({});
-  const [submittingReview, setSubmittingReview] = useState<string | null>(null);
 
   useEffect(() => {
-    if (orderNumber) {
-      loadOrder();
-    }
+    if (orderNumber) loadOrder();
   }, [orderNumber]);
 
   const loadOrder = async () => {
@@ -27,54 +25,14 @@ const OrderConfirmation: React.FC = () => {
     }
   };
 
-  const handleReviewSubmit = async (productId: string) => {
-    if (!order || !reviewData[productId]) return;
-
-    setSubmittingReview(productId);
-
-    try {
-      await api.createReview({
-        product_id: productId,
-        order_id: order.id,
-        customer_name: `${order.customer_name} ${order.customer_surname}`,
-        rating: reviewData[productId].rating,
-        comment: reviewData[productId].comment
-      });
-
-      // Remove the review form after successful submission
-      setReviewData(prev => {
-        const newData = { ...prev };
-        delete newData[productId];
-        return newData;
-      });
-
-      alert('Review submitted successfully!');
-    } catch (error) {
-      console.error('Error submitting review:', error);
-      alert('Failed to submit review. Please try again.');
-    } finally {
-      setSubmittingReview(null);
-    }
-  };
-
-  const updateReviewData = (productId: string, field: 'rating' | 'comment', value: number | string) => {
-    setReviewData(prev => ({
-      ...prev,
-      [productId]: {
-        ...prev[productId],
-        rating: prev[productId]?.rating || 0,
-        comment: prev[productId]?.comment || '',
-        [field]: value
-      }
-    }));
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-yellow-400 mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading order details...</p>
+      <div className="min-h-screen bg-white">
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-2 border-navy-900 border-t-transparent mx-auto mb-4"></div>
+            <p className="text-navy-900">Loading order...</p>
+          </div>
         </div>
       </div>
     );
@@ -82,145 +40,126 @@ const OrderConfirmation: React.FC = () => {
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <Package className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Order Not Found</h2>
-          <p className="text-gray-400">The order you're looking for doesn't exist or has been removed.</p>
+          <Package className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+          <h2 className="text-2xl font-bold text-navy-900 mb-2">Order Not Found</h2>
+          <p className="text-gray-500">The order you're looking for doesn't exist or has been removed.</p>
+          <Link
+            to="/"
+            className="mt-6 inline-block bg-navy-900 text-white px-6 py-3 font-medium hover:bg-navy-800 transition-colors duration-200"
+          >
+            Continue Shopping
+          </Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Success Header */}
-        <div className="text-center mb-12">
-          <div className="bg-gradient-to-r from-green-400 to-green-600 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="h-10 w-10 text-white" />
-          </div>
-          <h1 className="text-4xl font-bold text-white mb-4">Order Confirmed!</h1>
-          <p className="text-xl text-gray-300 mb-2">Thank you for your purchase</p>
-          <p className="text-gray-400">Order #{order.order_number}</p>
+    <div className="min-h-screen bg-white">
+      <Header />
+
+      {/* Hero Section */}
+      <section className="relative h-[300px] bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <CheckCircle className="h-16 w-16 mx-auto text-green-500 mb-4" />
+          <h1 className="text-3xl sm:text-4xl font-serif font-bold text-navy-900 mb-2">Order Confirmed!</h1>
+          <p className="text-gray-600 mb-1">Thank you for your purchase</p>
+          <p className="text-gray-500">Order #{order.order_number}</p>
         </div>
+      </section>
+
+      {/* Breadcrumb */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+          <Link to="/" className="hover:text-navy-900 transition-colors duration-200">Home</Link>
+          <span>/</span>
+          <span className="text-navy-900 font-medium">Order Confirmation</span>
+        </nav>
 
         {/* Order Details */}
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 mb-8 shadow-2xl">
-          <h2 className="text-2xl font-bold text-white mb-6">Order Details</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            {/* Customer Info */}
+        <div className="bg-gray-50 rounded-xl p-8 shadow-md mb-8">
+          <h2 className="text-2xl font-serif font-bold text-navy-900 mb-6">Order Details</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Customer Information</h3>
-              <div className="space-y-2 text-gray-300">
-                <p><span className="text-gray-400">Name:</span> {order.customer_name} {order.customer_surname}</p>
-                <p><span className="text-gray-400">Phone:</span> {order.customer_phone}</p>
-                <p><span className="text-gray-400">City:</span> {order.customer_city}</p>
-                <p><span className="text-gray-400">Address:</span> {order.customer_address}</p>
-              </div>
+              <h3 className="text-lg font-medium text-navy-900 mb-4">Customer Information</h3>
+              <p><span className="text-gray-400">Name:</span> {order.customer_name} {order.customer_surname}</p>
+              <p><span className="text-gray-400">Phone:</span> {order.customer_phone}</p>
+              <p><span className="text-gray-400">City:</span> {order.customer_city}</p>
+              <p><span className="text-gray-400">Address:</span> {order.customer_address}</p>
             </div>
-
-            {/* Order Info */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Order Information</h3>
-              <div className="space-y-2 text-gray-300">
-                <p><span className="text-gray-400">Order Date:</span> {new Date(order.created_at).toLocaleDateString()}</p>
-                <p><span className="text-gray-400">Payment Method:</span> {order.payment_method}</p>
-                <p><span className="text-gray-400">Status:</span> 
-                  <span className={`ml-2 px-3 py-1 rounded-full text-xs font-bold ${
-                    order.status === 'completed' ? 'bg-green-500 text-white' :
-                    order.status === 'pending' ? 'bg-yellow-500 text-black' :
-                    'bg-gray-500 text-white'
-                  }`}>
-                    {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                  </span>
-                </p>
-                <p><span className="text-gray-400">Total:</span> 
-                  <span className="text-navy-900 font-bold text-xl ml-2">₾{order.total_amount}</span>
-                </p>
-              </div>
+              <h3 className="text-lg font-medium text-navy-900 mb-4">Order Info</h3>
+              <p><span className="text-gray-400">Order Date:</span> {new Date(order.created_at).toLocaleDateString()}</p>
+              <p><span className="text-gray-400">Payment Method:</span> {order.payment_method}</p>
+              <p><span className="text-gray-400">Status:</span> <span className="ml-2 font-medium">{order.status}</span></p>
+              <p><span className="text-gray-400">Total:</span> <span className="font-bold text-lg ml-2">₾{order.total_amount}</span></p>
             </div>
           </div>
 
-          {/* Order Items */}
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Items Ordered</h3>
-            <div className="space-y-4">
-              {order.order_items?.map((item) => (
-                <div key={item.id} className="bg-gray-700 rounded-lg p-4">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <img
-                      src={item.product?.images[0] || 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'}
-                      alt={item.product?.name}
-                      className="w-16 h-16 object-cover rounded-lg"
-                    />
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-white">{item.product?.name}</h4>
-                      <div className="flex items-center space-x-2 text-sm text-gray-400 mt-1">
-                        {item.color && <span>{item.color}</span>}
-                        {item.size && <span>• {item.size}</span>}
-                        <span>• Qty: {item.quantity}</span>
-                      </div>
-                    </div>
-                    <span className="text-rolex-gold font-bold">
-                      ₾{(item.price * item.quantity).toFixed(2)}
-                    </span>
-                  </div>
+          {/* Items */}
+          <div className="mt-8">
+            <h3 className="text-lg font-medium text-navy-900 mb-4">Items Ordered</h3>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {order.order_items?.map(item => (
+                <div key={item.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col items-center text-center">
+                  <img
+                    src={item.product?.images[0] || 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'}
+                    alt={item.product?.name}
+                    className="w-32 h-32 object-cover rounded-lg mb-4"
+                  />
+                  <h4 className="text-navy-900 font-semibold">{item.product?.name}</h4>
+                  <p className="text-gray-500 text-sm mt-1">{item.color} {item.size} • Qty: {item.quantity}</p>
+                  <p className="text-navy-900 font-bold mt-2">₾{(item.price * item.quantity).toFixed(2)}</p>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Order Status Timeline */}
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 shadow-2xl">
-          <h2 className="text-2xl font-bold text-white mb-6">Order Status</h2>
-          
+        {/* Order Timeline */}
+        <div className="bg-gray-50 rounded-xl p-8 shadow-md mb-20">
+          <h2 className="text-2xl font-serif font-bold text-navy-900 mb-6">Order Status</h2>
           <div className="flex items-center justify-between">
             <div className="flex flex-col items-center space-y-2">
               <div className="bg-green-500 rounded-full p-3">
                 <CreditCard className="h-6 w-6 text-white" />
               </div>
-              <span className="text-sm text-green-400 font-medium">Order Placed</span>
+              <span className="text-sm text-green-600 font-medium">Order Placed</span>
             </div>
-            
-            <div className="flex-1 h-1 bg-gray-700 mx-4">
-              <div className={`h-full bg-gradient-to-r from-rolex-green to-rolex-gold transition-all duration-1000 ${
-                order.status !== 'pending' ? 'w-full' : 'w-0'
-              }`} />
+            <div className="flex-1 h-1 bg-gray-300 mx-4">
+              <div className={`h-full bg-green-400 transition-all duration-1000 ${order.status !== 'pending' ? 'w-full' : 'w-0'}`} />
             </div>
-            
             <div className="flex flex-col items-center space-y-2">
-              <div className={`rounded-full p-3 ${
-                order.status !== 'pending' ? 'bg-rolex-gold' : 'bg-gray-600'
-              }`}>
+              <div className={`rounded-full p-3 ${order.status !== 'pending' ? 'bg-yellow-400' : 'bg-gray-300'}`}>
                 <Package className="h-6 w-6 text-white" />
               </div>
-              <span className={`text-sm font-medium ${
-                order.status !== 'pending' ? 'text-rolex-gold' : 'text-gray-400'
-              }`}>Processing</span>
+              <span className={`text-sm font-medium ${order.status !== 'pending' ? 'text-yellow-600' : 'text-gray-400'}`}>Processing</span>
             </div>
-            
-            <div className="flex-1 h-1 bg-gray-700 mx-4">
-              <div className={`h-full bg-gradient-to-r from-rolex-gold to-blue-400 transition-all duration-1000 ${
-                order.status === 'completed' ? 'w-full' : 'w-0'
-              }`} />
+            <div className="flex-1 h-1 bg-gray-300 mx-4">
+              <div className={`h-full bg-blue-400 transition-all duration-1000 ${order.status === 'completed' ? 'w-full' : 'w-0'}`} />
             </div>
-            
             <div className="flex flex-col items-center space-y-2">
-              <div className={`rounded-full p-3 ${
-                order.status === 'completed' ? 'bg-blue-500' : 'bg-gray-600'
-              }`}>
+              <div className={`rounded-full p-3 ${order.status === 'completed' ? 'bg-blue-500' : 'bg-gray-300'}`}>
                 <Truck className="h-6 w-6 text-white" />
               </div>
-              <span className={`text-sm font-medium ${
-                order.status === 'completed' ? 'text-blue-400' : 'text-gray-400'
-              }`}>Delivered</span>
+              <span className={`text-sm font-medium ${order.status === 'completed' ? 'text-blue-600' : 'text-gray-400'}`}>Delivered</span>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Newsletter */}
+      <section className="bg-gray-50 py-16 mt-20">
+        <div className="max-w-4xl mx-auto text-center px-4">
+          <h2 className="text-3xl font-serif font-bold text-navy-900 mb-4">Stay Updated</h2>
+          <p className="text-gray-600 mb-8">Be the first to know about new collections and exclusive offers</p>
+          <div className="bg-navy-900 py-8 px-6 rounded-lg">
+            <NewsletterForm />
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
