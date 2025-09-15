@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { Product, Category, api } from './lib/supabase';
 import { CartProvider } from './contexts/CartContext';
 import AdminLogin from './components/admin/AdminLogin';
@@ -270,7 +270,7 @@ const MainApp: React.FC = () => {
 const App: React.FC = () => {
   return (
     <CartProvider>
-      <Router>
+      <Router basename="/">
         <Routes>
           <Route path="/" element={<MainApp />} />
           <Route path="/product/:id" element={<ProductDetail />} />
@@ -284,6 +284,7 @@ const App: React.FC = () => {
           <Route path="/order/:orderNumber" element={<OrderConfirmation />} />
           <Route path="/review/:orderNumber" element={<ReviewPage />} />
           <Route path="/admin" element={<AdminApp />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </CartProvider>
