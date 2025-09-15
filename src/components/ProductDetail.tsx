@@ -322,7 +322,7 @@ const ProductDetail: React.FC = () => {
                   
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Package className="h-5 w-5 text-gray-400" />
+                  
                  
                 </div>
               </div>
