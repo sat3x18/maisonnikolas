@@ -173,7 +173,7 @@ const MainApp: React.FC = () => {
         />
         <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
           <div className="text-center text-white">
-            <h1 className="text-5xl font-bold mb-4 text-white">Nikolas Maison</h1>
+            <h1 className="text-5xl font-bold mb-4 text-white">Tbilisi Wear</h1>
             <p className="text-xl mb-6 text-white">Timeless Elegance Since 2025</p>
             <Link to="/new-arrivals" className="bg-navy-900 text-white px-8 py-3 font-medium hover:bg-navy-800 transition-colors duration-200 inline-block">
               SHOP NOW
@@ -230,7 +230,7 @@ const MainApp: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             <div className="col-span-1 md:col-span-2">
-              <h3 className="text-2xl font-bold text-navy-900 mb-6">Nikolas Maison</h3>
+              <h3 className="text-2xl font-bold text-navy-900 mb-6">Tbilisi Wear</h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
                 Since 2025, we have been creating timeless pieces that embody 
                 elegance and sophistication for the modern wardrobe.
@@ -258,7 +258,7 @@ const MainApp: React.FC = () => {
 
           <div className="border-t border-gray-100 pt-8 text-center">
             <p className="text-gray-500">
-              © 2025 Nikolas Maison. All rights reserved.
+              © 2025 Tbilisi Wear. All rights reserved.
             </p>
           </div>
         </div>
