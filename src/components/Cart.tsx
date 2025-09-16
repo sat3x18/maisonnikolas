@@ -1,10 +1,43 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag, Tag, X } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import { api } from '../lib/supabase';
+import { useState } from 'react';
 
 const Cart: React.FC = () => {
-  const { state, removeItem, updateQuantity, clearCart, getTotalPrice } = useCart();
+  const { state, removeItem, updateQuantity, clearCart, getSubtotal, getFinalTotal, applyDiscount, removeDiscount } = useCart();
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountLoading, setDiscountLoading] = useState(false);
+  const [discountError, setDiscountError] = useState('');
+
+  const handleApplyDiscount = async () => {
+    if (!discountCode.trim()) return;
+    
+    setDiscountLoading(true);
+    setDiscountError('');
+    
+    try {
+      const validation = await api.validateDiscountCode(discountCode.trim(), getSubtotal(), state.items);
+      
+      if (validation.valid && validation.discount) {
+        const discountAmount = api.calculateDiscountAmount(validation.discount, getSubtotal(), state.items);
+        applyDiscount(validation.discount, discountAmount);
+        setDiscountCode('');
+      } else {
+        setDiscountError(validation.error || 'Invalid discount code');
+      }
+    } catch (error) {
+      setDiscountError('Error applying discount code');
+    } finally {
+      setDiscountLoading(false);
+    }
+  };
+
+  const handleRemoveDiscount = () => {
+    removeDiscount();
+    setDiscountError('');
+  };
 
   if (state.items.length === 0) {
     return (
@@ -144,22 +177,75 @@ const Cart: React.FC = () => {
               <div className="space-y-4 mb-6">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="text-navy-900 font-semibold">${getTotalPrice().toFixed(2)}</span>
-                  <span className="text-navy-900 font-semibold">₾{getTotalPrice().toFixed(2)}</span>
+                  <span className="text-navy-900 font-semibold">₾{getSubtotal().toFixed(2)}</span>
                 </div>
+                
+                {/* Discount Code Section */}
+                {!state.appliedDiscount ? (
+                  <div className="border-t border-gray-200 pt-4 space-y-3">
+                    <label className="block text-sm font-medium text-navy-900">
+                      Discount Code
+                    </label>
+                    <div className="flex space-x-2">
+                      <input
+                        type="text"
+                        value={discountCode}
+                        onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                        placeholder="Enter code"
+                        className="flex-1 px-3 py-2 border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
+                      />
+                      <button
+                        onClick={handleApplyDiscount}
+                        disabled={!discountCode.trim() || discountLoading}
+                        className="bg-navy-900 text-white px-4 py-2 font-medium hover:bg-navy-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {discountLoading ? '...' : 'Apply'}
+                      </button>
+                    </div>
+                    {discountError && (
+                      <p className="text-red-600 text-sm">{discountError}</p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="border-t border-gray-200 pt-4">
+                    <div className="bg-green-50 border border-green-200 p-3 rounded">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Tag className="h-4 w-4 text-green-600" />
+                          <span className="text-green-800 font-medium">{state.appliedDiscount.code}</span>
+                          <span className="text-green-600 text-sm">
+                            -{state.appliedDiscount.type === 'percentage' ? `${state.appliedDiscount.value}%` : `₾${state.appliedDiscount.value}`}
+                          </span>
+                        </div>
+                        <button
+                          onClick={handleRemoveDiscount}
+                          className="text-green-600 hover:text-green-800"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {state.appliedDiscount && (
+                  <div className="flex items-center justify-between text-green-600">
+                    <span>Discount ({state.appliedDiscount.code})</span>
+                    <span>-₾{state.discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Shipping</span>
                   <span className="text-green-400 font-semibold">Free</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Tax</span>
                   <span className="text-navy-900 font-semibold">Calculated at checkout</span>
                 </div>
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xl font-bold text-navy-900">Total</span>
-                    <span className="text-2xl font-bold text-navy-900">${getTotalPrice().toFixed(2)}</span>
-                    <span className="text-2xl font-bold text-navy-900">₾{getTotalPrice().toFixed(2)}</span>
+                    <span className="text-2xl font-bold text-navy-900">₾{getFinalTotal().toFixed(2)}</span>
                   </div>
                 </div>
               </div>

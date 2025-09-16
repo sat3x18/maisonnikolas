@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { CartItem, Product } from '../lib/supabase';
+import { CartItem, Product, DiscountCode } from '../lib/supabase';
 
 interface CartState {
   items: CartItem[];
   isOpen: boolean;
+  appliedDiscount?: DiscountCode;
+  discountAmount: number;
 }
 
 type CartAction =
@@ -13,7 +15,9 @@ type CartAction =
   | { type: 'CLEAR_CART' }
   | { type: 'TOGGLE_CART' }
   | { type: 'OPEN_CART' }
-  | { type: 'CLOSE_CART' };
+  | { type: 'CLOSE_CART' }
+  | { type: 'APPLY_DISCOUNT'; payload: { discount: DiscountCode; amount: number } }
+  | { type: 'REMOVE_DISCOUNT' };
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
@@ -81,6 +85,20 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     case 'CLOSE_CART':
       return { ...state, isOpen: false };
 
+    case 'APPLY_DISCOUNT':
+      return { 
+        ...state, 
+        appliedDiscount: action.payload.discount,
+        discountAmount: action.payload.amount
+      };
+
+    case 'REMOVE_DISCOUNT':
+      return { 
+        ...state, 
+        appliedDiscount: undefined,
+        discountAmount: 0
+      };
+
     default:
       return state;
   }
@@ -97,6 +115,10 @@ interface CartContextType {
   closeCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  getSubtotal: () => number;
+  getFinalTotal: () => number;
+  applyDiscount: (discount: DiscountCode, amount: number) => void;
+  removeDiscount: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -116,7 +138,8 @@ interface CartProviderProps {
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, {
     items: [],
-    isOpen: false
+    isOpen: false,
+    discountAmount: 0
   });
 
   const addItem = (product: Product, color?: string, size?: string) => {
@@ -158,6 +181,22 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     }, 0);
   };
 
+  const getSubtotal = () => {
+    return getTotalPrice();
+  };
+
+  const getFinalTotal = () => {
+    return Math.max(0, getTotalPrice() - state.discountAmount);
+  };
+
+  const applyDiscount = (discount: DiscountCode, amount: number) => {
+    dispatch({ type: 'APPLY_DISCOUNT', payload: { discount, amount } });
+  };
+
+  const removeDiscount = () => {
+    dispatch({ type: 'REMOVE_DISCOUNT' });
+  };
+
   const value: CartContextType = {
     state,
     addItem,
@@ -168,7 +207,11 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     openCart,
     closeCart,
     getTotalItems,
-    getTotalPrice
+    getTotalPrice,
+    getSubtotal,
+    getFinalTotal,
+    applyDiscount,
+    removeDiscount
   };
 
   return (

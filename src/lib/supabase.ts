@@ -97,6 +97,27 @@ export interface NewsletterSubscriber {
   is_active: boolean;
 }
 
+export interface DiscountCode {
+  id: string;
+  code: string;
+  type: 'percentage' | 'fixed';
+  value: number;
+  min_order_amount: number;
+  max_uses?: number;
+  current_uses: number;
+  valid_from: string;
+  valid_until?: string;
+  is_active: boolean;
+  created_at: string;
+  applicable_products?: Product[];
+  applicable_categories?: Category[];
+}
+
+export interface DiscountCodeApplication {
+  discount_code_id: string;
+  discount_amount: number;
+}
+
 // -----------------------------
 // Discord Webhook URL
 // -----------------------------
@@ -289,6 +310,240 @@ export const api = {
       .order('subscribed_at', { ascending: false });
     if (error) throw error;
     return data || [];
+  },
+
+  // -------- Discount Codes --------
+  getDiscountCodes: async (): Promise<DiscountCode[]> => {
+    const { data, error } = await supabase
+      .from('discount_codes')
+      .select(`
+        *,
+        discount_code_products(product_id, product:products(*)),
+        discount_code_categories(category_id, category:categories(*))
+      `)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    
+    return (data || []).map(code => ({
+      ...code,
+      applicable_products: code.discount_code_products?.map((dcp: any) => dcp.product) || [],
+      applicable_categories: code.discount_code_categories?.map((dcc: any) => dcc.category) || []
+    }));
+  },
+
+  validateDiscountCode: async (code: string, orderTotal: number, cartItems: CartItem[]): Promise<{ valid: boolean; discount?: DiscountCode; error?: string }> => {
+    try {
+      const { data: discountCode, error } = await supabase
+        .from('discount_codes')
+        .select(`
+          *,
+          discount_code_products(product_id),
+          discount_code_categories(category_id)
+        `)
+        .eq('code', code.toUpperCase())
+        .eq('is_active', true)
+        .single();
+
+      if (error || !discountCode) {
+        return { valid: false, error: 'Invalid discount code' };
+      }
+
+      // Check if code is still valid (dates)
+      const now = new Date();
+      const validFrom = new Date(discountCode.valid_from);
+      const validUntil = discountCode.valid_until ? new Date(discountCode.valid_until) : null;
+
+      if (now < validFrom) {
+        return { valid: false, error: 'Discount code is not yet active' };
+      }
+
+      if (validUntil && now > validUntil) {
+        return { valid: false, error: 'Discount code has expired' };
+      }
+
+      // Check usage limits
+      if (discountCode.max_uses && discountCode.current_uses >= discountCode.max_uses) {
+        return { valid: false, error: 'Discount code has reached its usage limit' };
+      }
+
+      // Check minimum order amount
+      if (orderTotal < discountCode.min_order_amount) {
+        return { valid: false, error: `Minimum order amount is ₾${discountCode.min_order_amount}` };
+      }
+
+      // Check if discount applies to cart items
+      const hasApplicableProducts = discountCode.discount_code_products?.length > 0;
+      const hasApplicableCategories = discountCode.discount_code_categories?.length > 0;
+
+      if (hasApplicableProducts || hasApplicableCategories) {
+        const applicableProductIds = discountCode.discount_code_products?.map((dcp: any) => dcp.product_id) || [];
+        const applicableCategoryIds = discountCode.discount_code_categories?.map((dcc: any) => dcc.category_id) || [];
+
+        const hasApplicableItem = cartItems.some(item => 
+          applicableProductIds.includes(item.product.id) ||
+          applicableCategoryIds.includes(item.product.category_id)
+        );
+
+        if (!hasApplicableItem) {
+          return { valid: false, error: 'Discount code does not apply to items in your cart' };
+        }
+      }
+
+      return { valid: true, discount: discountCode };
+    } catch (error) {
+      console.error('Error validating discount code:', error);
+      return { valid: false, error: 'Error validating discount code' };
+    }
+  },
+
+  calculateDiscountAmount: (discountCode: DiscountCode, orderTotal: number, cartItems: CartItem[]): number => {
+    const hasApplicableProducts = discountCode.applicable_products?.length > 0;
+    const hasApplicableCategories = discountCode.applicable_categories?.length > 0;
+
+    let applicableTotal = orderTotal;
+
+    // If discount is limited to specific products/categories, calculate applicable total
+    if (hasApplicableProducts || hasApplicableCategories) {
+      const applicableProductIds = discountCode.applicable_products?.map(p => p.id) || [];
+      const applicableCategoryIds = discountCode.applicable_categories?.map(c => c.id) || [];
+
+      applicableTotal = cartItems
+        .filter(item => 
+          applicableProductIds.includes(item.product.id) ||
+          applicableCategoryIds.includes(item.product.category_id)
+        )
+        .reduce((total, item) => {
+          const price = item.product.discount_price || item.product.price;
+          return total + (price * item.quantity);
+        }, 0);
+    }
+
+    if (discountCode.type === 'percentage') {
+      return Math.min(applicableTotal * (discountCode.value / 100), applicableTotal);
+    } else {
+      return Math.min(discountCode.value, applicableTotal);
+    }
+  },
+
+  createDiscountCode: async (discountData: Omit<DiscountCode, 'id' | 'created_at' | 'current_uses'>, productIds: string[] = [], categoryIds: string[] = []): Promise<DiscountCode> => {
+    const { data: discountCode, error } = await supabaseAdmin
+      .from('discount_codes')
+      .insert({
+        ...discountData,
+        code: discountData.code.toUpperCase(),
+        current_uses: 0
+      })
+      .select()
+      .single();
+    
+    if (error) throw error;
+
+    // Add product associations
+    if (productIds.length > 0) {
+      const productAssociations = productIds.map(productId => ({
+        discount_code_id: discountCode.id,
+        product_id: productId
+      }));
+      
+      const { error: productError } = await supabaseAdmin
+        .from('discount_code_products')
+        .insert(productAssociations);
+      
+      if (productError) throw productError;
+    }
+
+    // Add category associations
+    if (categoryIds.length > 0) {
+      const categoryAssociations = categoryIds.map(categoryId => ({
+        discount_code_id: discountCode.id,
+        category_id: categoryId
+      }));
+      
+      const { error: categoryError } = await supabaseAdmin
+        .from('discount_code_categories')
+        .insert(categoryAssociations);
+      
+      if (categoryError) throw categoryError;
+    }
+
+    return discountCode;
+  },
+
+  updateDiscountCode: async (id: string, discountData: Partial<Omit<DiscountCode, 'id' | 'created_at'>>, productIds: string[] = [], categoryIds: string[] = []): Promise<DiscountCode> => {
+    const updateData = { ...discountData };
+    if (updateData.code) {
+      updateData.code = updateData.code.toUpperCase();
+    }
+
+    const { data: discountCode, error } = await supabaseAdmin
+      .from('discount_codes')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+
+    // Update product associations
+    await supabaseAdmin.from('discount_code_products').delete().eq('discount_code_id', id);
+    if (productIds.length > 0) {
+      const productAssociations = productIds.map(productId => ({
+        discount_code_id: id,
+        product_id: productId
+      }));
+      
+      const { error: productError } = await supabaseAdmin
+        .from('discount_code_products')
+        .insert(productAssociations);
+      
+      if (productError) throw productError;
+    }
+
+    // Update category associations
+    await supabaseAdmin.from('discount_code_categories').delete().eq('discount_code_id', id);
+    if (categoryIds.length > 0) {
+      const categoryAssociations = categoryIds.map(categoryId => ({
+        discount_code_id: id,
+        category_id: categoryId
+      }));
+      
+      const { error: categoryError } = await supabaseAdmin
+        .from('discount_code_categories')
+        .insert(categoryAssociations);
+      
+      if (categoryError) throw categoryError;
+    }
+
+    return discountCode;
+  },
+
+  deleteDiscountCode: async (id: string): Promise<void> => {
+    const { error } = await supabaseAdmin
+      .from('discount_codes')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  applyDiscountToOrder: async (orderId: string, discountCodeId: string, discountAmount: number): Promise<void> => {
+    // Record the discount usage
+    const { error: usageError } = await supabaseAdmin
+      .from('order_discount_codes')
+      .insert({
+        order_id: orderId,
+        discount_code_id: discountCodeId,
+        discount_amount: discountAmount
+      });
+    
+    if (usageError) throw usageError;
+
+    // Increment usage count
+    const { error: incrementError } = await supabaseAdmin
+      .from('discount_codes')
+      .update({ current_uses: supabase.raw('current_uses + 1') })
+      .eq('id', discountCodeId);
+    
+    if (incrementError) throw incrementError;
   },
 
   // -------- Discord Webhooks --------
