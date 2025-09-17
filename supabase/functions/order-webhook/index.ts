@@ -51,7 +51,7 @@ serve(async (req) => {
         color: 0x1e3a8a,
         fields: [
           { name: 'Email', value: order.email, inline: true },
-          { name: 'Subscribed At', value: new Date().toLocaleString(), inline: true },
+          { name: 'Subscribed At', value: new Date().toLocaleString(), inline: true }
           { name: 'Source', value: 'Tbilisi Wear Website', inline: true }
         ],
         timestamp: new Date().toISOString(),
