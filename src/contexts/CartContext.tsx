@@ -18,7 +18,7 @@ type CartAction =
   | { type: 'OPEN_CART' }
   | { type: 'CLOSE_CART' }
   | { type: 'APPLY_DISCOUNT'; payload: { discount: DiscountCode; amount: number } }
-  | { type: 'REMOVE_DISCOUNT' };
+  | { type: 'REMOVE_DISCOUNT' }
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
