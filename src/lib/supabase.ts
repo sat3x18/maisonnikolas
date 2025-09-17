@@ -21,7 +21,7 @@ export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
 // Types
 // -----------------------------
 export interface Category {
-  id: string
+  id: string;
   name: string;
   slug: string;
   description?: string;
