@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CreditCard, Truck, Shield, Lock, Tag, X } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
-import { api, DiscountCode } from '../lib/supabase';
+import { api } from '../lib/supabase';
 
 const Checkout: React.FC = () => {
   const { state, clearCart, getSubtotal, getFinalTotal, applyDiscount, removeDiscount } = useCart();
@@ -33,7 +33,7 @@ const Checkout: React.FC = () => {
 
     try {
       const orderNumber = `ORD-${Date.now()}`;
-      
+
       const orderData = {
         order_number: orderNumber,
         customer_name: formData.firstName,
@@ -54,13 +54,7 @@ const Checkout: React.FC = () => {
       }));
 
       await api.createOrder(orderData, orderItems);
-      
-      // Apply discount if one was used
-      if (state.appliedDiscount) {
-        // This would be handled in the createOrder function
-        // await api.applyDiscountToOrder(order.id, state.appliedDiscount.id, state.discountAmount);
-      }
-      
+
       clearCart();
       navigate(`/order/${orderNumber}`);
     } catch (error) {
@@ -73,13 +67,13 @@ const Checkout: React.FC = () => {
 
   const handleApplyDiscount = async () => {
     if (!discountCode.trim()) return;
-    
+
     setDiscountLoading(true);
     setDiscountError('');
-    
+
     try {
       const validation = await api.validateDiscountCode(discountCode.trim(), getSubtotal(), state.items);
-      
+
       if (validation.valid && validation.discount) {
         const discountAmount = api.calculateDiscountAmount(validation.discount, getSubtotal(), state.items);
         applyDiscount(validation.discount, discountAmount);
@@ -130,7 +124,7 @@ const Checkout: React.FC = () => {
           {/* Checkout Form */}
           <div>
             <h1 className="text-3xl font-serif font-bold text-navy-900 mb-8">Checkout</h1>
-            
+
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Customer Information */}
               <div className="bg-gray-50 border border-gray-200 p-6">
@@ -138,7 +132,7 @@ const Checkout: React.FC = () => {
                   <Truck className="h-6 w-6 mr-3 text-navy-900" />
                   Shipping Information
                 </h2>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-navy-900 text-sm font-medium mb-2">
@@ -154,7 +148,7 @@ const Checkout: React.FC = () => {
                       placeholder="Enter your first name"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-navy-900 text-sm font-medium mb-2">
                       Last Name *
@@ -223,33 +217,33 @@ const Checkout: React.FC = () => {
                   <CreditCard className="h-6 w-6 mr-3 text-navy-900" />
                   Payment Method
                 </h2>
-                
-                <<div className="space-y-4">
-  <label className="flex items-center space-x-3 cursor-pointer">
-    <input
-      type="radio"
-      name="paymentMethod"
-      value="cash"
-      checked={formData.paymentMethod === 'cash'}
-      onChange={handleInputChange}
-      className="h-5 w-5 text-navy-900 border-gray-300 focus:ring-navy-900"
-    />
-    <span className="text-navy-900">TBC Bank</span>
-  </label>
-  
-  <label className="flex items-center space-x-3 cursor-pointer">
-    <input
-      type="radio"
-      name="paymentMethod"
-      value="card"
-      checked={formData.paymentMethod === 'card'}
-      onChange={handleInputChange}
-      className="h-5 w-5 text-navy-900 border-gray-300 focus:ring-navy-900"
-    />
-    <span className="text-navy-900">Bank Of Georgia</span>
-  </label>
-</div>
 
+                <div className="space-y-4">
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="cash"
+                      checked={formData.paymentMethod === 'cash'}
+                      onChange={handleInputChange}
+                      className="h-5 w-5 text-navy-900 border-gray-300 focus:ring-navy-900"
+                    />
+                    <span className="text-navy-900">TBC Bank</span>
+                  </label>
+
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="card"
+                      checked={formData.paymentMethod === 'card'}
+                      onChange={handleInputChange}
+                      className="h-5 w-5 text-navy-900 border-gray-300 focus:ring-navy-900"
+                    />
+                    <span className="text-navy-900">Bank Of Georgia</span>
+                  </label>
+                </div>
+              </div>
 
               {/* Submit Button */}
               <button
@@ -267,7 +261,7 @@ const Checkout: React.FC = () => {
           <div>
             <div className="bg-gray-50 border border-gray-200 p-6 sticky top-8">
               <h2 className="text-2xl font-bold text-navy-900 mb-6">Order Summary</h2>
-              
+
               {/* Order Items */}
               <div className="space-y-4 mb-6">
                 {state.items.map((item, index) => (
@@ -298,7 +292,7 @@ const Checkout: React.FC = () => {
                   <span className="text-gray-600">Subtotal</span>
                   <span className="text-navy-900 font-semibold">₾{getSubtotal().toFixed(2)}</span>
                 </div>
-                
+
                 {/* Discount Code Section */}
                 <div className="border-t border-gray-200 pt-4">
                   {!state.appliedDiscount ? (
@@ -355,7 +349,7 @@ const Checkout: React.FC = () => {
                     <span>-₾{state.discountAmount.toFixed(2)}</span>
                   </div>
                 )}
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Shipping</span>
                   <span className="text-green-400 font-semibold">Free</span>
