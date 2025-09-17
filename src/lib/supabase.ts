@@ -23,7 +23,7 @@ export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
 export interface Category {
   id: string;
   name: string;
-  slug: string
+  slug: string;
   description?: string;
   created_at: string;
   gender?: 'men' | 'women';
