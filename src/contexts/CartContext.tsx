@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import { useEffect } from 'react';
 import { CartItem, Product, DiscountCode } from '../lib/supabase';
 
 interface CartState {
@@ -136,11 +137,60 @@ interface CartProviderProps {
 }
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
+  // Get user's IP-based identifier
+  const getUserId = () => {
+    let userId = localStorage.getItem('cart_user_id');
+    if (!userId) {
+      userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('cart_user_id', userId);
+    }
+    return userId;
+  };
+
+  // Load cart from localStorage on mount
+  const loadCartFromStorage = () => {
+    try {
+      const userId = getUserId();
+      const savedCart = localStorage.getItem(`cart_${userId}`);
+      if (savedCart) {
+        const cartData = JSON.parse(savedCart);
+        return {
+          items: cartData.items || [],
+          isOpen: false,
+          appliedDiscount: cartData.appliedDiscount,
+          discountAmount: cartData.discountAmount || 0
+        };
+      }
+    } catch (error) {
+      console.error('Error loading cart from storage:', error);
+    }
+    return {
+      items: [],
+      isOpen: false,
+      discountAmount: 0
+    };
+  };
+
   const [state, dispatch] = useReducer(cartReducer, {
     items: [],
     isOpen: false,
     discountAmount: 0
-  });
+  }, loadCartFromStorage);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      const userId = getUserId();
+      const cartData = {
+        items: state.items,
+        appliedDiscount: state.appliedDiscount,
+        discountAmount: state.discountAmount
+      };
+      localStorage.setItem(`cart_${userId}`, JSON.stringify(cartData));
+    } catch (error) {
+      console.error('Error saving cart to storage:', error);
+    }
+  }, [state.items, state.appliedDiscount, state.discountAmount]);
 
   const addItem = (product: Product, color?: string, size?: string) => {
     dispatch({ type: 'ADD_ITEM', payload: { product, color, size } });
