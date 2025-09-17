@@ -224,7 +224,7 @@ const Checkout: React.FC = () => {
                   Payment Method
                 </h2>
                 
-                <div className="space-y-4">
+                <<div className="space-y-4">
   <label className="flex items-center space-x-3 cursor-pointer">
     <input
       type="radio"
