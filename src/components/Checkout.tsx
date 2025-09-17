@@ -225,31 +225,31 @@ const Checkout: React.FC = () => {
                 </h2>
                 
                 <div className="space-y-4">
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="cash"
-                      checked={formData.paymentMethod === 'cash'}
-                      onChange={handleInputChange}
-                      className="text-navy-900 focus:ring-navy-900"
-                    />
-                    <span className="text-navy-900">TBC Bank</span>
-                  </label>
-                  
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="card"
-                      checked={formData.paymentMethod === 'card'}
-                      onChange={handleInputChange}
-                      className="text-navy-900 focus:ring-navy-900"
-                    />
-                    <span className="text-navy-900">Bank Of Georgia</span>
-                  </label>
-                </div>
-              </div>
+  <label className="flex items-center space-x-3 cursor-pointer">
+    <input
+      type="radio"
+      name="paymentMethod"
+      value="cash"
+      checked={formData.paymentMethod === 'cash'}
+      onChange={handleInputChange}
+      className="h-5 w-5 text-navy-900 border-gray-300 focus:ring-navy-900"
+    />
+    <span className="text-navy-900">TBC Bank</span>
+  </label>
+  
+  <label className="flex items-center space-x-3 cursor-pointer">
+    <input
+      type="radio"
+      name="paymentMethod"
+      value="card"
+      checked={formData.paymentMethod === 'card'}
+      onChange={handleInputChange}
+      className="h-5 w-5 text-navy-900 border-gray-300 focus:ring-navy-900"
+    />
+    <span className="text-navy-900">Bank Of Georgia</span>
+  </label>
+</div>
+
 
               {/* Submit Button */}
               <button
