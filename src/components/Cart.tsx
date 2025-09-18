@@ -239,9 +239,6 @@ const Cart: React.FC = () => {
                   <span className="text-gray-600">Shipping</span>
                   <span className="text-green-400 font-semibold">Free</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-navy-900 font-semibold">Calculated at checkout</span>
-                </div>
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xl font-bold text-navy-900">Total</span>
