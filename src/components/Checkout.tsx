@@ -218,30 +218,26 @@ const Checkout: React.FC = () => {
                   Payment Method
                 </h2>
 
-                <div className="space-y-4">
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="cash"
-                      checked={formData.paymentMethod === 'cash'}
-                      onChange={handleInputChange}
-                      className="h-5 w-5 text-navy-900 border-gray-300 focus:ring-navy-900"
-                    />
-                    <span className="text-navy-900">TBC Bank</span>
-                  </label>
-
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="card"
-                      checked={formData.paymentMethod === 'card'}
-                      onChange={handleInputChange}
-                      className="h-5 w-5 text-navy-900 border-gray-300 focus:ring-navy-900"
-                    />
-                    <span className="text-navy-900">Bank Of Georgia</span>
-                  </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { id: 'cash', label: 'TBC Bank' },
+                    { id: 'card', label: 'Bank Of Georgia' },
+                  ].map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() =>
+                        setFormData((prev) => ({ ...prev, paymentMethod: option.id }))
+                      }
+                      className={`w-full border p-4 text-left font-medium transition-all ${
+                        formData.paymentMethod === option.id
+                          ? 'border-navy-900 bg-white shadow-md'
+                          : 'border-gray-300 bg-gray-100 hover:bg-gray-200'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
                 </div>
               </div>
 
