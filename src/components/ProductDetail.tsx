@@ -169,7 +169,7 @@ const ProductDetail: React.FC = () => {
                     />
                   </button>
                 ))}
-                <span className="text-sm text-gray-500">
+              </div>
             )}
           </div>
 
@@ -192,34 +192,34 @@ const ProductDetail: React.FC = () => {
                       className={`h-5 w-5 ${
                         star <= Math.round(averageRating) 
                           ? 'text-yellow-400 fill-current' 
-                        : 'text-gray-300'
-                    }`} 
-                  />
-                ))}
+                          : 'text-gray-300'
+                      }`} 
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-500 ml-2">
+                  ({reviews.length} review{reviews.length !== 1 ? 's' : ''})
+                </span>
               </div>
-              <span className="text-sm text-gray-500 ml-2">
-                ({reviews.length} review{reviews.length !== 1 ? 's' : ''})
-              </span>
-            </div>
 
-            <div className="flex items-center space-x-4 mb-6">
-              {product.discount_price ? (
-                <>
+              <div className="flex items-center space-x-4 mb-6">
+                {product.discount_price ? (
+                  <>
+                    <span className="text-4xl font-bold text-navy-900">
+                      ₾{product.discount_price}
+                    </span>
+                    <span className="text-2xl text-gray-500 line-through">
+                      ₾{product.price}
+                    </span>
+                    <span className="bg-red-100 text-red-800 px-3 py-1 text-sm font-medium rounded-full">
+                      Save ₾{(product.price - product.discount_price).toFixed(2)}
+                    </span>
+                  </>
+                ) : (
                   <span className="text-4xl font-bold text-navy-900">
-                    ₾{product.discount_price}
-                  </span>
-                  <span className="text-2xl text-gray-500 line-through">
                     ₾{product.price}
                   </span>
-                  <span className="bg-red-100 text-red-800 px-3 py-1 text-sm font-medium rounded-full">
-                    Save ₾{(product.price - product.discount_price).toFixed(2)}
-                  </span>
-                </>
-              ) : (
-                <span className="text-4xl font-bold text-navy-900">
-                  ₾{product.price}
-                </span>
-              )}
+                )}
               </div>
 
               {product.description && (
@@ -275,7 +275,7 @@ const ProductDetail: React.FC = () => {
 
             {/* Quantity */}
             <div className="border-t border-gray-200 pt-6">
-             <h3 className="text-sm font-medium text-navy-900 mb-3">Quantity</h3>
+              <h3 className="text-sm font-medium text-navy-900 mb-3">Quantity</h3>
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
