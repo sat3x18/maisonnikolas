@@ -52,7 +52,7 @@ INSERT INTO products (name, description, category_id, price, discount_price, ima
   285,
   225,
   ARRAY[
-    'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
+    'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
     'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
   ],
   ARRAY['White', 'Light Blue', 'Navy', 'Pink'],
@@ -70,7 +70,7 @@ INSERT INTO products (name, description, category_id, price, discount_price, ima
   NULL,
   ARRAY[
     'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
-    'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+    'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'
   ],
   ARRAY['Black', 'Navy', 'Burgundy', 'Emerald'],
   ARRAY['XS', 'S', 'M', 'L', 'XL'],
@@ -86,7 +86,7 @@ INSERT INTO products (name, description, category_id, price, discount_price, ima
   1850,
   1450,
   ARRAY[
-    'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+    'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'
   ],
   ARRAY['Charcoal', 'Navy', 'Black', 'Grey'],
   ARRAY['38', '40', '42', '44', '46', '48'],
@@ -118,7 +118,7 @@ INSERT INTO products (name, description, category_id, price, discount_price, ima
   385,
   NULL,
   ARRAY[
-    'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+    'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'
   ],
   ARRAY['Ivory', 'Blush', 'Navy', 'Black'],
   ARRAY['XS', 'S', 'M', 'L'],
@@ -150,7 +150,7 @@ INSERT INTO products (name, description, category_id, price, discount_price, ima
   650,
   520,
   ARRAY[
-    'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+    'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'
   ],
   ARRAY['Black', 'Brown', 'Burgundy'],
   ARRAY['7', '8', '9', '10', '11', '12'],
