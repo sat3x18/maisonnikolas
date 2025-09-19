@@ -18,13 +18,9 @@ import {
   DollarSign,
   Truck,
   X,
-  Save,
-  Tag,
-  Percent,
-  CheckSquare,
-  Square
+  Save
 } from 'lucide-react';
-import { Product, Category, Order, DiscountCode, api } from '../../lib/supabase';
+import { Product, Category, Order, api } from '../../lib/supabase';
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -34,17 +30,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [discountCodes, setDiscountCodes] = useState<DiscountCode[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'categories' | 'discounts'>('orders');
+  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'categories'>('orders');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [editingDiscount, setEditingDiscount] = useState<DiscountCode | null>(null);
   const [showProductModal, setShowProductModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
-  const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [productForm, setProductForm] = useState({
     name: '',
     description: '',
@@ -65,19 +58,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     description: '',
     gender: ''
   });
-  const [discountForm, setDiscountForm] = useState({
-    code: '',
-    type: 'percentage' as 'percentage' | 'fixed',
-    value: '',
-    min_order_amount: '',
-    max_uses: '',
-    valid_from: '',
-    valid_until: '',
-    is_active: true,
-    selectedProducts: [] as string[],
-    selectedCategories: [] as string[],
-    applyToAll: false
-  });
 
   useEffect(() => {
     loadData();
@@ -88,8 +68,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       await Promise.all([
         loadOrders(),
         loadProducts(),
-        loadCategories(),
-        loadDiscountCodes()
+        loadCategories()
       ]);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -122,15 +101,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       setCategories(categoriesData);
     } catch (error) {
       console.error('Error loading categories:', error);
-    }
-  };
-
-  const loadDiscountCodes = async () => {
-    try {
-      const discountData = await api.getDiscountCodes();
-      setDiscountCodes(discountData);
-    } catch (error) {
-      console.error('Error loading discount codes:', error);
     }
   };
 
@@ -172,23 +142,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     setEditingCategory(null);
   };
 
-  const resetDiscountForm = () => {
-    setDiscountForm({
-      code: '',
-      type: 'percentage',
-      value: '',
-      min_order_amount: '',
-      max_uses: '',
-      valid_from: '',
-      valid_until: '',
-      is_active: true,
-      selectedProducts: [],
-      selectedCategories: [],
-      applyToAll: false
-    });
-    setEditingDiscount(null);
-  };
-
   const openProductModal = (product?: Product) => {
     if (product) {
       setEditingProduct(product);
@@ -225,28 +178,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       resetCategoryForm();
     }
     setShowCategoryModal(true);
-  };
-
-  const openDiscountModal = (discount?: DiscountCode) => {
-    if (discount) {
-      setEditingDiscount(discount);
-      setDiscountForm({
-        code: discount.code,
-        type: discount.type,
-        value: discount.value.toString(),
-        min_order_amount: discount.min_order_amount.toString(),
-        max_uses: discount.max_uses?.toString() || '',
-        valid_from: discount.valid_from ? new Date(discount.valid_from).toISOString().slice(0, 16) : '',
-        valid_until: discount.valid_until ? new Date(discount.valid_until).toISOString().slice(0, 16) : '',
-        is_active: discount.is_active,
-        selectedProducts: discount.applicable_products?.map(p => p.id) || [],
-        selectedCategories: discount.applicable_categories?.map(c => c.id) || [],
-        applyToAll: (discount.applicable_products?.length === 0 && discount.applicable_categories?.length === 0)
-      });
-    } else {
-      resetDiscountForm();
-    }
-    setShowDiscountModal(true);
   };
 
   const handleProductSubmit = async (e: React.FormEvent) => {
@@ -309,39 +240,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     }
   };
 
-  const handleDiscountSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      const discountData = {
-        code: discountForm.code.toUpperCase(),
-        type: discountForm.type,
-        value: parseFloat(discountForm.value),
-        min_order_amount: parseFloat(discountForm.min_order_amount) || 0,
-        max_uses: discountForm.max_uses ? parseInt(discountForm.max_uses) : undefined,
-        valid_from: discountForm.valid_from ? new Date(discountForm.valid_from).toISOString() : new Date().toISOString(),
-        valid_until: discountForm.valid_until ? new Date(discountForm.valid_until).toISOString() : undefined,
-        is_active: discountForm.is_active
-      };
-
-      const productIds = discountForm.applyToAll ? [] : discountForm.selectedProducts;
-      const categoryIds = discountForm.applyToAll ? [] : discountForm.selectedCategories;
-
-      if (editingDiscount) {
-        await api.updateDiscountCode(editingDiscount.id, discountData, productIds, categoryIds);
-      } else {
-        await api.createDiscountCode(discountData, productIds, categoryIds);
-      }
-
-      await loadDiscountCodes();
-      setShowDiscountModal(false);
-      resetDiscountForm();
-    } catch (error) {
-      console.error('Error saving discount code:', error);
-      alert('Failed to save discount code. Please try again.');
-    }
-  };
-
   const handleDeleteProduct = async (productId: string) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
     
@@ -363,34 +261,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     } catch (error) {
       console.error('Error deleting category:', error);
       alert('Failed to delete category. Please try again.');
-    }
-  };
-
-  const handleDeleteDiscount = async (discountId: string) => {
-    if (!confirm('Are you sure you want to delete this discount code?')) return;
-    
-    try {
-      await api.deleteDiscountCode(discountId);
-      await loadDiscountCodes();
-    } catch (error) {
-      console.error('Error deleting discount code:', error);
-      alert('Failed to delete discount code. Please try again.');
-    }
-  };
-
-  const handleSelectAllProducts = () => {
-    if (discountForm.selectedProducts.length === products.length) {
-      setDiscountForm(prev => ({ ...prev, selectedProducts: [] }));
-    } else {
-      setDiscountForm(prev => ({ ...prev, selectedProducts: products.map(p => p.id) }));
-    }
-  };
-
-  const handleSelectAllCategories = () => {
-    if (discountForm.selectedCategories.length === categories.length) {
-      setDiscountForm(prev => ({ ...prev, selectedCategories: [] }));
-    } else {
-      setDiscountForm(prev => ({ ...prev, selectedCategories: categories.map(c => c.id) }));
     }
   };
 
@@ -458,7 +328,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-navy-900">ADMIN DASHBOARD</h1>
-              <span className="ml-4 text-sm text-gray-500">Tbilisi Wear</span>
+              <span className="ml-4 text-sm text-gray-500">MAISON NIKOLAS</span>
             </div>
             <button
               onClick={onLogout}
@@ -515,12 +385,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">
-                <Tag className="h-6 w-6 text-purple-600" />
+                <TrendingUp className="h-6 w-6 text-purple-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Discount Codes</p>
+                <p className="text-sm font-medium text-gray-600">Pending Orders</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {discountCodes.filter(code => code.is_active).length}
+                  {orders.filter(order => order.status === 'pending').length}
                 </p>
               </div>
             </div>
@@ -534,8 +404,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               {[
                 { id: 'orders', label: 'Orders', icon: ShoppingCart },
                 { id: 'products', label: 'Products', icon: Package },
-                { id: 'categories', label: 'Categories', icon: Filter },
-                { id: 'discounts', label: 'Discount Codes', icon: Tag }
+                { id: 'categories', label: 'Categories', icon: Filter }
               ].map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
@@ -601,16 +470,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 >
                   <Plus className="h-4 w-4" />
                   <span>Add Category</span>
-                </button>
-              )}
-
-              {activeTab === 'discounts' && (
-                <button
-                  onClick={() => openDiscountModal()}
-                  className="flex items-center space-x-2 bg-navy-900 text-white px-4 py-2 rounded-lg hover:bg-navy-800 transition-colors duration-200"
-                >
-                  <Plus className="h-4 w-4" />
-                  <span>Add Discount Code</span>
                 </button>
               )}
             </div>
@@ -848,81 +707,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                     <Filter className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No categories found</h3>
                     <p className="text-gray-500">No categories available.</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Discount Codes Tab */}
-            {activeTab === 'discounts' && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {discountCodes.map((discount) => (
-                    <div key={discount.id} className="bg-white border border-gray-200 rounded-lg p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-2">
-                          <Tag className="h-5 w-5 text-navy-900" />
-                          <h3 className="text-lg font-semibold text-navy-900">{discount.code}</h3>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <button 
-                            onClick={() => openDiscountModal(discount)}
-                            className="p-1 text-gray-400 hover:text-gray-600"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </button>
-                          <button 
-                            onClick={() => handleDeleteDiscount(discount.id)}
-                            className="p-1 text-gray-400 hover:text-red-600"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2 mb-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Type:</span>
-                          <span className="font-medium">
-                            {discount.type === 'percentage' ? `${discount.value}%` : `₾${discount.value}`}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Min Order:</span>
-                          <span className="font-medium">₾{discount.min_order_amount}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Uses:</span>
-                          <span className="font-medium">
-                            {discount.current_uses}{discount.max_uses ? `/${discount.max_uses}` : ''}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between text-sm">
-                        <span className={`px-2 py-1 rounded text-xs ${
-                          discount.is_active 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {discount.is_active ? 'Active' : 'Inactive'}
-                        </span>
-                        <span className="text-gray-500">
-                          {discount.valid_until 
-                            ? `Expires: ${new Date(discount.valid_until).toLocaleDateString()}`
-                            : 'No expiry'
-                          }
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {discountCodes.length === 0 && (
-                  <div className="text-center py-12">
-                    <Tag className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No discount codes found</h3>
-                    <p className="text-gray-500">Create your first discount code to get started.</p>
                   </div>
                 )}
               </div>
@@ -1260,257 +1044,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 >
                   <Save className="h-4 w-4" />
                   <span>{editingCategory ? 'Update' : 'Create'} Category</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Discount Code Modal */}
-      {showDiscountModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-navy-900">
-                {editingDiscount ? 'Edit Discount Code' : 'Add Discount Code'}
-              </h2>
-              <button
-                onClick={() => {
-                  setShowDiscountModal(false);
-                  resetDiscountForm();
-                }}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-
-            <form onSubmit={handleDiscountSubmit} className="p-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-navy-900 mb-2">Code *</label>
-                  <input
-                    type="text"
-                    value={discountForm.code}
-                    onChange={(e) => setDiscountForm(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
-                    placeholder="SAVE20"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-navy-900 mb-2">Type *</label>
-                  <select
-                    value={discountForm.type}
-                    onChange={(e) => setDiscountForm(prev => ({ ...prev, type: e.target.value as 'percentage' | 'fixed' }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
-                  >
-                    <option value="percentage">Percentage (%)</option>
-                    <option value="fixed">Fixed Amount (₾)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-navy-900 mb-2">
-                    Value * {discountForm.type === 'percentage' ? '(%)' : '(₾)'}
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={discountForm.value}
-                    onChange={(e) => setDiscountForm(prev => ({ ...prev, value: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-navy-900 mb-2">Min Order Amount (₾)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={discountForm.min_order_amount}
-                    onChange={(e) => setDiscountForm(prev => ({ ...prev, min_order_amount: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-navy-900 mb-2">Max Uses</label>
-                  <input
-                    type="number"
-                    value={discountForm.max_uses}
-                    onChange={(e) => setDiscountForm(prev => ({ ...prev, max_uses: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
-                    placeholder="Unlimited"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-navy-900 mb-2">Valid From</label>
-                  <input
-                    type="datetime-local"
-                    value={discountForm.valid_from}
-                    onChange={(e) => setDiscountForm(prev => ({ ...prev, valid_from: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-navy-900 mb-2">Valid Until</label>
-                  <input
-                    type="datetime-local"
-                    value={discountForm.valid_until}
-                    onChange={(e) => setDiscountForm(prev => ({ ...prev, valid_until: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy-900"
-                  />
-                </div>
-              </div>
-
-              {/* Apply to All Toggle */}
-              <div className="border-t border-gray-200 pt-6">
-                <label className="flex items-center space-x-3 mb-4">
-                  <input
-                    type="checkbox"
-                    checked={discountForm.applyToAll}
-                    onChange={(e) => setDiscountForm(prev => ({ 
-                      ...prev, 
-                      applyToAll: e.target.checked,
-                      selectedProducts: e.target.checked ? [] : prev.selectedProducts,
-                      selectedCategories: e.target.checked ? [] : prev.selectedCategories
-                    }))}
-                    className="w-4 h-4 text-navy-900 focus:ring-navy-900"
-                  />
-                  <span className="text-sm font-medium text-navy-900">Apply to all products</span>
-                </label>
-              </div>
-
-              {!discountForm.applyToAll && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Products Selection */}
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <label className="block text-sm font-medium text-navy-900">Applicable Products</label>
-                      <button
-                        type="button"
-                        onClick={handleSelectAllProducts}
-                        className="text-sm text-navy-900 hover:text-navy-700 flex items-center space-x-1"
-                      >
-                        {discountForm.selectedProducts.length === products.length ? (
-                          <CheckSquare className="h-4 w-4" />
-                        ) : (
-                          <Square className="h-4 w-4" />
-                        )}
-                        <span>Select All</span>
-                      </button>
-                    </div>
-                    <div className="max-h-40 overflow-y-auto border border-gray-300 rounded-lg p-3 space-y-2">
-                      {products.map(product => (
-                        <label key={product.id} className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            checked={discountForm.selectedProducts.includes(product.id)}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setDiscountForm(prev => ({
-                                  ...prev,
-                                  selectedProducts: [...prev.selectedProducts, product.id]
-                                }));
-                              } else {
-                                setDiscountForm(prev => ({
-                                  ...prev,
-                                  selectedProducts: prev.selectedProducts.filter(id => id !== product.id)
-                                }));
-                              }
-                            }}
-                            className="w-4 h-4 text-navy-900 focus:ring-navy-900"
-                          />
-                          <span className="text-sm">{product.name}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Categories Selection */}
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <label className="block text-sm font-medium text-navy-900">Applicable Categories</label>
-                      <button
-                        type="button"
-                        onClick={handleSelectAllCategories}
-                        className="text-sm text-navy-900 hover:text-navy-700 flex items-center space-x-1"
-                      >
-                        {discountForm.selectedCategories.length === categories.length ? (
-                          <CheckSquare className="h-4 w-4" />
-                        ) : (
-                          <Square className="h-4 w-4" />
-                        )}
-                        <span>Select All</span>
-                      </button>
-                    </div>
-                    <div className="max-h-40 overflow-y-auto border border-gray-300 rounded-lg p-3 space-y-2">
-                      {categories.map(category => (
-                        <label key={category.id} className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            checked={discountForm.selectedCategories.includes(category.id)}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setDiscountForm(prev => ({
-                                  ...prev,
-                                  selectedCategories: [...prev.selectedCategories, category.id]
-                                }));
-                              } else {
-                                setDiscountForm(prev => ({
-                                  ...prev,
-                                  selectedCategories: prev.selectedCategories.filter(id => id !== category.id)
-                                }));
-                              }
-                            }}
-                            className="w-4 h-4 text-navy-900 focus:ring-navy-900"
-                          />
-                          <span className="text-sm">{category.name} ({category.gender})</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Active Toggle */}
-              <div className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  checked={discountForm.is_active}
-                  onChange={(e) => setDiscountForm(prev => ({ ...prev, is_active: e.target.checked }))}
-                  className="w-4 h-4 text-navy-900 focus:ring-navy-900"
-                />
-                <span className="text-sm font-medium text-navy-900">Active</span>
-              </div>
-
-              <div className="flex items-center justify-end space-x-4 pt-4 border-t border-gray-200">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowDiscountModal(false);
-                    resetDiscountForm();
-                  }}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex items-center space-x-2 bg-navy-900 text-white px-6 py-2 rounded-lg hover:bg-navy-800"
-                >
-                  <Save className="h-4 w-4" />
-                  <span>{editingDiscount ? 'Update' : 'Create'} Discount Code</span>
                 </button>
               </div>
             </form>

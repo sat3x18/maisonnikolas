@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Product, Category, api } from './lib/supabase';
 import { CartProvider } from './contexts/CartContext';
 import AdminLogin from './components/admin/AdminLogin';
@@ -165,15 +165,15 @@ const MainApp: React.FC = () => {
       <Header categories={categories} />
       
       {/* Hero Banner */}
-      <section className="relative h-[500px] bg-gray-100 overflow-hidden">
+      <section className="relative h-96 bg-gray-100">
         <img
           src="https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg"
           alt="Hero Banner"
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
           <div className="text-center text-white">
-            <h1 className="text-5xl font-bold mb-4 text-white">Tbilisi Wear</h1>
+            <h1 className="text-5xl font-bold mb-4 text-white">MAISON NIKOLAS</h1>
             <p className="text-xl mb-6 text-white">Timeless Elegance Since 2025</p>
             <Link to="/new-arrivals" className="bg-navy-900 text-white px-8 py-3 font-medium hover:bg-navy-800 transition-colors duration-200 inline-block">
               SHOP NOW
@@ -181,6 +181,8 @@ const MainApp: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Category Banners */}
 
       {/* Featured Products */}
       {featuredProducts.length > 0 && (
@@ -230,7 +232,7 @@ const MainApp: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             <div className="col-span-1 md:col-span-2">
-              <h3 className="text-2xl font-bold text-navy-900 mb-6">Tbilisi Wear</h3>
+              <h3 className="text-2xl font-bold text-navy-900 mb-6">MAISON NIKOLAS</h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
                 Since 2025, we have been creating timeless pieces that embody 
                 elegance and sophistication for the modern wardrobe.
@@ -240,12 +242,14 @@ const MainApp: React.FC = () => {
             <div>
               <h4 className="text-lg font-medium text-navy-900 mb-6">Customer Care</h4>
               <ul className="space-y-3 text-gray-600">
-               
-                <li><a href="contact" className="hover:text-navy-900 transition-colors duration-200">Contact Us</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Size Guide</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Shipping & Returns</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Care Instructions</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Contact Us</a></li>
               </ul>
             </div>
 
-            {/*<div>
+            <div>
               <h4 className="text-lg font-medium text-navy-900 mb-6">Company</h4>
               <ul className="space-y-3 text-gray-600">
                 <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">About Us</a></li>
@@ -253,12 +257,12 @@ const MainApp: React.FC = () => {
                 <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Press</a></li>
                 <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Sustainability</a></li>
               </ul>
-            </div> */}
+            </div>
           </div>
 
           <div className="border-t border-gray-100 pt-8 text-center">
             <p className="text-gray-500">
-              © 2025 Tbilisi Wear. All rights reserved.
+              © 2025 Maison Nikolas. All rights reserved.
             </p>
           </div>
         </div>
@@ -270,21 +274,20 @@ const MainApp: React.FC = () => {
 const App: React.FC = () => {
   return (
     <CartProvider>
-      <Router basename="/">
+      <Router>
         <Routes>
           <Route path="/" element={<MainApp />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
-          <Route path="/men" element={<Navigate to="/category/men" replace />} />
-          <Route path="/women" element={<Navigate to="/category/women" replace />} />
-          <Route path="/new-arrivals" element={<Navigate to="/category/new-arrivals" replace />} />
+          <Route path="/men" element={<CategoryPage key="men" />} />
+          <Route path="/women" element={<CategoryPage key="women" />} />
+          <Route path="/new-arrivals" element={<CategoryPage />} />
           <Route path="/sale" element={<SalePage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order/:orderNumber" element={<OrderConfirmation />} />
           <Route path="/review/:orderNumber" element={<ReviewPage />} />
           <Route path="/admin" element={<AdminApp />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </CartProvider>

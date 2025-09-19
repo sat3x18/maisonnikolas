@@ -77,7 +77,7 @@ const CategoryPage: React.FC = () => {
       },
       'new-arrivals': {
         title: 'New Arrivals',
-        subtitle: 'Latest from Tbilisi Wear',
+        subtitle: 'Latest from Maison Nikolas',
         description:
           'Be the first to discover our newest pieces. Fresh designs that embody our commitment to timeless elegance and modern sophistication.',
         image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
@@ -252,17 +252,14 @@ const CategoryPage: React.FC = () => {
       <Header categories={categories} />
 
       {/* Hero Section */}
-      <section className="relative h-[500px] bg-gray-100 overflow-hidden">
-        <img 
-          src={marketingContent.image} 
-          alt={marketingContent.title} 
-          className="w-full h-full object-cover object-center" 
-        />
+      <section className="relative h-96 bg-gray-100">
+        <img src={marketingContent.image} alt={marketingContent.title} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center px-4 sm:px-6">
           <div className="text-center text-white max-w-3xl">
             <h1 className="text-3xl sm:text-5xl font-serif font-bold mb-4">{marketingContent.title}</h1>
             <p className="text-lg sm:text-xl mb-6">{marketingContent.subtitle}</p>
             <p className="text-sm sm:text-lg mb-8 leading-relaxed">{marketingContent.description}</p>
+           
           </div>
         </div>
       </section>
