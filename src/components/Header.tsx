@@ -81,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
 
               <Link 
                 to="/sale" 
-                className="text-white-400 hover:bg-gray-800 font-medium py-2 px-4 transition-colors duration-200"
+                className="text-white hover:bg-gray-800 font-medium py-2 px-4 transition-colors duration-200"
               >
                 SALE
               </Link>
