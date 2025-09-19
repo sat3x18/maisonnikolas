@@ -185,7 +185,7 @@ const SalePage: React.FC = () => {
               Discover exceptional value on our premium collection. Quality and style at special prices.
             </p>
             <button className="bg-navy-900 text-white px-8 py-3 font-medium hover:bg-navy-800 transition-colors duration-200">
-              SHOP NOW
+              SHOP ALL
             </button>
           </div>
         </div>
