@@ -220,7 +220,7 @@ const MainApp: React.FC = () => {
   to="/new-arrivals"
   className="bg-transparent text-white border border-white px-8 py-3 font-medium hover:bg-white hover:text-navy-900 transition-colors duration-200 inline-block"
 >
-  SHOP ALL
+  SHOP NOW
 </Link>
           </div>
         </div>
