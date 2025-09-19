@@ -148,7 +148,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                     </div>
                   </div>
                 )}
-                <Link to="/checkout" onClick={toggleCart} className="w-full bg-blue-600 text-white py-3 px-6 hover:bg-blue-700 text-center block font-medium">Checkout</Link>
+                <Link to="/checkout" onClick={toggleCart} className="w-full bg-white text-white py-3 px-6 hover:bg-blue-700 text-center block font-medium">Checkout</Link>
               </div>
             )}
           </div>
