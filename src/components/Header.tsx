@@ -53,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                     <Link
                       key={cat.id}
                       to={`/category/${cat.slug}`}
-                      className="block px-4 py-3 text-sm text-white hover:bg-gray-800 transition-colors duration-200"
+                      className="block px-4 py-3 text-sm text-white hover:bg-white transition-colors duration-200"
                     >
                       {cat.name}
                     </Link>
