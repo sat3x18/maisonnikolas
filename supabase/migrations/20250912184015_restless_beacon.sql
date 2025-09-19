@@ -207,7 +207,7 @@ INSERT INTO products (name, description, category_id, price, discount_price, ima
     (SELECT id FROM categories WHERE slug = 'shirts'),
     459.00,
     NULL,
-    ARRAY['https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'],
+    ARRAY['https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'],
     ARRAY['White', 'Light Blue', 'Charcoal'],
     ARRAY['S', 'M', 'L', 'XL', 'XXL'],
     30,
