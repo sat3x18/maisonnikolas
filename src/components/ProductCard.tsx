@@ -1,186 +1,228 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Menu, X, User, Trash2, Plus, Minus } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
+import { Product } from '../lib/supabase';
 import { useCart } from '../contexts/CartContext';
-import { Category } from '../lib/supabase';
 
-interface HeaderProps {
-  categories: Category[];
+interface ProductCardProps {
+  product: Product;
+  viewMode?: 'grid' | 'list';
 }
 
-const Header: React.FC<HeaderProps> = ({ categories }) => {
-  const { state, toggleCart, getTotalItems, removeItem, updateQuantity } = useCart();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' }) => {
+  const { addItem, openCart } = useCart();
 
-  const menCategories = categories.filter(cat => cat.gender === 'men');
-  const womenCategories = categories.filter(cat => cat.gender === 'women');
-  const unisexCategories = categories.filter(cat => cat.gender === 'unisex');
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem(product);
+    openCart();
+  };
+
+  const discountPercentage = product.discount_price 
+    ? Math.round(((product.price - product.discount_price) / product.price) * 100)
+    : 0;
+
+  if (viewMode === 'list') {
+    return (
+      <div className="flex items-center space-x-6 p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+        <Link to={`/product/${product.id}`} className="relative w-32 h-32 flex-shrink-0">
+          <img
+            src={product.images[0] || 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'}
+            alt={product.name}
+            className="w-full h-full object-cover hover:opacity-90 transition-opacity duration-200"
+          />
+          
+          {/* Badges */}
+          <div className="absolute top-3 left-3 flex flex-col space-y-1">
+            {product.is_new && (
+              <span className="bg-navy-900 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
+                NEW
+              </span>
+            )}
+            {discountPercentage > 0 && (
+              <span className="bg-red-600 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
+                -{discountPercentage}%
+              </span>
+            )}
+          </div>
+        </Link>
+
+        <div className="flex-1">
+          <Link to={`/product/${product.id}`}>
+            {product.category && (
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
+                {product.category.name}
+              </p>
+            )}
+
+            <h3 className="text-lg font-medium text-navy-900 mb-2 hover:text-navy-700 transition-colors duration-200">
+              {product.name}
+            </h3>
+
+            <div className="flex items-center space-x-2 mb-3">
+              {product.discount_price ? (
+                <>
+                  <span className="text-xl font-medium text-navy-900">
+                    ₾{product.discount_price}
+                  </span>
+                  <span className="text-sm text-gray-500 line-through">
+                    ₾{product.price}
+                  </span>
+                </>
+              ) : (
+                <span className="text-xl font-medium text-navy-900">
+                  ₾{product.price}
+                </span>
+              )}
+            </div>
+
+            {product.description && (
+              <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                {product.description}
+              </p>
+            )}
+
+            {/* Colors */}
+            {product.colors.length > 0 && (
+              <div className="flex items-center space-x-1 mb-3">
+                {product.colors.slice(0, 4).map((color, index) => (
+                  <div
+                    key={index}
+                    className="w-4 h-4 border border-gray-300"
+                    style={{
+                      backgroundColor: color.toLowerCase() === 'white' ? '#FFFFFF' :
+                                     color.toLowerCase() === 'black' ? '#000000' :
+                                     color.toLowerCase() === 'navy' ? '#1e3a8a' :
+                                     color.toLowerCase() === 'grey' || color.toLowerCase() === 'gray' ? '#6B7280' :
+                                     '#6B7280'
+                    }}
+                    title={color}
+                  ></div>
+                ))}
+                {product.colors.length > 4 && (
+                  <span className="text-xs text-gray-400">+{product.colors.length - 4}</span>
+                )}
+              </div>
+            )}
+          </Link>
+        </div>
+
+        <div className="flex-shrink-0">
+          <button
+            onClick={handleAddToCart}
+            className="bg-navy-900 text-white px-6 py-2 font-medium hover:bg-navy-800 transition-colors duration-200"
+          >
+            ADD TO CART
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <header className="absolute top-0 left-0 w-full z-50 bg-transparent">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            
-            {/* Left: Navigation */}
-            <nav className="hidden md:flex items-center space-x-6">
-              <div className="relative group">
-                <button className="text-white hover:text-gray-200 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
-                  MEN
-                </button>
-                <div className="absolute top-full left-0 mt-0 w-48 bg-transparent shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  {menCategories.map(cat => (
-                    <Link
-                      key={cat.id}
-                      to={`/category/${cat.slug}`}
-                      className="block px-4 py-3 text-sm text-white hover:bg-gray-800 transition-colors duration-200"
-                    >
-                      {cat.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              <div className="relative group">
-                <button className="text-white hover:text-gray-200 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
-                  WOMEN
-                </button>
-                <div className="absolute top-full left-0 mt-0 w-48 bg-transparent shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  {womenCategories.map(cat => (
-                    <Link
-                      key={cat.id}
-                      to={`/category/${cat.slug}`}
-                      className="block px-4 py-3 text-sm text-white hover:bg-gray-800 transition-colors duration-200"
-                    >
-                      {cat.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              <div className="relative group">
-                <button className="text-white hover:text-gray-200 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
-                  UNISEX
-                </button>
-                <div className="absolute top-full left-0 mt-0 w-48 bg-transparent shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  {unisexCategories.map(cat => (
-                    <Link
-                      key={cat.id}
-                      to={`/category/${cat.slug}`}
-                      className="block px-4 py-3 text-sm text-white hover:bg-gray-800 transition-colors duration-200"
-                    >
-                      {cat.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </nav>
-
-            {/* Center: Logo/Name */}
-            <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-white tracking-tight font-serif">
-              TBILISI WEAR
-            </Link>
-
-            {/* Right: Action Buttons */}
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={toggleCart}
-                className="relative text-white hover:text-gray-200 transition-colors duration-200"
-              >
-                <ShoppingBag className="h-5 w-5" />
-                {getTotalItems() > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-white text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                    {getTotalItems()}
-                  </span>
-                )}
-              </button>
-
-              <Link
-                to="/admin"
-                className="text-white hover:text-gray-200 transition-colors duration-200"
-              >
-                <User className="h-5 w-5" />
-              </Link>
-
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden text-white hover:text-gray-200 transition-colors duration-200"
-              >
-                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Navigation */}
-          {isMenuOpen && (
-            <div className="md:hidden py-4">
-              <nav className="flex flex-col space-y-4">
-                <div>
-                  <h3 className="font-bold text-white px-4 py-2 text-sm">MEN</h3>
-                  {menCategories.map(cat => (
-                    <Link
-                      key={cat.id}
-                      to={`/category/${cat.slug}`}
-                      className="block px-6 py-2 text-white hover:bg-gray-800 transition-colors duration-200"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {cat.name}
-                    </Link>
-                  ))}
-                </div>
-
-                <div>
-                  <h3 className="font-bold text-white px-4 py-2 text-sm">UNISEX</h3>
-                  {unisexCategories.map(cat => (
-                    <Link
-                      key={cat.id}
-                      to={`/category/${cat.slug}`}
-                      className="block px-6 py-2 text-white hover:bg-gray-800 transition-colors duration-200"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {cat.name}
-                    </Link>
-                  ))}
-                </div>
-
-                <div>
-                  <h3 className="font-bold text-white px-4 py-2 text-sm">WOMEN</h3>
-                  {womenCategories.map(cat => (
-                    <Link
-                      key={cat.id}
-                      to={`/category/${cat.slug}`}
-                      className="block px-6 py-2 text-white hover:bg-gray-800 transition-colors duration-200"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {cat.name}
-                    </Link>
-                  ))}
-                </div>
-
-                <Link
-                  to="/sale"
-                  className="text-red-400 hover:bg-gray-800 font-medium py-2 px-4 transition-colors duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  SALE
-                </Link>
-              </nav>
-            </div>
+    <div className="group relative bg-white">
+      <Link to={`/product/${product.id}`} className="relative overflow-hidden bg-gray-100 aspect-square block">
+        <img
+          src={product.images[0] || 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'}
+          alt={product.name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        
+        {/* Badges */}
+        <div className="absolute top-3 left-3 flex flex-col space-y-1">
+          {product.is_new && (
+            <span className="bg-navy-900 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
+              NEW
+            </span>
+          )}
+          {product.is_limited && (
+            <span className="bg-red-600 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
+              LIMITED
+            </span>
           )}
         </div>
-      </header>
 
-      {/* Cart Sidebar (kept same as before, transparent) */}
-      {state.isOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden">
-          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={toggleCart}></div>
-          <div className="absolute right-0 top-0 h-full w-full max-w-md bg-transparent shadow-xl">
-            {/* Cart content same as previous white version */}
+        {discountPercentage > 0 && (
+          <div className="absolute top-3 right-3">
+            <span className="bg-red-600 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
+              -{discountPercentage}% OFF
+            </span>
           </div>
+        )}
+      </Link>
+      
+      <div className="relative">
+        {/* Add to Cart Button */}
+        <div className="absolute -top-16 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button
+            onClick={handleAddToCart}
+            className="bg-navy-900 text-white p-3 hover:bg-navy-800 transition-colors duration-200 shadow-lg mr-2"
+          >
+            <ShoppingBag className="h-4 w-4" />
+          </button>
+          <Link
+            to={`/product/${product.id}`}
+            className="bg-white text-navy-900 p-3 hover:bg-gray-100 transition-colors duration-200 shadow-lg border border-navy-900 inline-block"
+          >
+            <span className="text-xs font-medium">BUY</span>
+          </Link>
         </div>
-      )}
-    </>
+      </div>
+
+      <Link to={`/product/${product.id}`} className="block pt-4">
+        {product.category && (
+          <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
+            {product.category.name}
+          </p>
+        )}
+
+        <h3 className="font-medium text-navy-900 mb-2 group-hover:text-navy-600 transition-colors duration-200">
+          {product.name}
+        </h3>
+
+        <div className="flex items-center space-x-2 mb-3">
+          {product.discount_price ? (
+            <>
+              <span className="text-lg font-medium text-navy-900">
+                ₾{product.discount_price}
+              </span>
+              <span className="text-sm text-gray-500 line-through">
+                ₾{product.price}
+              </span>
+            </>
+          ) : (
+            <span className="text-lg font-medium text-navy-900">
+              ₾{product.price}
+            </span>
+          )}
+        </div>
+
+        {/* Colors */}
+        {product.colors.length > 0 && (
+          <div className="flex items-center space-x-1">
+            {product.colors.slice(0, 4).map((color, index) => (
+              <div
+                key={index}
+                className="w-3 h-3 border border-gray-300"
+                style={{
+                  backgroundColor: color.toLowerCase() === 'white' ? '#FFFFFF' :
+                                 color.toLowerCase() === 'black' ? '#000000' :
+                                 color.toLowerCase() === 'navy' ? '#1e3a8a' :
+                                 color.toLowerCase() === 'grey' || color.toLowerCase() === 'gray' ? '#6B7280' :
+                                 '#6B7280'
+                }}
+                title={color}
+              ></div>
+            ))}
+            {product.colors.length > 4 && (
+              <span className="text-xs text-gray-400">+{product.colors.length - 4}</span>
+            )}
+          </div>
+        )}
+      </Link>
+    </div>
   );
 };
 
-export default Header;
+export default ProductCard;

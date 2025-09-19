@@ -14,17 +14,16 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
 
   const menCategories = categories.filter(cat => cat.gender === 'men');
   const womenCategories = categories.filter(cat => cat.gender === 'women');
-  const unisexCategories = categories.filter(cat => cat.gender === 'unisex');
 
   return (
     <>
-     <header className="absolute top-0 left-0 w-full z-50 bg-transparent">
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to="/" className="flex items-center">
               <div className="text-2xl font-bold text-navy-900 tracking-tight font-serif">
-                TBILISI WEAR
+                NIKOLAS MAISON
               </div>
             </Link>
 
@@ -35,7 +34,8 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 <button className="text-navy-900 hover:text-navy-700 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
                   MEN
                 </button>
-                <div className="absolute top-full left-0 mt-0 w-48 bg-transparent shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                
+                <div className="absolute top-full left-0 mt-0 w-48 bg-white border border-gray-100 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                   {menCategories.map((category) => (
                     <Link
                       key={category.id}
@@ -53,7 +53,8 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 <button className="text-navy-900 hover:text-navy-700 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
                   WOMEN
                 </button>
-                <div className="absolute top-full left-0 mt-0 w-48 bg-transparent shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                
+                <div className="absolute top-full left-0 mt-0 w-48 bg-white border border-gray-100 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                   {womenCategories.map((category) => (
                     <Link
                       key={category.id}
@@ -66,24 +67,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 </div>
               </div>
 
-              {/* Unisex Dropdown */}
-              <div className="relative group">
-                <button className="text-navy-900 hover:text-navy-700 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
-                  UNISEX
-                </button>
-                <div className="absolute top-full left-0 mt-0 w-48 bg-transparent shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  {unisexCategories.map((category) => (
-                    <Link
-                      key={category.id}
-                      to={`/category/${category.slug}`}
-                      className="block px-4 py-3 text-sm text-navy-900 hover:bg-gray-50 transition-colors duration-200"
-                    >
-                      {category.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
+             
               <Link 
                 to="/sale" 
                 className="text-navy-900 hover:text-navy-700 font-medium transition-colors duration-200 uppercase tracking-wide"
@@ -124,7 +108,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
 
           {/* Mobile Navigation */}
           {isMenuOpen && (
-            <div className="md:hidden py-4">
+            <div className="md:hidden py-4 border-t border-gray-100">
               <nav className="flex flex-col space-y-4">
                 <div>
                   <h3 className="font-bold text-navy-900 px-4 py-2 text-sm">MEN</h3>
@@ -141,20 +125,6 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 </div>
                 
                 <div>
-                  <h3 className="font-bold text-navy-900 px-4 py-2 text-sm">UNISEX</h3>
-                  {unisexCategories.map((category) => (
-                    <Link
-                      key={category.id}
-                      to={`/category/${category.slug}`}
-                      className="block px-6 py-2 text-navy-900 hover:bg-gray-50 transition-colors duration-200"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {category.name}
-                    </Link>
-                  ))}
-                </div>
-
-                <div>
                   <h3 className="font-bold text-navy-900 px-4 py-2 text-sm">WOMEN</h3>
                   {womenCategories.map((category) => (
                     <Link
@@ -168,6 +138,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                   ))}
                 </div>
 
+                
                 <Link 
                   to="/sale" 
                   className="text-red-600 hover:bg-gray-50 font-medium py-2 px-4 transition-colors duration-200"
@@ -185,8 +156,8 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
       {state.isOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden">
           <div className="absolute inset-0 bg-black bg-opacity-50" onClick={toggleCart}></div>
-          <div className="absolute right-0 top-0 h-full w-full max-w-md bg-transparent shadow-xl">
-            <div className="flex items-center justify-between p-6">
+          <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
               <h2 className="text-lg font-bold text-navy-900">Shopping Bag</h2>
               <button
                 onClick={toggleCart}
@@ -265,26 +236,16 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
             </div>
 
             {state.items.length > 0 && (
-              <div className="p-6">
+              <div className="border-t border-gray-100 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-lg font-medium text-navy-900">Total</span>
                   <span className="text-lg font-bold text-navy-900">
-                    ₾{(state.items.reduce((total, item) => {
+                    ₾{state.items.reduce((total, item) => {
                       const price = item.product.discount_price || item.product.price;
                       return total + (price * item.quantity);
-                    }, 0) - state.discountAmount).toFixed(2)}
+                    }, 0).toFixed(2)}
                   </span>
                 </div>
-                
-                {state.appliedDiscount && (
-                  <div className="mb-4 p-2 bg-green-50 border border-green-200 rounded text-sm">
-                    <div className="flex items-center justify-between text-green-800">
-                      <span>Discount: {state.appliedDiscount.code}</span>
-                      <span>-₾{state.discountAmount.toFixed(2)}</span>
-                    </div>
-                  </div>
-                )}
-                
                 <Link
                   to="/checkout"
                   onClick={toggleCart}

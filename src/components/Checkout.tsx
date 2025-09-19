@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CreditCard, Truck, Shield, Lock, Tag, X } from 'lucide-react';
+import { ArrowLeft, CreditCard, Truck, Shield, Lock } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { api } from '../lib/supabase';
 
 const Checkout: React.FC = () => {
-  const { state, clearCart, getSubtotal, getFinalTotal, applyDiscount, removeDiscount } = useCart();
+  const { state, clearCart, getTotalPrice } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [discountCode, setDiscountCode] = useState('');
-  const [discountLoading, setDiscountLoading] = useState(false);
-  const [discountError, setDiscountError] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -33,7 +30,7 @@ const Checkout: React.FC = () => {
 
     try {
       const orderNumber = `ORD-${Date.now()}`;
-
+      
       const orderData = {
         order_number: orderNumber,
         customer_name: formData.firstName,
@@ -42,7 +39,7 @@ const Checkout: React.FC = () => {
         customer_city: formData.city,
         customer_address: formData.address,
         payment_method: formData.paymentMethod,
-        total_amount: getFinalTotal()
+        total_amount: getTotalPrice()
       };
 
       const orderItems = state.items.map(item => ({
@@ -54,7 +51,6 @@ const Checkout: React.FC = () => {
       }));
 
       await api.createOrder(orderData, orderItems);
-
       clearCart();
       navigate(`/order/${orderNumber}`);
     } catch (error) {
@@ -63,34 +59,6 @@ const Checkout: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleApplyDiscount = async () => {
-    if (!discountCode.trim()) return;
-
-    setDiscountLoading(true);
-    setDiscountError('');
-
-    try {
-      const validation = await api.validateDiscountCode(discountCode.trim(), getSubtotal(), state.items);
-
-      if (validation.valid && validation.discount) {
-        const discountAmount = api.calculateDiscountAmount(validation.discount, getSubtotal(), state.items);
-        applyDiscount(validation.discount, discountAmount);
-        setDiscountCode('');
-      } else {
-        setDiscountError(validation.error || 'Invalid discount code');
-      }
-    } catch (error) {
-      setDiscountError('Error applying discount code');
-    } finally {
-      setDiscountLoading(false);
-    }
-  };
-
-  const handleRemoveDiscount = () => {
-    removeDiscount();
-    setDiscountError('');
   };
 
   if (state.items.length === 0) {
@@ -124,7 +92,7 @@ const Checkout: React.FC = () => {
           {/* Checkout Form */}
           <div>
             <h1 className="text-3xl font-serif font-bold text-navy-900 mb-8">Checkout</h1>
-
+            
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Customer Information */}
               <div className="bg-gray-50 border border-gray-200 p-6">
@@ -132,7 +100,7 @@ const Checkout: React.FC = () => {
                   <Truck className="h-6 w-6 mr-3 text-navy-900" />
                   Shipping Information
                 </h2>
-
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-navy-900 text-sm font-medium mb-2">
@@ -148,7 +116,7 @@ const Checkout: React.FC = () => {
                       placeholder="Enter your first name"
                     />
                   </div>
-
+                  
                   <div>
                     <label className="block text-navy-900 text-sm font-medium mb-2">
                       Last Name *
@@ -217,27 +185,31 @@ const Checkout: React.FC = () => {
                   <CreditCard className="h-6 w-6 mr-3 text-navy-900" />
                   Payment Method
                 </h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[
-                    { id: 'cash', label: 'TBC Bank' },
-                    { id: 'card', label: 'Bank Of Georgia' },
-                  ].map((option) => (
-                    <button
-                      key={option.id}
-                      type="button"
-                      onClick={() =>
-                        setFormData((prev) => ({ ...prev, paymentMethod: option.id }))
-                      }
-                      className={`w-full border p-4 text-left font-medium transition-all ${
-                        formData.paymentMethod === option.id
-                          ? 'border-navy-900 bg-white shadow-md'
-                          : 'border-gray-300 bg-gray-100 hover:bg-gray-200'
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
+                
+                <div className="space-y-4">
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="cash"
+                      checked={formData.paymentMethod === 'cash'}
+                      onChange={handleInputChange}
+                      className="text-navy-900 focus:ring-navy-900"
+                    />
+                    <span className="text-navy-900">TBC Bank</span>
+                  </label>
+                  
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="card"
+                      checked={formData.paymentMethod === 'card'}
+                      onChange={handleInputChange}
+                      className="text-navy-900 focus:ring-navy-900"
+                    />
+                    <span className="text-navy-900">Bank Of Georgia</span>
+                  </label>
                 </div>
               </div>
 
@@ -257,7 +229,7 @@ const Checkout: React.FC = () => {
           <div>
             <div className="bg-gray-50 border border-gray-200 p-6 sticky top-8">
               <h2 className="text-2xl font-bold text-navy-900 mb-6">Order Summary</h2>
-
+              
               {/* Order Items */}
               <div className="space-y-4 mb-6">
                 {state.items.map((item, index) => (
@@ -286,78 +258,23 @@ const Checkout: React.FC = () => {
               <div className="space-y-4 mb-6 pt-6 border-t border-gray-200">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="text-navy-900 font-semibold">₾{getSubtotal().toFixed(2)}</span>
+                  <span className="text-navy-900 font-semibold">${getTotalPrice().toFixed(2)}</span>
+                  <span className="text-navy-900 font-semibold">₾{getTotalPrice().toFixed(2)}</span>
                 </div>
-
-                {/* Discount Code Section */}
-                <div className="border-t border-gray-200 pt-4">
-                  {!state.appliedDiscount ? (
-                    <div className="space-y-3">
-                      <label className="block text-sm font-medium text-navy-900">
-                        Discount Code
-                      </label>
-                      <div className="flex space-x-2">
-                        <input
-                          type="text"
-                          value={discountCode}
-                          onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
-                          placeholder="Enter discount code"
-                          className="flex-1 px-3 py-2 border border-gray-300 text-navy-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy-900 focus:border-transparent"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleApplyDiscount}
-                          disabled={!discountCode.trim() || discountLoading}
-                          className="bg-navy-900 text-white px-4 py-2 font-medium hover:bg-navy-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {discountLoading ? 'Applying...' : 'Apply'}
-                        </button>
-                      </div>
-                      {discountError && (
-                        <p className="text-red-600 text-sm">{discountError}</p>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="bg-green-50 border border-green-200 p-3 rounded">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Tag className="h-4 w-4 text-green-600" />
-                          <span className="text-green-800 font-medium">{state.appliedDiscount.code}</span>
-                          <span className="text-green-600 text-sm">
-                            -{state.appliedDiscount.type === 'percentage' ? `${state.appliedDiscount.value}%` : `₾${state.appliedDiscount.value}`}
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={handleRemoveDiscount}
-                          className="text-green-600 hover:text-green-800"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {state.appliedDiscount && (
-                  <div className="flex items-center justify-between text-green-600">
-                    <span>Discount ({state.appliedDiscount.code})</span>
-                    <span>-₾{state.discountAmount.toFixed(2)}</span>
-                  </div>
-                )}
-
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Shipping</span>
                   <span className="text-green-400 font-semibold">Free</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Tax</span>
+                  <span className="text-navy-900 font-semibold">$0.00</span>
                   <span className="text-navy-900 font-semibold">₾0.00</span>
                 </div>
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xl font-bold text-navy-900">Total</span>
-                    <span className="text-2xl font-bold text-navy-900">₾{getFinalTotal().toFixed(2)}</span>
+                    <span className="text-2xl font-bold text-navy-900">${getTotalPrice().toFixed(2)}</span>
+                    <span className="text-2xl font-bold text-navy-900">₾{getTotalPrice().toFixed(2)}</span>
                   </div>
                 </div>
               </div>

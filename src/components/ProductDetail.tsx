@@ -118,12 +118,12 @@ const ProductDetail: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Images */}
-          <div className="space-y-4 lg:sticky lg:top-8">
+          <div className="space-y-4">
             <div className="relative">
               <img
                 src={product.images[selectedImage] || 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'}
                 alt={product.name}
-                className="w-full h-96 lg:h-[700px] object-cover object-center rounded-lg shadow-lg"
+                className="w-full h-96 lg:h-[600px] object-cover object-center"
               />
               
               {/* Badges */}
@@ -151,12 +151,12 @@ const ProductDetail: React.FC = () => {
 
             {/* Thumbnail Images */}
             {product.images.length > 1 && (
-              <div className="flex space-x-4 overflow-x-auto pb-2">
+              <div className="flex space-x-4 overflow-x-auto">
                 {product.images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`flex-shrink-0 w-24 h-24 overflow-hidden border-2 rounded-lg transition-all duration-300 ${
+                    className={`flex-shrink-0 w-20 h-20 overflow-hidden border-2 transition-all duration-300 ${
                       selectedImage === index 
                         ? 'border-navy-900' 
                         : 'border-gray-200 hover:border-gray-300'
@@ -165,7 +165,7 @@ const ProductDetail: React.FC = () => {
                     <img
                       src={image}
                       alt={`${product.name} ${index + 1}`}
-                      className="w-full h-full object-cover object-center"
+                      className="w-full h-full object-cover"
                     />
                   </button>
                 ))}
@@ -174,7 +174,7 @@ const ProductDetail: React.FC = () => {
           </div>
 
           {/* Product Info */}
-          <div className="space-y-6 lg:pl-8">
+          <div className="space-y-6">
             <div>
               {product.category && (
                 <p className="text-sm text-gray-500 uppercase tracking-wider mb-2">
@@ -184,42 +184,42 @@ const ProductDetail: React.FC = () => {
 
               <h1 className="text-3xl font-bold text-navy-900 mb-4">{product.name}</h1>
               
-              <div className="flex items-center space-x-3 mb-6">
+              <div className="flex items-center space-x-2 mb-4">
                 <div className="flex items-center">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star 
                       key={star} 
-                      className={`h-5 w-5 ${
+                      className={`h-4 w-4 ${
                         star <= Math.round(averageRating) 
                           ? 'text-yellow-400 fill-current' 
-                          : 'text-gray-300'
-                      }`} 
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-gray-500 ml-2">
-                  ({reviews.length} review{reviews.length !== 1 ? 's' : ''})
-                </span>
+                        : 'text-gray-300'
+                    }`} 
+                  />
+                ))}
               </div>
+              <span className="text-sm text-gray-500 ml-2">
+                ({reviews.length} review{reviews.length !== 1 ? 's' : ''})
+              </span>
+            </div>
 
-              <div className="flex items-center space-x-4 mb-6">
-                {product.discount_price ? (
-                  <>
-                    <span className="text-4xl font-bold text-navy-900">
-                      ₾{product.discount_price}
-                    </span>
-                    <span className="text-2xl text-gray-500 line-through">
-                      ₾{product.price}
-                    </span>
-                    <span className="bg-red-100 text-red-800 px-3 py-1 text-sm font-medium rounded-full">
-                      Save ₾{(product.price - product.discount_price).toFixed(2)}
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-4xl font-bold text-navy-900">
+            <div className="flex items-center space-x-4">
+              {product.discount_price ? (
+                <>
+                  <span className="text-3xl font-bold text-navy-900">
+                    ₾{product.discount_price}
+                  </span>
+                  <span className="text-xl text-gray-500 line-through">
                     ₾{product.price}
                   </span>
-                )}
+                  <span className="bg-red-100 text-red-800 px-2 py-1 text-sm font-medium">
+                    Save ₾{(product.price - product.discount_price).toFixed(2)}
+                  </span>
+                </>
+              ) : (
+                <span className="text-3xl font-bold text-navy-900">
+                  ₾{product.price}
+                </span>
+              )}
               </div>
 
               {product.description && (
@@ -231,14 +231,14 @@ const ProductDetail: React.FC = () => {
 
             {/* Color Selection */}
             {product.colors.length > 0 && (
-              <div className="border-t border-gray-200 pt-6">
+              <div>
                 <h3 className="text-sm font-medium text-navy-900 mb-3">Color</h3>
                 <div className="flex flex-wrap gap-2">
                   {product.colors.map((color) => (
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
-                      className={`px-4 py-2 border text-sm rounded-lg transition-all duration-200 ${
+                      className={`px-4 py-2 border text-sm transition-all duration-200 ${
                         selectedColor === color
                           ? 'border-navy-900 bg-navy-900 text-white'
                           : 'border-gray-300 text-gray-700 hover:border-gray-400'
@@ -253,14 +253,14 @@ const ProductDetail: React.FC = () => {
 
             {/* Size Selection */}
             {product.sizes.length > 0 && (
-              <div className="border-t border-gray-200 pt-6">
+              <div>
                 <h3 className="text-sm font-medium text-navy-900 mb-3">Size</h3>
                 <div className="flex flex-wrap gap-2">
                   {product.sizes.map((size) => (
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`px-4 py-2 border text-sm rounded-lg transition-all duration-200 ${
+                      className={`px-4 py-2 border text-sm transition-all duration-200 ${
                         selectedSize === size
                           ? 'border-navy-900 bg-navy-900 text-white'
                           : 'border-gray-300 text-gray-700 hover:border-gray-400'
@@ -274,24 +274,24 @@ const ProductDetail: React.FC = () => {
             )}
 
             {/* Quantity */}
-            <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-sm font-medium text-navy-900 mb-3">Quantity</h3>
+            <div>
+             <h3 className="text-sm font-medium text-navy-900 mb-3">Quantity</h3>
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-12 h-12 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
+                  className="w-10 h-10 border border-gray-300 flex items-center justify-center hover:bg-gray-50"
                 >
-                  <span className="text-lg font-medium">-</span>
+                  -
                 </button>
-                <span className="text-xl font-medium w-12 text-center">{quantity}</span>
+                <span className="text-lg font-medium w-8 text-center">{quantity}</span>
                 <button
                   onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                  className="w-12 h-12 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
+                  className="w-10 h-10 border border-gray-300 flex items-center justify-center hover:bg-gray-50"
                   disabled={quantity >= product.stock}
                 >
-                  <span className="text-lg font-medium">+</span>
+                  +
                 </button>
-                <span className="text-sm text-gray-500 ml-4">
+                <span className="text-sm text-gray-500">
                   {product.stock > 0 ? `${product.stock} available` : 'Out of stock'}
                 </span>
               </div>
@@ -301,34 +301,34 @@ const ProductDetail: React.FC = () => {
             <button
               onClick={handleAddToCart}
               disabled={product.stock === 0}
-              className="w-full bg-navy-900 text-white py-4 px-8 rounded-lg font-medium text-lg hover:bg-navy-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 shadow-lg"
+              className="w-full bg-navy-900 text-white py-4 px-8 font-medium hover:bg-navy-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
-              <ShoppingCart className="h-6 w-6" />
+              <ShoppingCart className="h-5 w-5" />
               <span>{product.stock === 0 ? 'Out of Stock' : 'Add to Bag'}</span>
             </button>
 
             {/* Features */}
-            <div className="border-t border-gray-200 pt-8">
+            <div className="border-t border-gray-200 pt-6">
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <Truck className="h-6 w-6 text-navy-900" />
+                  <Truck className="h-5 w-5 text-gray-400" />
                   <div>
-                    <p className="font-medium text-navy-900">Free Shipping</p>
-                    <p className="text-xs text-gray-500">In Tbilisi</p>
+                    <p className="text-sm font-medium text-navy-900">Free Shipping</p>
+                    <p className="text-xs text-gray-500">On orders over ₾100</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Shield className="h-6 w-6 text-navy-900" />
+                  <Shield className="h-5 w-5 text-gray-400" />
                   <div>
-                    <p className="font-medium text-navy-900">Quality Guarantee</p>
-                    <p className="text-xs text-gray-500">Premium materials</p>
+                    <p className="text-sm font-medium text-navy-900">2 Year Warranty</p>
+                    <p className="text-xs text-gray-500">Quality guarantee</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Package className="h-6 w-6 text-navy-900" />
+                  <Package className="h-5 w-5 text-gray-400" />
                   <div>
-                    <p className="font-medium text-navy-900">Secure Packaging</p>
-                    <p className="text-xs text-gray-500">Careful handling</p>
+                    <p className="text-sm font-medium text-navy-900">Easy Returns</p>
+                    <p className="text-xs text-gray-500">30 day return policy</p>
                   </div>
                 </div>
               </div>
@@ -338,11 +338,11 @@ const ProductDetail: React.FC = () => {
 
         {/* Reviews Section */}
         {reviews.length > 0 && (
-          <div className="mt-20 border-t border-gray-200 pt-16">
-            <h2 className="text-3xl font-bold text-navy-900 mb-12 text-center">Customer Reviews</h2>
+          <div className="mt-16 border-t border-gray-200 pt-16">
+            <h2 className="text-2xl font-bold text-navy-900 mb-8">Customer Reviews</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {reviews.map((review) => (
-                <div key={review.id} className="border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+                <div key={review.id} className="border border-gray-200 p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h4 className="font-medium text-navy-900">{review.customer_name}</h4>
                     <div className="flex items-center">

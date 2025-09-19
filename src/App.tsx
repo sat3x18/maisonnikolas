@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Product, Category, api } from './lib/supabase';
 import { CartProvider } from './contexts/CartContext';
 import AdminLogin from './components/admin/AdminLogin';
@@ -19,6 +19,7 @@ const AdminApp: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogin = async (username: string, password: string): Promise<boolean> => {
+    // Simple demo authentication
     if (username === 'admin' && password === 'admin123') {
       setIsLoggedIn(true);
       return true;
@@ -42,21 +43,16 @@ const MainApp: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Mock categories
+  // Mock data fallback
   const mockCategories: Category[] = [
     { id: '1', name: 'Shirts', slug: 'shirts', description: 'Premium shirts collection', created_at: new Date().toISOString(), gender: 'men' },
     { id: '2', name: 'Suits', slug: 'suits', description: 'Luxury suits', created_at: new Date().toISOString(), gender: 'men' },
     { id: '3', name: 'Casual Wear', slug: 'casual', description: 'Casual clothing', created_at: new Date().toISOString(), gender: 'men' },
     { id: '4', name: 'Dresses', slug: 'dresses', description: 'Elegant dresses', created_at: new Date().toISOString(), gender: 'women' },
     { id: '5', name: 'Blouses', slug: 'blouses', description: 'Designer blouses', created_at: new Date().toISOString(), gender: 'women' },
-    { id: '6', name: 'Skirts', slug: 'skirts', description: 'Premium skirts', created_at: new Date().toISOString(), gender: 'women' },
-    { id: '7', name: 'Accessories', slug: 'accessories', description: 'Premium accessories for everyone', created_at: new Date().toISOString(), gender: 'unisex' },
-    { id: '8', name: 'Bags', slug: 'bags', description: 'Luxury bags and leather goods', created_at: new Date().toISOString(), gender: 'unisex' },
-    { id: '9', name: 'Watches', slug: 'watches', description: 'Timepieces for all occasions', created_at: new Date().toISOString(), gender: 'unisex' },
-    { id: '10', name: 'Sunglasses', slug: 'sunglasses', description: 'Designer eyewear collection', created_at: new Date().toISOString(), gender: 'unisex' }
+    { id: '6', name: 'Skirts', slug: 'skirts', description: 'Premium skirts', created_at: new Date().toISOString(), gender: 'women' }
   ];
 
-  // Mock products
   const mockProducts: Product[] = [
     {
       id: '1',
@@ -114,43 +110,6 @@ const MainApp: React.FC = () => {
       is_limited: false,
       created_at: new Date().toISOString(),
       category: mockCategories[1]
-    },
-    {
-      id: '4',
-      name: 'Leather Crossbody Bag',
-      description: 'Premium leather crossbody bag perfect for any occasion.',
-      category_id: '8',
-      price: 195,
-      images: [
-        'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
-      ],
-      colors: ['Black', 'Brown', 'Tan'],
-      sizes: ['One Size'],
-      stock: 15,
-      is_featured: true,
-      is_new: false,
-      is_limited: false,
-      created_at: new Date().toISOString(),
-      category: mockCategories[7]
-    },
-    {
-      id: '5',
-      name: 'Classic Watch',
-      description: 'Timeless watch design with premium materials.',
-      category_id: '9',
-      price: 450,
-      discount_price: 350,
-      images: [
-        'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
-      ],
-      colors: ['Silver', 'Gold', 'Black'],
-      sizes: ['One Size'],
-      stock: 8,
-      is_featured: false,
-      is_new: true,
-      is_limited: true,
-      created_at: new Date().toISOString(),
-      category: mockCategories[8]
     }
   ];
 
@@ -162,7 +121,7 @@ const MainApp: React.FC = () => {
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
+      
       if (!supabaseUrl || !supabaseKey) {
         console.log('Supabase not configured, using mock data');
         setProducts(mockProducts);
@@ -175,7 +134,7 @@ const MainApp: React.FC = () => {
         api.getProducts(),
         api.getCategories()
       ]);
-
+      
       setProducts(productsData.length > 0 ? productsData : mockProducts);
       setCategories(categoriesData.length > 0 ? categoriesData : mockCategories);
     } catch (error) {
@@ -208,13 +167,13 @@ const MainApp: React.FC = () => {
       {/* Hero Banner */}
       <section className="relative h-[500px] bg-gray-100 overflow-hidden">
         <img
-          src="https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png"
+          src="https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg"
           alt="Hero Banner"
           className="w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
           <div className="text-center text-white">
-            <h1 className="text-5xl font-bold mb-4 text-white">Tbilisi Wear</h1>
+            <h1 className="text-5xl font-bold mb-4 text-white">Nikolas Maison</h1>
             <p className="text-xl mb-6 text-white">Timeless Elegance Since 2025</p>
             <Link to="/new-arrivals" className="bg-navy-900 text-white px-8 py-3 font-medium hover:bg-navy-800 transition-colors duration-200 inline-block">
               SHOP NOW
@@ -271,7 +230,7 @@ const MainApp: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             <div className="col-span-1 md:col-span-2">
-              <h3 className="text-2xl font-bold text-navy-900 mb-6">Tbilisi Wear</h3>
+              <h3 className="text-2xl font-bold text-navy-900 mb-6">Nikolas Maison</h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
                 Since 2025, we have been creating timeless pieces that embody 
                 elegance and sophistication for the modern wardrobe.
@@ -281,14 +240,25 @@ const MainApp: React.FC = () => {
             <div>
               <h4 className="text-lg font-medium text-navy-900 mb-6">Customer Care</h4>
               <ul className="space-y-3 text-gray-600">
+               
                 <li><a href="contact" className="hover:text-navy-900 transition-colors duration-200">Contact Us</a></li>
               </ul>
             </div>
+
+            {/*<div>
+              <h4 className="text-lg font-medium text-navy-900 mb-6">Company</h4>
+              <ul className="space-y-3 text-gray-600">
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">About Us</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Careers</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Press</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Sustainability</a></li>
+              </ul>
+            </div> */}
           </div>
 
           <div className="border-t border-gray-100 pt-8 text-center">
             <p className="text-gray-500">
-              © 2025 Tbilisi Wear. All rights reserved.
+              © 2025 Nikolas Maison. All rights reserved.
             </p>
           </div>
         </div>
@@ -300,22 +270,20 @@ const MainApp: React.FC = () => {
 const App: React.FC = () => {
   return (
     <CartProvider>
-      <Router basename="/">
+      <Router>
         <Routes>
           <Route path="/" element={<MainApp />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
-          <Route path="/men" element={<Navigate to="/category/men" replace />} />
-          <Route path="/women" element={<Navigate to="/category/women" replace />} />
-          <Route path="/unisex" element={<Navigate to="/category/unisex" replace />} />
-          <Route path="/new-arrivals" element={<Navigate to="/category/new-arrivals" replace />} />
+          <Route path="/men" element={<CategoryPage key="men" />} />
+          <Route path="/women" element={<CategoryPage key="women" />} />
+          <Route path="/new-arrivals" element={<CategoryPage />} />
           <Route path="/sale" element={<SalePage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order/:orderNumber" element={<OrderConfirmation />} />
           <Route path="/review/:orderNumber" element={<ReviewPage />} />
           <Route path="/admin" element={<AdminApp />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </CartProvider>
