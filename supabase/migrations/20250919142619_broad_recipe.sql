@@ -23,4 +23,4 @@ INSERT INTO categories (name, slug, description, gender) VALUES
   ('Bags', 'bags', 'Luxury bags and leather goods', 'unisex'),
   ('Watches', 'watches', 'Timepieces for all occasions', 'unisex'),
   ('Sunglasses', 'sunglasses', 'Designer eyewear collection', 'unisex')
-ON CONFLICT (slug) DO NOTHING
+ON CONFLICT (slug) DO NOTHING;
