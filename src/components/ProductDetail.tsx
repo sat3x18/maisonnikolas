@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Star, Package, Truck, Shield } from 'lucide-react';
 import { Product, Review, Category, api } from '../lib/supabase';
 import { useCart } from '../contexts/CartContext';
-import Header from './Header';
+import Header from './Headerr';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
