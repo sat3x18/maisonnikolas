@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, Menu, X, User, Trash2, Plus, Minus } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { Category } from '../lib/supabase';
 
 interface HeaderProps {
@@ -11,6 +12,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ categories }) => {
   const { state, toggleCart, getTotalItems, removeItem, updateQuantity } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t, language, setLanguage } = useLanguage();
 
   const menCategories = categories.filter(cat => cat.gender === 'men');
   const womenCategories = categories.filter(cat => cat.gender === 'women');
@@ -32,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
               {/* Men's Dropdown */}
               <div className="relative group">
                 <button className="text-navy-900 hover:text-navy-700 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
-                  MEN
+                  {t('header.men')}
                 </button>
                 
                 <div className="absolute top-full left-0 mt-0 w-48 bg-white border border-gray-100 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
@@ -51,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
               {/* Women's Dropdown */}
               <div className="relative group">
                 <button className="text-navy-900 hover:text-navy-700 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
-                  WOMEN
+                  {t('header.women')}
                 </button>
                 
                 <div className="absolute top-full left-0 mt-0 w-48 bg-white border border-gray-100 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
@@ -72,12 +74,36 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 to="/sale" 
                 className="text-navy-900 hover:text-navy-700 font-medium transition-colors duration-200 uppercase tracking-wide"
               >
-                SALE
+                {t('header.sale')}
               </Link>
             </nav>
 
             {/* Action Buttons */}
             <div className="flex items-center space-x-4">
+              {/* Language Toggle */}
+              <div className="flex items-center space-x-1">
+                <button
+                  onClick={() => setLanguage('ka')}
+                  className={`px-2 py-1 text-xs font-medium transition-colors duration-200 ${
+                    language === 'ka' 
+                      ? 'bg-navy-900 text-white' 
+                      : 'text-navy-900 hover:bg-gray-100'
+                  }`}
+                >
+                  ქარ
+                </button>
+                <button
+                  onClick={() => setLanguage('en')}
+                  className={`px-2 py-1 text-xs font-medium transition-colors duration-200 ${
+                    language === 'en' 
+                      ? 'bg-navy-900 text-white' 
+                      : 'text-navy-900 hover:bg-gray-100'
+                  }`}
+                >
+                  EN
+                </button>
+              </div>
+
               <button
                 onClick={toggleCart}
                 className="relative text-navy-900 hover:text-navy-700 transition-colors duration-200"
@@ -111,7 +137,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
             <div className="md:hidden py-4 border-t border-gray-100">
               <nav className="flex flex-col space-y-4">
                 <div>
-                  <h3 className="font-bold text-navy-900 px-4 py-2 text-sm">MEN</h3>
+                  <h3 className="font-bold text-navy-900 px-4 py-2 text-sm">{t('header.men')}</h3>
                   {menCategories.map((category) => (
                     <Link
                       key={category.id}
@@ -125,7 +151,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 </div>
                 
                 <div>
-                  <h3 className="font-bold text-navy-900 px-4 py-2 text-sm">WOMEN</h3>
+                  <h3 className="font-bold text-navy-900 px-4 py-2 text-sm">{t('header.women')}</h3>
                   {womenCategories.map((category) => (
                     <Link
                       key={category.id}
@@ -144,7 +170,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                   className="text-red-600 hover:bg-gray-50 font-medium py-2 px-4 transition-colors duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  SALE
+                  {t('header.sale')}
                 </Link>
               </nav>
             </div>
@@ -158,7 +184,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
           <div className="absolute inset-0 bg-black bg-opacity-50" onClick={toggleCart}></div>
           <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl">
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <h2 className="text-lg font-bold text-navy-900">Shopping Bag</h2>
+              <h2 className="text-lg font-bold text-navy-900">{t('header.shopping_bag')}</h2>
               <button
                 onClick={toggleCart}
                 className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
@@ -171,13 +197,13 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
               {state.items.length === 0 ? (
                 <div className="text-center py-12">
                   <ShoppingBag className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-navy-900 mb-2">Your bag is empty</h3>
-                  <p className="text-gray-500 mb-6">Add items to get started.</p>
+                  <h3 className="text-lg font-medium text-navy-900 mb-2">{t('header.your_bag_empty')}</h3>
+                  <p className="text-gray-500 mb-6">{t('header.add_items')}</p>
                   <button
                     onClick={toggleCart}
                     className="bg-navy-900 text-white px-6 py-2 hover:bg-navy-800 transition-colors duration-200"
                   >
-                    Continue Shopping
+                    {t('header.continue_shopping')}
                   </button>
                 </div>
               ) : (
@@ -226,7 +252,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                           </button>
                         </div>
                         <span className="text-sm text-gray-500">
-                          ₾{(item.product.discount_price || item.product.price).toFixed(2)} each
+                          ₾{(item.product.discount_price || item.product.price).toFixed(2)} {t('header.each')}
                         </span>
                       </div>
                     </div>
@@ -238,7 +264,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
             {state.items.length > 0 && (
               <div className="border-t border-gray-100 p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-lg font-medium text-navy-900">Total</span>
+                  <span className="text-lg font-medium text-navy-900">{t('cart.total')}</span>
                   <span className="text-lg font-bold text-navy-900">
                     ₾{state.items.reduce((total, item) => {
                       const price = item.product.discount_price || item.product.price;
@@ -251,7 +277,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                   onClick={toggleCart}
                   className="w-full bg-navy-900 text-white py-3 px-6 hover:bg-navy-800 transition-colors duration-200 text-center block font-medium"
                 >
-                  Checkout
+                  {t('header.checkout')}
                 </Link>
               </div>
             )}

@@ -123,7 +123,7 @@ const ProductDetail: React.FC = () => {
               <img
                 src={product.images[selectedImage] || 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'}
                 alt={product.name}
-                className="w-full h-96 lg:h-[600px] object-cover"
+                className="w-full h-96 lg:h-[600px] object-cover object-center"
               />
               
               {/* Badges */}

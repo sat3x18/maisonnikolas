@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Product, Category, api } from './lib/supabase';
 import { CartProvider } from './contexts/CartContext';
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminDashboard from './components/admin/AdminDashboard';
 import Header from './components/Header';
@@ -42,6 +43,7 @@ const MainApp: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   // Mock data fallback
   const mockCategories: Category[] = [
@@ -165,32 +167,30 @@ const MainApp: React.FC = () => {
       <Header categories={categories} />
       
       {/* Hero Banner */}
-      <section className="relative h-96 bg-gray-100">
+      <section className="relative h-[500px] bg-gray-100 overflow-hidden">
         <img
           src="https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg"
           alt="Hero Banner"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
           <div className="text-center text-white">
-            <h1 className="text-5xl font-bold mb-4 text-white">MAISON NIKOLAS</h1>
-            <p className="text-xl mb-6 text-white">Timeless Elegance Since 2025</p>
+            <h1 className="text-5xl font-bold mb-4 text-white">{t('home.hero_title')}</h1>
+            <p className="text-xl mb-6 text-white">{t('home.hero_subtitle')}</p>
             <Link to="/new-arrivals" className="bg-navy-900 text-white px-8 py-3 font-medium hover:bg-navy-800 transition-colors duration-200 inline-block">
-              SHOP NOW
+              {t('home.shop_now')}
             </Link>
           </div>
         </div>
       </section>
-
-      {/* Category Banners */}
 
       {/* Featured Products */}
       {featuredProducts.length > 0 && (
         <section className="bg-gray-50 py-16 px-4">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-navy-900 mb-4">FEATURED</h2>
-              <p className="text-gray-600">Handpicked pieces for the season</p>
+              <h2 className="text-3xl font-bold text-navy-900 mb-4">{t('home.featured')}</h2>
+              <p className="text-gray-600">{t('home.featured_subtitle')}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredProducts.slice(0, 6).map((product) => (
@@ -206,8 +206,8 @@ const MainApp: React.FC = () => {
         <section className="bg-white py-16 px-4">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-navy-900 mb-4">NEW ARRIVALS</h2>
-              <p className="text-gray-600">The latest additions to our collection</p>
+              <h2 className="text-3xl font-bold text-navy-900 mb-4">{t('home.new_arrivals')}</h2>
+              <p className="text-gray-600">{t('home.new_arrivals_subtitle')}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {newProducts.slice(0, 6).map((product) => (
@@ -221,8 +221,8 @@ const MainApp: React.FC = () => {
       {/* Newsletter */}
       <section className="bg-navy-900 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">STAY IN TOUCH</h2>
-          <p className="text-gray-300 mb-8">Be the first to know about new collections and exclusive offers</p>
+          <h2 className="text-3xl font-bold text-white mb-4">{t('home.stay_in_touch')}</h2>
+          <p className="text-gray-300 mb-8">{t('home.newsletter_subtitle')}</p>
           <NewsletterForm />
         </div>
       </section>
@@ -232,37 +232,36 @@ const MainApp: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             <div className="col-span-1 md:col-span-2">
-              <h3 className="text-2xl font-bold text-navy-900 mb-6">MAISON NIKOLAS</h3>
+              <h3 className="text-2xl font-bold text-navy-900 mb-6">{t('home.hero_title')}</h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Since 2025, we have been creating timeless pieces that embody 
-                elegance and sophistication for the modern wardrobe.
+                {t('home.footer_text')}
               </p>
             </div>
 
             <div>
-              <h4 className="text-lg font-medium text-navy-900 mb-6">Customer Care</h4>
+              <h4 className="text-lg font-medium text-navy-900 mb-6">{t('home.customer_care')}</h4>
               <ul className="space-y-3 text-gray-600">
-                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Size Guide</a></li>
-                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Shipping & Returns</a></li>
-                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Care Instructions</a></li>
-                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Contact Us</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">{t('home.size_guide')}</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">{t('home.shipping_returns')}</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">{t('home.care_instructions')}</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">{t('home.contact_us')}</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-lg font-medium text-navy-900 mb-6">Company</h4>
+              <h4 className="text-lg font-medium text-navy-900 mb-6">{t('home.company')}</h4>
               <ul className="space-y-3 text-gray-600">
-                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">About Us</a></li>
-                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Careers</a></li>
-                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Press</a></li>
-                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Sustainability</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">{t('home.about_us')}</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">{t('home.careers')}</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">{t('home.press')}</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">{t('home.sustainability')}</a></li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-gray-100 pt-8 text-center">
             <p className="text-gray-500">
-              © 2025 Maison Nikolas. All rights reserved.
+              {t('home.rights_reserved')}
             </p>
           </div>
         </div>
@@ -273,24 +272,26 @@ const MainApp: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <CartProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<MainApp />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/category/:slug" element={<CategoryPage />} />
-          <Route path="/men" element={<CategoryPage key="men" />} />
-          <Route path="/women" element={<CategoryPage key="women" />} />
-          <Route path="/new-arrivals" element={<CategoryPage />} />
-          <Route path="/sale" element={<SalePage />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/order/:orderNumber" element={<OrderConfirmation />} />
-          <Route path="/review/:orderNumber" element={<ReviewPage />} />
-          <Route path="/admin" element={<AdminApp />} />
-        </Routes>
-      </Router>
-    </CartProvider>
+    <LanguageProvider>
+      <CartProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<MainApp />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/category/:slug" element={<CategoryPage />} />
+            <Route path="/men" element={<CategoryPage key="men" />} />
+            <Route path="/women" element={<CategoryPage key="women" />} />
+            <Route path="/new-arrivals" element={<CategoryPage />} />
+            <Route path="/sale" element={<SalePage />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order/:orderNumber" element={<OrderConfirmation />} />
+            <Route path="/review/:orderNumber" element={<ReviewPage />} />
+            <Route path="/admin" element={<AdminApp />} />
+          </Routes>
+        </Router>
+      </CartProvider>
+    </LanguageProvider>
   );
 };
 
