@@ -216,9 +216,12 @@ const MainApp: React.FC = () => {
           <div className="text-center text-white">
             <h1 className="text-5xl font-bold mb-4 text-white">Tbilisi Wear</h1>
             <p className="text-xl mb-6 text-white">Timeless Elegance Since 2025</p>
-            <Link to="/new-arrivals" className="bg-navy-900 text-white px-8 py-3 font-medium hover:bg-navy-800 transition-colors duration-200 inline-block">
-              SHOP ALL
-            </Link>
+            <Link
+  to="/new-arrivals"
+  className="bg-transparent text-white border border-white px-8 py-3 font-medium hover:bg-white hover:text-navy-900 transition-colors duration-200 inline-block"
+>
+  SHOP ALL
+</Link>
           </div>
         </div>
       </section>
