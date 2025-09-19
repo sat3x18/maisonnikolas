@@ -35,7 +35,7 @@ const SalePage: React.FC = () => {
       price: 125,
       discount_price: 95,
       images: [
-        'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
+        'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
         'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
       ],
       colors: ['White', 'Light Blue', 'Navy'],
@@ -55,7 +55,7 @@ const SalePage: React.FC = () => {
       price: 395,
       discount_price: 295,
       images: [
-        'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+        'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'
       ],
       colors: ['Navy', 'Charcoal', 'Black'],
       sizes: ['38', '40', '42', '44', '46'],
