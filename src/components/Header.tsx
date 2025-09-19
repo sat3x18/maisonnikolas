@@ -215,7 +215,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                     <div key={index} className="py-4 border-b border-gray-700">
                       <div className="flex items-center space-x-4 mb-3">
                         <img
-                          src={item.product.images[0] || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'}
+                          src={item.product.images[0] || 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'}
                           alt={item.product.name}
                           className="w-16 h-16 object-cover"
                         />
