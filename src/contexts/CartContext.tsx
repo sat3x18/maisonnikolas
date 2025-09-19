@@ -157,8 +157,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         return {
           items: cartData.items || [],
           isOpen: false,
-          appliedDiscount: cartData.appliedDiscount,
-          discountAmount: cartData.discountAmount || 0
+          discountAmount: 0
         };
       }
     } catch (error) {
@@ -182,15 +181,13 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     try {
       const userId = getUserId();
       const cartData = {
-        items: state.items,
-        appliedDiscount: state.appliedDiscount,
-        discountAmount: state.discountAmount
+        items: state.items
       };
       localStorage.setItem(`cart_${userId}`, JSON.stringify(cartData));
     } catch (error) {
       console.error('Error saving cart to storage:', error);
     }
-  }, [state.items, state.appliedDiscount, state.discountAmount]);
+  }, [state.items]);
 
   const addItem = (product: Product, color?: string, size?: string) => {
     dispatch({ type: 'ADD_ITEM', payload: { product, color, size } });

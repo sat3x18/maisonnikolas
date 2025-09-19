@@ -392,16 +392,16 @@ export const api = {
     }
   },
 
-  calculateDiscountAmount: (discountCode: DiscountCode, orderTotal: number, cartItems: CartItem[]): number => {
-    const hasApplicableProducts = discountCode.applicable_products?.length > 0;
-    const hasApplicableCategories = discountCode.applicable_categories?.length > 0;
+  calculateDiscountAmount: (discountCode: any, orderTotal: number, cartItems: CartItem[]): number => {
+    const hasApplicableProducts = discountCode.discount_code_products?.length > 0;
+    const hasApplicableCategories = discountCode.discount_code_categories?.length > 0;
 
     let applicableTotal = orderTotal;
 
     // If discount is limited to specific products/categories, calculate applicable total
     if (hasApplicableProducts || hasApplicableCategories) {
-      const applicableProductIds = discountCode.applicable_products?.map(p => p.id) || [];
-      const applicableCategoryIds = discountCode.applicable_categories?.map(c => c.id) || [];
+      const applicableProductIds = discountCode.discount_code_products?.map((dcp: any) => dcp.product_id) || [];
+      const applicableCategoryIds = discountCode.discount_code_categories?.map((dcc: any) => dcc.category_id) || [];
 
       applicableTotal = cartItems
         .filter(item => 
