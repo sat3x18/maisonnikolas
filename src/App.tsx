@@ -232,8 +232,8 @@ const MainApp: React.FC = () => {
         <section className="bg-gray-50 py-16 px-4">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-navy-900 mb-4">FEATURED</h2>
-              <p className="text-gray-600">Handpicked pieces for the season</p>
+              
+              <p className="text-gray-600">Featured products</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredProducts.slice(0, 6).map((product) => (
