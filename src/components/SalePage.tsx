@@ -173,7 +173,7 @@ const SalePage: React.FC = () => {
       {/* Hero Section */}
       <section className="relative h-[500px] bg-gray-100 overflow-hidden">
         <img
-          src="https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg"
+          src="https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png"
           alt="Sale Collection"
           className="w-full h-full object-cover object-center"
         />
