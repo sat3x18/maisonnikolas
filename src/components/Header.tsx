@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
             {/* Logo */}
             <Link to="/" className="flex items-center">
               <div className="text-2xl font-bold text-navy-900 tracking-tight font-serif">
-                NIKOLAS MAISON
+                TBILISI WEAR
               </div>
             </Link>
 
@@ -240,12 +240,22 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-lg font-medium text-navy-900">Total</span>
                   <span className="text-lg font-bold text-navy-900">
-                    ₾{state.items.reduce((total, item) => {
+                    ₾{(state.items.reduce((total, item) => {
                       const price = item.product.discount_price || item.product.price;
                       return total + (price * item.quantity);
-                    }, 0).toFixed(2)}
+                    }, 0) - state.discountAmount).toFixed(2)}
                   </span>
                 </div>
+                
+                {state.appliedDiscount && (
+                  <div className="mb-4 p-2 bg-green-50 border border-green-200 rounded text-sm">
+                    <div className="flex items-center justify-between text-green-800">
+                      <span>Discount: {state.appliedDiscount.code}</span>
+                      <span>-₾{state.discountAmount.toFixed(2)}</span>
+                    </div>
+                  </div>
+                )}
+                
                 <Link
                   to="/checkout"
                   onClick={toggleCart}

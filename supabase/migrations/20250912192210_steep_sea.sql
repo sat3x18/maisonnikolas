@@ -1,5 +1,5 @@
 /*
-  # Add Sample Data for Nikolas Maison
+  # Add Sample Data for Tbilisi Wear
 
   1. Sample Categories
     - Men's Watches
