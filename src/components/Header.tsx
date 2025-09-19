@@ -18,14 +18,13 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
 
   return (
     <>
-      {/* Header */}
-      <header className="absolute top-0 left-0 w-full z-50 bg-transparent">
+      {/* Header always visible for Product Page */}
+      <header className="bg-transparent w-full z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 relative">
 
-            {/* Left: Navigation */}
+            {/* Left Navigation */}
             <nav className="hidden md:flex items-center space-x-6">
-              {/* MEN Dropdown */}
               <div className="relative group">
                 <button className="text-white hover:text-gray-200 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
                   MEN
@@ -43,7 +42,6 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 </div>
               </div>
 
-              {/* WOMEN Dropdown */}
               <div className="relative group">
                 <button className="text-white hover:text-gray-200 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
                   WOMEN
@@ -61,7 +59,6 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 </div>
               </div>
 
-              {/* UNISEX Dropdown */}
               <div className="relative group">
                 <button className="text-white hover:text-gray-200 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
                   UNISEX
@@ -79,20 +76,20 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 </div>
               </div>
 
-              <Link 
-                to="/sale" 
+              <Link
+                to="/sale"
                 className="text-red-400 hover:bg-gray-800 font-medium py-2 px-4 transition-colors duration-200"
               >
                 SALE
               </Link>
             </nav>
 
-            {/* Center: Logo */}
+            {/* Center Logo */}
             <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-white tracking-tight font-serif">
               TBILISI WEAR
             </Link>
 
-            {/* Right: Action Buttons */}
+            {/* Right Action Buttons */}
             <div className="flex items-center space-x-4">
               <button
                 onClick={toggleCart}
@@ -186,7 +183,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
         <div className="fixed inset-0 z-50 overflow-hidden">
           <div className="absolute inset-0 bg-black bg-opacity-50" onClick={toggleCart}></div>
           <div className="absolute right-0 top-0 h-full w-full max-w-md bg-transparent shadow-xl">
-            <div className="flex items-center justify-between p-6">
+            <div className="flex items-center justify-between p-6 border-b border-gray-700">
               <h2 className="text-lg font-bold text-white">Shopping Bag</h2>
               <button
                 onClick={toggleCart}
@@ -237,7 +234,6 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                         </div>
                       </div>
 
-                      {/* Quantity Controls */}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <button
@@ -265,7 +261,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
             </div>
 
             {state.items.length > 0 && (
-              <div className="p-6">
+              <div className="border-t border-gray-700 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-lg font-medium text-white">Total</span>
                   <span className="text-lg font-bold text-white">
@@ -277,8 +273,8 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 </div>
 
                 {state.appliedDiscount && (
-                  <div className="mb-4 p-2 bg-green-700 border border-green-600 rounded text-sm">
-                    <div className="flex items-center justify-between text-white">
+                  <div className="mb-4 p-2 bg-green-900 border border-green-700 rounded text-sm">
+                    <div className="flex items-center justify-between text-green-200">
                       <span>Discount: {state.appliedDiscount.code}</span>
                       <span>-₾{state.discountAmount.toFixed(2)}</span>
                     </div>
