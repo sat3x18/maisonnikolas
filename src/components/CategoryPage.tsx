@@ -31,7 +31,7 @@ const CategoryPage: React.FC = () => {
         subtitle: 'Sophisticated Style for the Modern Woman',
         description:
           "Explore our exquisite women's collection featuring elegant dresses, luxurious blouses, and timeless pieces that celebrate femininity and grace. Each garment is designed to empower and inspire.",
-        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
       unisex: {
         title: 'Unisex Collection',
@@ -59,14 +59,14 @@ const CategoryPage: React.FC = () => {
         subtitle: 'Grace and Sophistication',
         description:
           'From cocktail parties to formal events, our dress collection offers timeless elegance and contemporary style for every occasion.',
-        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
       blouses: {
         title: 'Designer Blouses',
         subtitle: 'Refined Femininity',
         description:
           "Discover our collection of silk and cotton blouses, designed to complement the modern woman's wardrobe with elegance and versatility.",
-        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
       casual: {
         title: 'Casual Wear',
@@ -80,7 +80,7 @@ const CategoryPage: React.FC = () => {
         subtitle: 'Classic Silhouettes',
         description:
           'Timeless skirts crafted from the finest fabrics, designed to flatter and enhance your natural elegance.',
-        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
       accessories: {
         title: 'Premium Accessories',
@@ -94,7 +94,7 @@ const CategoryPage: React.FC = () => {
         subtitle: 'Crafted Excellence',
         description:
           'Discover our collection of luxury bags and leather goods. Each piece combines functionality with timeless design for the modern lifestyle.',
-        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
       watches: {
         title: 'Timepieces',
@@ -108,7 +108,7 @@ const CategoryPage: React.FC = () => {
         subtitle: 'Latest from Tbilisi Wear',
         description:
           'Be the first to discover our newest pieces. Fresh designs that embody our commitment to timeless elegance and modern sophistication.',
-        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
       sale: {
         title: 'Sale Collection',
@@ -125,7 +125,7 @@ const CategoryPage: React.FC = () => {
       description: `Discover our exquisite ${categoryName.toLowerCase()} collection, featuring carefully curated pieces that embody the essence of luxury and sophistication. Each item is crafted with attention to detail and premium materials.`,
       image:
         gender === 'women'
-          ? 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+          ? 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'
           : 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
     };
 
@@ -159,7 +159,7 @@ const CategoryPage: React.FC = () => {
           category_id: '1',
           price: 125,
           discount_price: 95,
-          images: ['https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg', 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'],
+          images: ['https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png', 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'],
           colors: ['White', 'Light Blue', 'Navy'],
           sizes: ['S', 'M', 'L', 'XL'],
           stock: 25,
@@ -192,7 +192,7 @@ const CategoryPage: React.FC = () => {
           category_id: '2',
           price: 395,
           discount_price: 295,
-          images: ['https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'],
+          images: ['https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'],
           colors: ['Navy', 'Charcoal', 'Black'],
           sizes: ['38', '40', '42', '44', '46'],
           stock: 8,
@@ -225,7 +225,7 @@ const CategoryPage: React.FC = () => {
           category_id: '9',
           price: 450,
           discount_price: 350,
-          images: ['https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'],
+          images: ['https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'],
           colors: ['Silver', 'Gold', 'Black'],
           sizes: ['One Size'],
           stock: 8,
