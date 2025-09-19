@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { CheckCircle, Package, Truck, CreditCard } from 'lucide-react';
 import { Order, api, Category } from '../lib/supabase';
-import Header from './Header';
+import Header from './Headerr';
 import NewsletterForm from './NewsletterForm';
 
 const OrderConfirmation: React.FC = () => {
