@@ -15,8 +15,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
   const location = useLocation();
   const isProductPage = location.pathname.startsWith('/product');
 
-  // Conditional styling
-  const headerBgClass = isProductPage ? 'bg-white' : 'bg-transparent';
+  // Conditional colors
   const textColorClass = isProductPage ? 'text-black' : 'text-white';
   const iconColorClass = isProductPage ? 'text-black' : 'text-white';
 
@@ -26,10 +25,11 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
 
   return (
     <>
-      <header className={`${headerBgClass} border-b border-gray-100 sticky top-0 z-50 transition-colors duration-200`}>
+      <header className={`sticky top-0 z-50 transition-colors duration-200 bg-transparent`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Navigation Left (Categories) */}
+            
+            {/* Left nav (categories) */}
             <nav className="hidden md:flex items-center space-x-8 flex-1 justify-start">
               {/* MEN */}
               <div className="relative group">
@@ -42,6 +42,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                   ))}
                 </div>
               </div>
+
               {/* WOMEN */}
               <div className="relative group">
                 <button className={`hover:opacity-80 font-medium py-2 transition-colors duration-200 uppercase tracking-wide ${textColorClass}`}>
@@ -53,6 +54,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                   ))}
                 </div>
               </div>
+
               {/* UNISEX */}
               <div className="relative group">
                 <button className={`hover:opacity-80 font-medium py-2 transition-colors duration-200 uppercase tracking-wide ${textColorClass}`}>
@@ -68,27 +70,29 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
               <Link to="/sale" className={`hover:opacity-80 font-medium transition-colors duration-200 uppercase tracking-wide ${textColorClass}`}>SALE</Link>
             </nav>
 
-            {/* Logo Center */}
+            {/* Logo center */}
             <Link to="/" className={`flex-1 flex justify-center md:justify-center ${textColorClass} font-serif font-bold text-2xl tracking-tight`}>
               TBILISI WEAR
             </Link>
 
-            {/* Action Buttons Right */}
+            {/* Right buttons */}
             <div className="flex items-center space-x-4">
               <button onClick={toggleCart} className={`relative hover:opacity-80 transition-colors duration-200 ${iconColorClass}`}>
                 <ShoppingBag className="h-5 w-5" />
                 {getTotalItems() > 0 && <span className="absolute -top-2 -right-2 bg-black text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">{getTotalItems()}</span>}
               </button>
+
               <Link to="/admin" className={`hover:opacity-80 transition-colors duration-200 ${iconColorClass}`}>
                 <User className="h-5 w-5" />
               </Link>
+
               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className={`md:hidden hover:opacity-80 transition-colors duration-200 ${iconColorClass}`}>
                 {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
             </div>
           </div>
 
-          {/* Mobile Nav */}
+          {/* Mobile menu */}
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-gray-100">
               <nav className="flex flex-col space-y-4">
@@ -98,18 +102,21 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                     <Link key={cat.id} to={`/category/${cat.slug}`} className="block px-6 py-2 text-black hover:bg-gray-50 transition-colors duration-200" onClick={() => setIsMenuOpen(false)}>{cat.name}</Link>
                   ))}
                 </div>
+
                 <div>
                   <h3 className="font-bold text-black px-4 py-2 text-sm">UNISEX</h3>
                   {unisexCategories.map(cat => (
                     <Link key={cat.id} to={`/category/${cat.slug}`} className="block px-6 py-2 text-black hover:bg-gray-50 transition-colors duration-200" onClick={() => setIsMenuOpen(false)}>{cat.name}</Link>
                   ))}
                 </div>
+
                 <div>
                   <h3 className="font-bold text-black px-4 py-2 text-sm">WOMEN</h3>
                   {womenCategories.map(cat => (
                     <Link key={cat.id} to={`/category/${cat.slug}`} className="block px-6 py-2 text-black hover:bg-gray-50 transition-colors duration-200" onClick={() => setIsMenuOpen(false)}>{cat.name}</Link>
                   ))}
                 </div>
+
                 <Link to="/sale" className="text-black font-medium py-2 px-4 hover:bg-gray-50 transition-colors duration-200" onClick={() => setIsMenuOpen(false)}>SALE</Link>
               </nav>
             </div>
@@ -117,7 +124,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
         </div>
       </header>
 
-      {/* Cart Sidebar */}
+      {/* Cart sidebar */}
       {state.isOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden">
           <div className="absolute inset-0 bg-black bg-opacity-50" onClick={toggleCart}></div>
