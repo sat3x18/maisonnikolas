@@ -242,12 +242,6 @@ const MainApp: React.FC = () => {
             </div>
           </div>
         </section>
-      )}
-
-      {/* New Arrivals */}
-      {newProducts.length > 0 && (
-        <section className="bg-white py-16 px-4">
-          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-navy-900 mb-4">NEW ARRIVALS</h2>
               <p className="text-gray-600">The latest additions to our collection</p>
