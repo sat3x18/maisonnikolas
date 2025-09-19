@@ -207,6 +207,7 @@ const MainApp: React.FC = () => {
       
       {/* Hero Banner */}
      <section className="relative h-[400px] md:h-[600px] bg-gray-100 overflow-hidden">
+       
         <img
           src="https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png"
           alt="Hero Banner"
