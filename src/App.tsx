@@ -50,7 +50,11 @@ const MainApp: React.FC = () => {
     { id: '3', name: 'Casual Wear', slug: 'casual', description: 'Casual clothing', created_at: new Date().toISOString(), gender: 'men' },
     { id: '4', name: 'Dresses', slug: 'dresses', description: 'Elegant dresses', created_at: new Date().toISOString(), gender: 'women' },
     { id: '5', name: 'Blouses', slug: 'blouses', description: 'Designer blouses', created_at: new Date().toISOString(), gender: 'women' },
-    { id: '6', name: 'Skirts', slug: 'skirts', description: 'Premium skirts', created_at: new Date().toISOString(), gender: 'women' }
+    { id: '6', name: 'Skirts', slug: 'skirts', description: 'Premium skirts', created_at: new Date().toISOString(), gender: 'women' },
+    { id: '7', name: 'Accessories', slug: 'accessories', description: 'Premium accessories for everyone', created_at: new Date().toISOString(), gender: 'unisex' },
+    { id: '8', name: 'Bags', slug: 'bags', description: 'Luxury bags and leather goods', created_at: new Date().toISOString(), gender: 'unisex' },
+    { id: '9', name: 'Watches', slug: 'watches', description: 'Timepieces for all occasions', created_at: new Date().toISOString(), gender: 'unisex' },
+    { id: '10', name: 'Sunglasses', slug: 'sunglasses', description: 'Designer eyewear collection', created_at: new Date().toISOString(), gender: 'unisex' }
   ];
 
   const mockProducts: Product[] = [
@@ -128,6 +132,43 @@ const MainApp: React.FC = () => {
         setCategories(mockCategories);
         setLoading(false);
         return;
+      },
+      {
+        id: '4',
+        name: 'Leather Crossbody Bag',
+        description: 'Premium leather crossbody bag perfect for any occasion.',
+        category_id: '8',
+        price: 195,
+        images: [
+          'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
+        ],
+        colors: ['Black', 'Brown', 'Tan'],
+        sizes: ['One Size'],
+        stock: 15,
+        is_featured: true,
+        is_new: false,
+        is_limited: false,
+        created_at: new Date().toISOString(),
+        category: mockCategories[7]
+      },
+      {
+        id: '5',
+        name: 'Classic Watch',
+        description: 'Timeless watch design with premium materials.',
+        category_id: '9',
+        price: 450,
+        discount_price: 350,
+        images: [
+          'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+        ],
+        colors: ['Silver', 'Gold', 'Black'],
+        sizes: ['One Size'],
+        stock: 8,
+        is_featured: false,
+        is_new: true,
+        is_limited: true,
+        created_at: new Date().toISOString(),
+        category: mockCategories[8]
       }
 
       const [productsData, categoriesData] = await Promise.all([
@@ -277,6 +318,7 @@ const App: React.FC = () => {
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/men" element={<Navigate to="/category/men" replace />} />
           <Route path="/women" element={<Navigate to="/category/women" replace />} />
+          <Route path="/unisex" element={<Navigate to="/category/unisex" replace />} />
           <Route path="/new-arrivals" element={<Navigate to="/category/new-arrivals" replace />} />
           <Route path="/sale" element={<SalePage />} />
           <Route path="/cart" element={<Cart />} />
