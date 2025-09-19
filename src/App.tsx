@@ -206,7 +206,7 @@ const MainApp: React.FC = () => {
       <Header categories={categories} />
       
       {/* Hero Banner */}
-      <section className="relative h-[550px] bg-gray-100 overflow-hidden">
+      <section className="relative h-[600px] bg-gray-100 overflow-hidden">
         <img
           src="https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png"
           alt="Hero Banner"
