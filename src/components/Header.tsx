@@ -27,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
             <nav className="hidden md:flex items-center space-x-6">
               {/* MEN Dropdown */}
               <div className="relative group">
-                <button className="text-white hover:text-gray-200 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
+                <button className="text-white  font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
                   MEN
                 </button>
                 <div className="absolute top-full left-0 mt-0 w-48 bg-transparent shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
