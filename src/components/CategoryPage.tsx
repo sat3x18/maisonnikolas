@@ -24,7 +24,7 @@ const CategoryPage: React.FC = () => {
         subtitle: 'Timeless Elegance for the Modern Gentleman',
         description:
           'Discover our curated selection of premium menswear, crafted with the finest materials and attention to detail. From classic dress shirts to tailored suits, each piece embodies sophistication and style.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
       women: {
         title: "Women's Collection",
@@ -38,21 +38,21 @@ const CategoryPage: React.FC = () => {
         subtitle: 'Style Without Boundaries',
         description:
           'Discover our carefully curated unisex collection featuring accessories, bags, watches, and essentials designed for everyone. Timeless pieces that transcend traditional boundaries.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
       shirts: {
         title: 'Premium Shirts',
         subtitle: 'Crafted for Perfection',
         description:
           'Our shirt collection features the finest cotton and silk fabrics, expertly tailored for the perfect fit. From business meetings to casual weekends, find your perfect shirt.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
       suits: {
         title: 'Tailored Suits',
         subtitle: 'Bespoke Excellence',
         description:
           'Experience the pinnacle of menswear with our collection of tailored suits. Each piece is crafted with precision and attention to detail for the discerning gentleman.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
       dresses: {
         title: 'Elegant Dresses',
@@ -73,7 +73,7 @@ const CategoryPage: React.FC = () => {
         subtitle: 'Effortless Style',
         description:
           'Comfortable yet sophisticated pieces for your everyday wardrobe. Quality craftsmanship meets relaxed elegance.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
       skirts: {
         title: 'Premium Skirts',
@@ -87,7 +87,7 @@ const CategoryPage: React.FC = () => {
         subtitle: 'Complete Your Look',
         description:
           'Elevate your style with our collection of premium accessories. From statement pieces to everyday essentials, find the perfect finishing touch.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
       bags: {
         title: 'Luxury Bags',
@@ -101,7 +101,7 @@ const CategoryPage: React.FC = () => {
         subtitle: 'Precision Meets Style',
         description:
           'Explore our curated selection of watches that blend traditional craftsmanship with contemporary design. Time never looked so elegant.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
       'new-arrivals': {
         title: 'New Arrivals',
@@ -115,7 +115,7 @@ const CategoryPage: React.FC = () => {
         subtitle: 'Exceptional Value on Premium Pieces',
         description:
           'Discover our carefully selected sale items featuring the same exceptional quality and timeless style at special prices. Limited time offers on luxury pieces from our premium collections.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
+        image: 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
       },
     };
 
@@ -126,7 +126,7 @@ const CategoryPage: React.FC = () => {
       image:
         gender === 'women'
           ? 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
-          : 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
+          : 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
     };
 
     return marketingData[categoryName.toLowerCase()] || defaultContent;
@@ -159,7 +159,7 @@ const CategoryPage: React.FC = () => {
           category_id: '1',
           price: 125,
           discount_price: 95,
-          images: ['https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg', 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'],
+          images: ['https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg', 'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'],
           colors: ['White', 'Light Blue', 'Navy'],
           sizes: ['S', 'M', 'L', 'XL'],
           stock: 25,
@@ -175,7 +175,7 @@ const CategoryPage: React.FC = () => {
           description: 'Elegant silk dress perfect for any occasion.',
           category_id: '4',
           price: 285,
-          images: ['https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'],
+          images: ['https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'],
           colors: ['Black', 'Navy', 'Burgundy'],
           sizes: ['XS', 'S', 'M', 'L'],
           stock: 12,
@@ -208,7 +208,7 @@ const CategoryPage: React.FC = () => {
           description: 'Premium leather crossbody bag perfect for any occasion.',
           category_id: '8',
           price: 195,
-          images: ['https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'],
+          images: ['https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'],
           colors: ['Black', 'Brown', 'Tan'],
           sizes: ['One Size'],
           stock: 15,
