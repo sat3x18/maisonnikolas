@@ -33,13 +33,6 @@ const CategoryPage: React.FC = () => {
           "Explore our exquisite women's collection featuring elegant dresses, luxurious blouses, and timeless pieces that celebrate femininity and grace. Each garment is designed to empower and inspire.",
         image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
       },
-      unisex: {
-        title: 'Unisex Collection',
-        subtitle: 'Style Without Boundaries',
-        description:
-          'Discover our carefully curated unisex collection featuring accessories, bags, watches, and essentials designed for everyone. Timeless pieces that transcend traditional boundaries.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
-      },
       shirts: {
         title: 'Premium Shirts',
         subtitle: 'Crafted for Perfection',
@@ -81,27 +74,6 @@ const CategoryPage: React.FC = () => {
         description:
           'Timeless skirts crafted from the finest fabrics, designed to flatter and enhance your natural elegance.',
         image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
-      },
-      accessories: {
-        title: 'Premium Accessories',
-        subtitle: 'Complete Your Look',
-        description:
-          'Elevate your style with our collection of premium accessories. From statement pieces to everyday essentials, find the perfect finishing touch.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
-      },
-      bags: {
-        title: 'Luxury Bags',
-        subtitle: 'Crafted Excellence',
-        description:
-          'Discover our collection of luxury bags and leather goods. Each piece combines functionality with timeless design for the modern lifestyle.',
-        image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
-      },
-      watches: {
-        title: 'Timepieces',
-        subtitle: 'Precision Meets Style',
-        description:
-          'Explore our curated selection of watches that blend traditional craftsmanship with contemporary design. Time never looked so elegant.',
-        image: 'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg',
       },
       'new-arrivals': {
         title: 'New Arrivals',
@@ -145,10 +117,6 @@ const CategoryPage: React.FC = () => {
         { id: '4', name: 'Dresses', slug: 'dresses', description: 'Elegant dresses', created_at: new Date().toISOString(), gender: 'women' },
         { id: '5', name: 'Blouses', slug: 'blouses', description: 'Designer blouses', created_at: new Date().toISOString(), gender: 'women' },
         { id: '6', name: 'Skirts', slug: 'skirts', description: 'Premium skirts', created_at: new Date().toISOString(), gender: 'women' },
-        { id: '7', name: 'Accessories', slug: 'accessories', description: 'Premium accessories for everyone', created_at: new Date().toISOString(), gender: 'unisex' },
-        { id: '8', name: 'Bags', slug: 'bags', description: 'Luxury bags and leather goods', created_at: new Date().toISOString(), gender: 'unisex' },
-        { id: '9', name: 'Watches', slug: 'watches', description: 'Timepieces for all occasions', created_at: new Date().toISOString(), gender: 'unisex' },
-        { id: '10', name: 'Sunglasses', slug: 'sunglasses', description: 'Designer eyewear collection', created_at: new Date().toISOString(), gender: 'unisex' }
       ];
 
       const mockProducts: Product[] = [
@@ -202,39 +170,6 @@ const CategoryPage: React.FC = () => {
           created_at: new Date().toISOString(),
           category: mockCategories[1],
         },
-        {
-          id: '4',
-          name: 'Leather Crossbody Bag',
-          description: 'Premium leather crossbody bag perfect for any occasion.',
-          category_id: '8',
-          price: 195,
-          images: ['https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'],
-          colors: ['Black', 'Brown', 'Tan'],
-          sizes: ['One Size'],
-          stock: 15,
-          is_featured: true,
-          is_new: false,
-          is_limited: false,
-          created_at: new Date().toISOString(),
-          category: mockCategories[7],
-        },
-        {
-          id: '5',
-          name: 'Classic Watch',
-          description: 'Timeless watch design with premium materials.',
-          category_id: '9',
-          price: 450,
-          discount_price: 350,
-          images: ['https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'],
-          colors: ['Silver', 'Gold', 'Black'],
-          sizes: ['One Size'],
-          stock: 8,
-          is_featured: false,
-          is_new: true,
-          is_limited: true,
-          created_at: new Date().toISOString(),
-          category: mockCategories[8],
-        },
       ];
 
       let categoriesData = mockCategories;
@@ -255,7 +190,7 @@ const CategoryPage: React.FC = () => {
       let shouldShowCategorySelection = false;
 
       if (slug) {
-        if (slug === 'men' || slug === 'women' || slug === 'unisex') {
+        if (slug === 'men' || slug === 'women') {
           shouldShowCategorySelection = true;
           filteredProducts = [];
           category = { id: slug, name: slug.charAt(0).toUpperCase() + slug.slice(1), slug, description: `${slug.charAt(0).toUpperCase() + slug.slice(1)}'s Collection`, created_at: new Date().toISOString(), gender: slug as 'men' | 'women' };
@@ -346,14 +281,12 @@ const CategoryPage: React.FC = () => {
         {showCategorySelection && (
           <div className="mb-12">
             <h2 className="text-3xl font-serif font-bold text-navy-900 mb-8 text-center">
-              {slug === 'men' ? "Men's Categories" : slug === 'women' ? "Women's Categories" : "Unisex Categories"}
+              {slug === 'men' ? "Men's Categories" : "Women's Categories"}
             </h2>
             <p className="text-center text-gray-600 mb-12">
               {slug === 'men'
                 ? "Discover our premium men's collection across different categories"
-                : slug === 'women' 
-                ? "Explore our elegant women's collection across different categories"
-                : "Discover our unisex collection designed for everyone"}
+                : "Explore our elegant women's collection across different categories"}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {categories

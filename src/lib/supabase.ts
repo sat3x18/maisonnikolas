@@ -26,7 +26,7 @@ export interface Category {
   slug: string;
   description?: string;
   created_at: string;
-  gender?: 'men' | 'women' | 'unisex';
+  gender?: 'men' | 'women';
 }
 
 export interface Product {

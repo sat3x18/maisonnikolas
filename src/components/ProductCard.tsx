@@ -19,7 +19,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
     openCart();
   };
 
-  const discountPercentage = product.discount_price
+  const discountPercentage = product.discount_price 
     ? Math.round(((product.price - product.discount_price) / product.price) * 100)
     : 0;
 
@@ -32,7 +32,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
             alt={product.name}
             className="w-full h-full object-cover hover:opacity-90 transition-opacity duration-200"
           />
-
+          
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col space-y-1">
             {product.is_new && (
@@ -55,6 +55,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
                 {product.category.name}
               </p>
             )}
+
             <h3 className="text-lg font-medium text-navy-900 mb-2 hover:text-navy-700 transition-colors duration-200">
               {product.name}
             </h3>
@@ -62,16 +63,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
             <div className="flex items-center space-x-2 mb-3">
               {product.discount_price ? (
                 <>
-                  <span className="text-xl font-medium text-navy-900">₾{product.discount_price}</span>
-                  <span className="text-sm text-gray-500 line-through">₾{product.price}</span>
+                  <span className="text-xl font-medium text-navy-900">
+                    ₾{product.discount_price}
+                  </span>
+                  <span className="text-sm text-gray-500 line-through">
+                    ₾{product.price}
+                  </span>
                 </>
               ) : (
-                <span className="text-xl font-medium text-navy-900">₾{product.price}</span>
+                <span className="text-xl font-medium text-navy-900">
+                  ₾{product.price}
+                </span>
               )}
             </div>
 
             {product.description && (
-              <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
+              <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                {product.description}
+              </p>
             )}
 
             {/* Colors */}
@@ -82,16 +91,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
                     key={index}
                     className="w-4 h-4 border border-gray-300"
                     style={{
-                      backgroundColor:
-                        color.toLowerCase() === 'white'
-                          ? '#FFFFFF'
-                          : color.toLowerCase() === 'black'
-                          ? '#000000'
-                          : color.toLowerCase() === 'navy'
-                          ? '#1e3a8a'
-                          : color.toLowerCase() === 'grey' || color.toLowerCase() === 'gray'
-                          ? '#6B7280'
-                          : '#6B7280',
+                      backgroundColor: color.toLowerCase() === 'white' ? '#FFFFFF' :
+                                     color.toLowerCase() === 'black' ? '#000000' :
+                                     color.toLowerCase() === 'navy' ? '#1e3a8a' :
+                                     color.toLowerCase() === 'grey' || color.toLowerCase() === 'gray' ? '#6B7280' :
+                                     '#6B7280'
                     }}
                     title={color}
                   ></div>
@@ -124,7 +128,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-
+        
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col space-y-1">
           {product.is_new && (
@@ -147,9 +151,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
           </div>
         )}
       </Link>
-
+      
       <div className="relative">
-        {/* Add to Cart & Buy Buttons */}
+        {/* Add to Cart Button */}
         <div className="absolute -top-16 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button
             onClick={handleAddToCart}
@@ -157,7 +161,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
           >
             <ShoppingBag className="h-4 w-4" />
           </button>
-
           <Link
             to={`/product/${product.id}`}
             className="bg-white text-navy-900 p-3 hover:bg-gray-100 transition-colors duration-200 shadow-lg border border-navy-900 inline-block"
@@ -169,8 +172,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
 
       <Link to={`/product/${product.id}`} className="block pt-4">
         {product.category && (
-          <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">{product.category.name}</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
+            {product.category.name}
+          </p>
         )}
+
         <h3 className="font-medium text-navy-900 mb-2 group-hover:text-navy-600 transition-colors duration-200">
           {product.name}
         </h3>
@@ -178,11 +184,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
         <div className="flex items-center space-x-2 mb-3">
           {product.discount_price ? (
             <>
-              <span className="text-lg font-medium text-navy-900">₾{product.discount_price}</span>
-              <span className="text-sm text-gray-500 line-through">₾{product.price}</span>
+              <span className="text-lg font-medium text-navy-900">
+                ₾{product.discount_price}
+              </span>
+              <span className="text-sm text-gray-500 line-through">
+                ₾{product.price}
+              </span>
             </>
           ) : (
-            <span className="text-lg font-medium text-navy-900">₾{product.price}</span>
+            <span className="text-lg font-medium text-navy-900">
+              ₾{product.price}
+            </span>
           )}
         </div>
 
@@ -194,16 +206,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
                 key={index}
                 className="w-3 h-3 border border-gray-300"
                 style={{
-                  backgroundColor:
-                    color.toLowerCase() === 'white'
-                      ? '#FFFFFF'
-                      : color.toLowerCase() === 'black'
-                      ? '#000000'
-                      : color.toLowerCase() === 'navy'
-                      ? '#1e3a8a'
-                      : color.toLowerCase() === 'grey' || color.toLowerCase() === 'gray'
-                      ? '#6B7280'
-                      : '#6B7280',
+                  backgroundColor: color.toLowerCase() === 'white' ? '#FFFFFF' :
+                                 color.toLowerCase() === 'black' ? '#000000' :
+                                 color.toLowerCase() === 'navy' ? '#1e3a8a' :
+                                 color.toLowerCase() === 'grey' || color.toLowerCase() === 'gray' ? '#6B7280' :
+                                 '#6B7280'
                 }}
                 title={color}
               ></div>
