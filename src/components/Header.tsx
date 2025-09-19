@@ -23,11 +23,11 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 relative">
 
-            {/* Left: Navigation */}
+            {/* Left: Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-6">
               {/* MEN Dropdown */}
               <div className="relative group">
-                <button className="text-white  font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
+                <button className="text-white font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
                   MEN
                 </button>
                 <div className="absolute top-full left-0 mt-0 w-48 bg-transparent shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
@@ -35,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                     <Link
                       key={cat.id}
                       to={`/category/${cat.slug}`}
-                      className="block px-4 py-3 text-sm text-white  transition-colors duration-200"
+                      className="block px-4 py-3 text-sm text-white transition-colors duration-200"
                     >
                       {cat.name}
                     </Link>
@@ -45,7 +45,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
 
               {/* WOMEN Dropdown */}
               <div className="relative group">
-                <button className="text-white hover:text-gray-200 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
+                <button className="text-white font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
                   WOMEN
                 </button>
                 <div className="absolute top-full left-0 mt-0 w-48 bg-transparent shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
@@ -53,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                     <Link
                       key={cat.id}
                       to={`/category/${cat.slug}`}
-                      className="block px-4 py-3 text-sm text-white  transition-colors duration-200"
+                      className="block px-4 py-3 text-sm text-white transition-colors duration-200"
                     >
                       {cat.name}
                     </Link>
@@ -63,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
 
               {/* UNISEX Dropdown */}
               <div className="relative group">
-                <button className="text-white hover:text-gray-200 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
+                <button className="text-white font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
                   UNISEX
                 </button>
                 <div className="absolute top-full left-0 mt-0 w-48 bg-transparent shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
@@ -71,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                     <Link
                       key={cat.id}
                       to={`/category/${cat.slug}`}
-                      className="block px-4 py-3 text-sm text-white 0 transition-colors duration-200"
+                      className="block px-4 py-3 text-sm text-white transition-colors duration-200"
                     >
                       {cat.name}
                     </Link>
@@ -79,21 +79,25 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 </div>
               </div>
 
-              <Link 
-                to="/sale" 
-                className="text-white  font-medium py-2 px-4 transition-colors duration-200"
+              <Link
+                to="/sale"
+                className="text-white font-medium py-2 px-4 transition-colors duration-200"
               >
                 SALE
               </Link>
             </nav>
 
             {/* Center: Logo */}
-            <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-white tracking-tight font-serif">
+            <Link
+              to="/"
+              className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-white tracking-tight font-serif"
+            >
               TBILISI WEAR
             </Link>
 
-            {/* Right: Action Buttons */}
-            <div className="flex items-center space-x-4">
+            {/* Right: Actions + Hamburger */}
+            <div className="flex items-center w-full justify-end space-x-4 md:space-x-4">
+              {/* Cart */}
               <button
                 onClick={toggleCart}
                 className="relative text-white hover:text-gray-200 transition-colors duration-200"
@@ -106,6 +110,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 )}
               </button>
 
+              {/* User */}
               <Link
                 to="/admin"
                 className="text-white hover:text-gray-200 transition-colors duration-200"
@@ -113,12 +118,15 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 <User className="h-5 w-5" />
               </Link>
 
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden text-white hover:text-gray-200 transition-colors duration-200"
-              >
-                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </button>
+              {/* Hamburger Menu */}
+              <div className="md:hidden ml-2">
+                <button
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className="text-white hover:text-gray-200 transition-colors duration-200"
+                >
+                  {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                </button>
+              </div>
             </div>
           </div>
 
