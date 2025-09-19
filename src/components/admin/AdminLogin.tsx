@@ -43,7 +43,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
               <Lock className="h-8 w-8 text-white" />
             </div>
             <h1 className="text-3xl font-serif font-bold text-navy-900 mb-2">ADMIN PORTAL</h1>
-            <p className="text-gray-600 uppercase tracking-wider text-sm">MAISON NIKOLAS</p>
+            <p className="text-gray-600 uppercase tracking-wider text-sm">TBILISI WEAR</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">

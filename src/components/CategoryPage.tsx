@@ -77,7 +77,7 @@ const CategoryPage: React.FC = () => {
       },
       'new-arrivals': {
         title: 'New Arrivals',
-        subtitle: 'Latest from Maison Nikolas',
+        subtitle: 'Latest from Tbilisi Wear',
         description:
           'Be the first to discover our newest pieces. Fresh designs that embody our commitment to timeless elegance and modern sophistication.',
         image: 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
