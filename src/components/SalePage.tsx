@@ -21,7 +21,9 @@ const SalePage: React.FC = () => {
     { id: '3', name: 'Casual Wear', slug: 'casual', description: 'Casual clothing', created_at: new Date().toISOString(), gender: 'men' },
     { id: '4', name: 'Dresses', slug: 'dresses', description: 'Elegant dresses', created_at: new Date().toISOString(), gender: 'women' },
     { id: '5', name: 'Blouses', slug: 'blouses', description: 'Designer blouses', created_at: new Date().toISOString(), gender: 'women' },
-    { id: '6', name: 'Skirts', slug: 'skirts', description: 'Premium skirts', created_at: new Date().toISOString(), gender: 'women' }
+    { id: '6', name: 'Skirts', slug: 'skirts', description: 'Premium skirts', created_at: new Date().toISOString(), gender: 'women' },
+    { id: '7', name: 'Accessories', slug: 'accessories', description: 'Premium accessories for everyone', created_at: new Date().toISOString(), gender: 'unisex' },
+    { id: '8', name: 'Bags', slug: 'bags', description: 'Luxury bags and leather goods', created_at: new Date().toISOString(), gender: 'unisex' }
   ];
 
   const mockProducts: Product[] = [
@@ -63,6 +65,25 @@ const SalePage: React.FC = () => {
       is_limited: false,
       created_at: new Date().toISOString(),
       category: mockCategories[1]
+    },
+    {
+      id: '4',
+      name: 'Leather Crossbody Bag',
+      description: 'Premium leather crossbody bag perfect for any occasion.',
+      category_id: '8',
+      price: 195,
+      discount_price: 150,
+      images: [
+        'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
+      ],
+      colors: ['Black', 'Brown', 'Tan'],
+      sizes: ['One Size'],
+      stock: 15,
+      is_featured: true,
+      is_new: false,
+      is_limited: false,
+      created_at: new Date().toISOString(),
+      category: mockCategories[7]
     }
   ];
 
