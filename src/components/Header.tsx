@@ -22,40 +22,58 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
       <header className="absolute top-0 left-0 w-full z-50 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 relative">
+
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-6">
-              {['MEN','WOMEN','UNISEX'].map((gender) => {
-                const cats = gender==='MEN'?menCategories:gender==='WOMEN'?womenCategories:unisexCategories;
-                return (
-                  <div key={gender} className="relative group">
-                    <button className="text-white font-medium py-2 transition-colors duration-200 uppercase tracking-wide">{gender}</button>
-                    <div className="absolute top-full left-0 mt-0 w-48 bg-white shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                      {cats.map(cat => (
-                        <Link key={cat.id} to={`/category/${cat.slug}`} className="block px-4 py-3 text-sm text-navy-900 hover:bg-blue-50">{cat.name}</Link>
-                      ))}
-                    </div>
-                  </div>
-                )
-              })}
+              {/* MEN */}
+              <div className="relative group">
+                <button className="text-white font-medium py-2 transition-colors duration-200 uppercase tracking-wide">MEN</button>
+                <div className="absolute top-full left-0 mt-0 w-48 bg-white shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  {menCategories.map(cat => (
+                    <Link key={cat.id} to={`/category/${cat.slug}`} className="block px-4 py-3 text-sm text-navy-900 hover:bg-blue-50">{cat.name}</Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* WOMEN */}
+              <div className="relative group">
+                <button className="text-white font-medium py-2 transition-colors duration-200 uppercase tracking-wide">WOMEN</button>
+                <div className="absolute top-full left-0 mt-0 w-48 bg-white shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  {womenCategories.map(cat => (
+                    <Link key={cat.id} to={`/category/${cat.slug}`} className="block px-4 py-3 text-sm text-navy-900 hover:bg-blue-50">{cat.name}</Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* UNISEX */}
+              <div className="relative group">
+                <button className="text-white font-medium py-2 transition-colors duration-200 uppercase tracking-wide">UNISEX</button>
+                <div className="absolute top-full left-0 mt-0 w-48 bg-white shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  {unisexCategories.map(cat => (
+                    <Link key={cat.id} to={`/category/${cat.slug}`} className="block px-4 py-3 text-sm text-navy-900 hover:bg-blue-50">{cat.name}</Link>
+                  ))}
+                </div>
+              </div>
+
               <Link to="/sale" className="text-red-600 font-medium py-2 px-4 hover:text-red-400">SALE</Link>
             </nav>
 
             {/* Logo */}
             <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-white tracking-tight font-serif">TBILISI WEAR</Link>
 
-            {/* Right Icons */}
+            {/* Icons + Hamburger */}
             <div className="flex items-center space-x-4">
               {/* Cart */}
               <button onClick={toggleCart} className="relative text-white hover:text-gray-200 transition-colors duration-200">
-                <ShoppingBag className="h-5 w-5" />
-                {getTotalItems() > 0 && (
+                <ShoppingBag className="h-5 w-5"/>
+                {getTotalItems()>0 && (
                   <span className="absolute -top-2 -right-2 bg-white text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">{getTotalItems()}</span>
                 )}
               </button>
 
               {/* Login */}
               <Link to="/admin" className="text-white hover:text-gray-200 transition-colors duration-200">
-                <User className="h-5 w-5" />
+                <User className="h-5 w-5"/>
               </Link>
 
               {/* Hamburger */}
@@ -71,12 +89,12 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
           {isMenuOpen && (
             <div className="md:hidden mt-2 w-full bg-white shadow-lg rounded-b-lg">
               <nav className="flex flex-col px-2 py-2 space-y-1">
-                {['MEN','UNISEX','WOMEN'].map((gender)=> {
+                {['MEN','UNISEX','WOMEN'].map((gender)=>{
                   const cats = gender==='MEN'?menCategories:gender==='WOMEN'?womenCategories:unisexCategories;
                   return (
                     <div key={gender}>
                       <h3 className="font-bold text-navy-900 px-4 py-2 text-sm">{gender}</h3>
-                      {cats.map(cat => (
+                      {cats.map(cat=>(
                         <Link key={cat.id} to={`/category/${cat.slug}`} className="block px-6 py-2 text-navy-900 hover:bg-blue-50 rounded" onClick={()=>setIsMenuOpen(false)}>{cat.name}</Link>
                       ))}
                     </div>
@@ -98,6 +116,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
               <h2 className="text-lg font-bold text-navy-900">Shopping Bag</h2>
               <button onClick={toggleCart} className="text-gray-400 hover:text-navy-900"><X className="h-6 w-6"/></button>
             </div>
+
             {/* Cart Items */}
             <div className="flex-1 overflow-y-auto p-6">
               {state.items.length===0?(
@@ -148,7 +167,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                     </div>
                   </div>
                 )}
-                <Link to="/checkout" onClick={toggleCart} className="w-full bg-white text-white py-3 px-6 hover:bg-white text-center block font-medium">Checkout</Link>
+                <Link to="/checkout" onClick={toggleCart} className="w-full bg-blue-600 text-white py-3 px-6 hover:bg-blue-700 text-center block font-medium">Checkout</Link>
               </div>
             )}
           </div>
