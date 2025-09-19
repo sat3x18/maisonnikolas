@@ -185,7 +185,7 @@ const SalePage: React.FC = () => {
               Discover exceptional value on our premium collection. Quality and style at special prices.
             </p>
             <Link
-  to="/product"
+  to="/new-arrivals"
   className="bg-transparent text-white border border-white px-8 py-3 font-medium hover:bg-white hover:text-navy-900 transition-colors duration-200 inline-block"
 >
   SHOP ALL
