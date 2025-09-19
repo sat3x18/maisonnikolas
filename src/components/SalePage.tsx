@@ -184,9 +184,12 @@ const SalePage: React.FC = () => {
             <p className="text-lg mb-8 leading-relaxed">
               Discover exceptional value on our premium collection. Quality and style at special prices.
             </p>
-            <button className="bg-navy-900 text-white px-8 py-3 font-medium hover:bg-navy-800 transition-colors duration-200">
-              SHOP ALL
-            </button>
+            <Link
+  to="/new-arrivals"
+  className="bg-transparent text-white border border-white px-8 py-3 font-medium hover:bg-white hover:text-navy-900 transition-colors duration-200 inline-block"
+>
+  SHOP ALL
+</Link>
           </div>
         </div>
       </section>
