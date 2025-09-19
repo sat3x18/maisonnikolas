@@ -18,12 +18,14 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
 
   return (
     <>
+      {/* Header */}
       <header className="absolute top-0 left-0 w-full z-50 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            
+          <div className="flex items-center justify-between h-16 relative">
+
             {/* Left: Navigation */}
             <nav className="hidden md:flex items-center space-x-6">
+              {/* MEN Dropdown */}
               <div className="relative group">
                 <button className="text-white hover:text-gray-200 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
                   MEN
@@ -41,6 +43,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 </div>
               </div>
 
+              {/* WOMEN Dropdown */}
               <div className="relative group">
                 <button className="text-white hover:text-gray-200 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
                   WOMEN
@@ -58,6 +61,7 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 </div>
               </div>
 
+              {/* UNISEX Dropdown */}
               <div className="relative group">
                 <button className="text-white hover:text-gray-200 font-medium py-2 transition-colors duration-200 uppercase tracking-wide">
                   UNISEX
@@ -74,9 +78,16 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                   ))}
                 </div>
               </div>
+
+              <Link 
+                to="/sale" 
+                className="text-red-400 hover:bg-gray-800 font-medium py-2 px-4 transition-colors duration-200"
+              >
+                SALE
+              </Link>
             </nav>
 
-            {/* Center: Logo/Name */}
+            {/* Center: Logo */}
             <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-white tracking-tight font-serif">
               TBILISI WEAR
             </Link>
@@ -170,12 +181,119 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
         </div>
       </header>
 
-      {/* Cart Sidebar (kept same as before, transparent) */}
+      {/* Cart Sidebar */}
       {state.isOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden">
           <div className="absolute inset-0 bg-black bg-opacity-50" onClick={toggleCart}></div>
           <div className="absolute right-0 top-0 h-full w-full max-w-md bg-transparent shadow-xl">
-            {/* Cart content same as previous white version */}
+            <div className="flex items-center justify-between p-6">
+              <h2 className="text-lg font-bold text-white">Shopping Bag</h2>
+              <button
+                onClick={toggleCart}
+                className="text-gray-300 hover:text-white transition-colors duration-200"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6">
+              {state.items.length === 0 ? (
+                <div className="text-center py-12">
+                  <ShoppingBag className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-white mb-2">Your bag is empty</h3>
+                  <p className="text-gray-300 mb-6">Add items to get started.</p>
+                  <button
+                    onClick={toggleCart}
+                    className="bg-white text-black px-6 py-2 hover:bg-gray-200 transition-colors duration-200"
+                  >
+                    Continue Shopping
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {state.items.map((item, index) => (
+                    <div key={index} className="py-4 border-b border-gray-700">
+                      <div className="flex items-center space-x-4 mb-3">
+                        <img
+                          src={item.product.images[0] || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'}
+                          alt={item.product.name}
+                          className="w-16 h-16 object-cover"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-medium text-white">{item.product.name}</h3>
+                          <div className="text-sm text-gray-300 mt-1">
+                            {item.color && <span>{item.color}</span>}
+                            <span> • Qty: {item.quantity}</span>
+                          </div>
+                          <div className="font-medium text-white mt-1">
+                            ₾{((item.product.discount_price || item.product.price) * item.quantity).toFixed(2)}
+                          </div>
+                          <button
+                            onClick={() => removeItem(index)}
+                            className="text-gray-400 hover:text-red-400 transition-colors duration-200 p-1"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Quantity Controls */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <button
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.color, item.size)}
+                            className="bg-gray-700 text-white w-8 h-8 hover:bg-gray-600 transition-colors duration-200 flex items-center justify-center"
+                          >
+                            <Minus className="h-3 w-3" />
+                          </button>
+                          <span className="text-white font-semibold w-8 text-center">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.color, item.size)}
+                            className="bg-gray-700 text-white w-8 h-8 hover:bg-gray-600 transition-colors duration-200 flex items-center justify-center"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </button>
+                        </div>
+                        <span className="text-sm text-gray-300">
+                          ₾{(item.product.discount_price || item.product.price).toFixed(2)} each
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {state.items.length > 0 && (
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-lg font-medium text-white">Total</span>
+                  <span className="text-lg font-bold text-white">
+                    ₾{(state.items.reduce((total, item) => {
+                      const price = item.product.discount_price || item.product.price;
+                      return total + (price * item.quantity);
+                    }, 0) - state.discountAmount).toFixed(2)}
+                  </span>
+                </div>
+
+                {state.appliedDiscount && (
+                  <div className="mb-4 p-2 bg-green-700 border border-green-600 rounded text-sm">
+                    <div className="flex items-center justify-between text-white">
+                      <span>Discount: {state.appliedDiscount.code}</span>
+                      <span>-₾{state.discountAmount.toFixed(2)}</span>
+                    </div>
+                  </div>
+                )}
+
+                <Link
+                  to="/checkout"
+                  onClick={toggleCart}
+                  className="w-full bg-white text-black py-3 px-6 hover:bg-gray-200 transition-colors duration-200 text-center block font-medium"
+                >
+                  Checkout
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       )}
