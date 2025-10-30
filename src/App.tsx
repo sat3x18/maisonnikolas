@@ -114,6 +114,43 @@ const MainApp: React.FC = () => {
       is_limited: false,
       created_at: new Date().toISOString(),
       category: mockCategories[1]
+    },
+    {
+      id: '4',
+      name: 'Leather Crossbody Bag',
+      description: 'Premium leather crossbody bag perfect for any occasion.',
+      category_id: '8',
+      price: 195,
+      images: [
+        'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
+      ],
+      colors: ['Black', 'Brown', 'Tan'],
+      sizes: ['One Size'],
+      stock: 15,
+      is_featured: true,
+      is_new: false,
+      is_limited: false,
+      created_at: new Date().toISOString(),
+      category: mockCategories[7]
+    },
+    {
+      id: '5',
+      name: 'Classic Watch',
+      description: 'Timeless watch design with premium materials.',
+      category_id: '9',
+      price: 450,
+      discount_price: 350,
+      images: [
+        'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+      ],
+      colors: ['Silver', 'Gold', 'Black'],
+      sizes: ['One Size'],
+      stock: 8,
+      is_featured: false,
+      is_new: true,
+      is_limited: true,
+      created_at: new Date().toISOString(),
+      category: mockCategories[8]
     }
   ];
 
@@ -132,43 +169,6 @@ const MainApp: React.FC = () => {
         setCategories(mockCategories);
         setLoading(false);
         return;
-      },
-      {
-        id: '4',
-        name: 'Leather Crossbody Bag',
-        description: 'Premium leather crossbody bag perfect for any occasion.',
-        category_id: '8',
-        price: 195,
-        images: [
-          'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
-        ],
-        colors: ['Black', 'Brown', 'Tan'],
-        sizes: ['One Size'],
-        stock: 15,
-        is_featured: true,
-        is_new: false,
-        is_limited: false,
-        created_at: new Date().toISOString(),
-        category: mockCategories[7]
-      },
-      {
-        id: '5',
-        name: 'Classic Watch',
-        description: 'Timeless watch design with premium materials.',
-        category_id: '9',
-        price: 450,
-        discount_price: 350,
-        images: [
-          'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
-        ],
-        colors: ['Silver', 'Gold', 'Black'],
-        sizes: ['One Size'],
-        stock: 8,
-        is_featured: false,
-        is_new: true,
-        is_limited: true,
-        created_at: new Date().toISOString(),
-        category: mockCategories[8]
       }
 
       const [productsData, categoriesData] = await Promise.all([
