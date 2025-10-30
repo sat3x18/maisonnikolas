@@ -19,6 +19,7 @@ const AdminApp: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogin = async (username: string, password: string): Promise<boolean> => {
+    // Simple demo authentication
     if (username === 'admin' && password === 'admin123') {
       setIsLoggedIn(true);
       return true;
@@ -42,7 +43,7 @@ const MainApp: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Mock categories
+  // Mock data fallback
   const mockCategories: Category[] = [
     { id: '1', name: 'Shirts', slug: 'shirts', description: 'Premium shirts collection', created_at: new Date().toISOString(), gender: 'men' },
     { id: '2', name: 'Suits', slug: 'suits', description: 'Luxury suits', created_at: new Date().toISOString(), gender: 'men' },
@@ -56,7 +57,6 @@ const MainApp: React.FC = () => {
     { id: '10', name: 'Sunglasses', slug: 'sunglasses', description: 'Designer eyewear collection', created_at: new Date().toISOString(), gender: 'unisex' }
   ];
 
-  // Mock products
   const mockProducts: Product[] = [
     {
       id: '1',
@@ -66,7 +66,7 @@ const MainApp: React.FC = () => {
       price: 125,
       discount_price: 95,
       images: [
-        'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
+        'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
         'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
       ],
       colors: ['White', 'Light Blue', 'Navy'],
@@ -104,7 +104,7 @@ const MainApp: React.FC = () => {
       price: 395,
       discount_price: 295,
       images: [
-        'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'
+        'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
       ],
       colors: ['Navy', 'Charcoal', 'Black'],
       sizes: ['38', '40', '42', '44', '46'],
@@ -114,43 +114,6 @@ const MainApp: React.FC = () => {
       is_limited: false,
       created_at: new Date().toISOString(),
       category: mockCategories[1]
-    },
-    {
-      id: '4',
-      name: 'Leather Crossbody Bag',
-      description: 'Premium leather crossbody bag perfect for any occasion.',
-      category_id: '8',
-      price: 195,
-      images: [
-        'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
-      ],
-      colors: ['Black', 'Brown', 'Tan'],
-      sizes: ['One Size'],
-      stock: 15,
-      is_featured: true,
-      is_new: false,
-      is_limited: false,
-      created_at: new Date().toISOString(),
-      category: mockCategories[7]
-    },
-    {
-      id: '5',
-      name: 'Classic Watch',
-      description: 'Timeless watch design with premium materials.',
-      category_id: '9',
-      price: 450,
-      discount_price: 350,
-      images: [
-        'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'
-      ],
-      colors: ['Silver', 'Gold', 'Black'],
-      sizes: ['One Size'],
-      stock: 8,
-      is_featured: false,
-      is_new: true,
-      is_limited: true,
-      created_at: new Date().toISOString(),
-      category: mockCategories[8]
     }
   ];
 
@@ -162,20 +125,57 @@ const MainApp: React.FC = () => {
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
+      
       if (!supabaseUrl || !supabaseKey) {
         console.log('Supabase not configured, using mock data');
         setProducts(mockProducts);
         setCategories(mockCategories);
         setLoading(false);
         return;
+      },
+      {
+        id: '4',
+        name: 'Leather Crossbody Bag',
+        description: 'Premium leather crossbody bag perfect for any occasion.',
+        category_id: '8',
+        price: 195,
+        images: [
+          'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
+        ],
+        colors: ['Black', 'Brown', 'Tan'],
+        sizes: ['One Size'],
+        stock: 15,
+        is_featured: true,
+        is_new: false,
+        is_limited: false,
+        created_at: new Date().toISOString(),
+        category: mockCategories[7]
+      },
+      {
+        id: '5',
+        name: 'Classic Watch',
+        description: 'Timeless watch design with premium materials.',
+        category_id: '9',
+        price: 450,
+        discount_price: 350,
+        images: [
+          'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
+        ],
+        colors: ['Silver', 'Gold', 'Black'],
+        sizes: ['One Size'],
+        stock: 8,
+        is_featured: false,
+        is_new: true,
+        is_limited: true,
+        created_at: new Date().toISOString(),
+        category: mockCategories[8]
       }
 
       const [productsData, categoriesData] = await Promise.all([
         api.getProducts(),
         api.getCategories()
       ]);
-
+      
       setProducts(productsData.length > 0 ? productsData : mockProducts);
       setCategories(categoriesData.length > 0 ? categoriesData : mockCategories);
     } catch (error) {
@@ -206,10 +206,9 @@ const MainApp: React.FC = () => {
       <Header categories={categories} />
       
       {/* Hero Banner */}
-     <section className="relative h-[400px] md:h-[600px] bg-gray-100 overflow-hidden">
-       
+      <section className="relative h-[500px] bg-gray-100 overflow-hidden">
         <img
-          src="https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png"
+          src="https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg"
           alt="Hero Banner"
           className="w-full h-full object-cover object-center"
         />
@@ -217,12 +216,9 @@ const MainApp: React.FC = () => {
           <div className="text-center text-white">
             <h1 className="text-5xl font-bold mb-4 text-white">Tbilisi Wear</h1>
             <p className="text-xl mb-6 text-white">Timeless Elegance Since 2025</p>
-            <Link
-  to="/new-arrivals"
-  className="bg-transparent text-white border border-white px-8 py-3 font-medium hover:bg-white hover:text-navy-900 transition-colors duration-200 inline-block"
->
-  SHOP NOW
-</Link>
+            <Link to="/new-arrivals" className="bg-navy-900 text-white px-8 py-3 font-medium hover:bg-navy-800 transition-colors duration-200 inline-block">
+              SHOP NOW
+            </Link>
           </div>
         </div>
       </section>
@@ -232,8 +228,8 @@ const MainApp: React.FC = () => {
         <section className="bg-gray-50 py-16 px-4">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
-              
-              <p className="text-gray-600">Featured products</p>
+              <h2 className="text-3xl font-bold text-navy-900 mb-4">FEATURED</h2>
+              <p className="text-gray-600">Handpicked pieces for the season</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredProducts.slice(0, 6).map((product) => (
@@ -242,6 +238,12 @@ const MainApp: React.FC = () => {
             </div>
           </div>
         </section>
+      )}
+
+      {/* New Arrivals */}
+      {newProducts.length > 0 && (
+        <section className="bg-white py-16 px-4">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-navy-900 mb-4">NEW ARRIVALS</h2>
               <p className="text-gray-600">The latest additions to our collection</p>
@@ -279,9 +281,20 @@ const MainApp: React.FC = () => {
             <div>
               <h4 className="text-lg font-medium text-navy-900 mb-6">Customer Care</h4>
               <ul className="space-y-3 text-gray-600">
+               
                 <li><a href="contact" className="hover:text-navy-900 transition-colors duration-200">Contact Us</a></li>
               </ul>
             </div>
+
+            {/*<div>
+              <h4 className="text-lg font-medium text-navy-900 mb-6">Company</h4>
+              <ul className="space-y-3 text-gray-600">
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">About Us</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Careers</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Press</a></li>
+                <li><a href="#" className="hover:text-navy-900 transition-colors duration-200">Sustainability</a></li>
+              </ul>
+            </div> */}
           </div>
 
           <div className="border-t border-gray-100 pt-8 text-center">

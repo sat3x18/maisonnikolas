@@ -35,7 +35,7 @@ const SalePage: React.FC = () => {
       price: 125,
       discount_price: 95,
       images: [
-        'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png',
+        'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg',
         'https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg'
       ],
       colors: ['White', 'Light Blue', 'Navy'],
@@ -55,7 +55,7 @@ const SalePage: React.FC = () => {
       price: 395,
       discount_price: 295,
       images: [
-        'https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png'
+        'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg'
       ],
       colors: ['Navy', 'Charcoal', 'Black'],
       sizes: ['38', '40', '42', '44', '46'],
@@ -171,9 +171,9 @@ const SalePage: React.FC = () => {
       <Header categories={categories} />
       
       {/* Hero Section */}
-      <section className="relative h-[600px] bg-gray-100 overflow-hidden">
+      <section className="relative h-[500px] bg-gray-100 overflow-hidden">
         <img
-          src="https://i.postimg.cc/MK2NNhK3/imgi-1-Untitled-design-4.png"
+          src="https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg"
           alt="Sale Collection"
           className="w-full h-full object-cover object-center"
         />
@@ -184,12 +184,9 @@ const SalePage: React.FC = () => {
             <p className="text-lg mb-8 leading-relaxed">
               Discover exceptional value on our premium collection. Quality and style at special prices.
             </p>
-            <Link
-  to="/new-arrivals"
-  className="bg-transparent text-white border border-white px-8 py-3 font-medium hover:bg-white hover:text-navy-900 transition-colors duration-200 inline-block"
->
-  SHOP NOW
-</Link>
+            <button className="bg-navy-900 text-white px-8 py-3 font-medium hover:bg-navy-800 transition-colors duration-200">
+              SHOP NOW
+            </button>
           </div>
         </div>
       </section>
