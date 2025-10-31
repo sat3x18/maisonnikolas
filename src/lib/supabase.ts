@@ -395,24 +395,45 @@ export const api = {
   calculateDiscountAmount: (discountCode: any, orderTotal: number, cartItems: CartItem[]): number => {
     const hasApplicableProducts = discountCode.discount_code_products?.length > 0;
     const hasApplicableCategories = discountCode.discount_code_categories?.length > 0;
+    const isSingleUse = discountCode.max_uses === 1;
 
-    let applicableTotal = orderTotal;
+    let applicableItems = cartItems;
 
     // If discount is limited to specific products/categories, calculate applicable total
     if (hasApplicableProducts || hasApplicableCategories) {
       const applicableProductIds = discountCode.discount_code_products?.map((dcp: any) => dcp.product_id) || [];
       const applicableCategoryIds = discountCode.discount_code_categories?.map((dcc: any) => dcc.category_id) || [];
 
-      applicableTotal = cartItems
+      applicableItems = cartItems
         .filter(item => 
           applicableProductIds.includes(item.product.id) ||
           applicableCategoryIds.includes(item.product.category_id)
-        )
-        .reduce((total, item) => {
-          const price = item.product.discount_price || item.product.price;
-          return total + (price * item.quantity);
-        }, 0);
+        );
     }
+
+    // If single use (max_uses = 1), apply discount to only the most expensive applicable item
+    if (isSingleUse && applicableItems.length > 0) {
+      // Find the most expensive single item (not total price * quantity)
+      const mostExpensiveItem = applicableItems.reduce((max, item) => {
+        const itemPrice = item.product.discount_price || item.product.price;
+        const maxPrice = max.product.discount_price || max.product.price;
+        return itemPrice > maxPrice ? item : max;
+      });
+      
+      const itemPrice = mostExpensiveItem.product.discount_price || mostExpensiveItem.product.price;
+      
+      if (discountCode.type === 'percentage') {
+        return Math.min(itemPrice * (discountCode.value / 100), itemPrice);
+      } else {
+        return Math.min(discountCode.value, itemPrice);
+      }
+    }
+
+    // Regular discount calculation for multiple uses
+    const applicableTotal = applicableItems.reduce((total, item) => {
+      const price = item.product.discount_price || item.product.price;
+      return total + (price * item.quantity);
+    }, 0);
 
     if (discountCode.type === 'percentage') {
       return Math.min(applicableTotal * (discountCode.value / 100), applicableTotal);
