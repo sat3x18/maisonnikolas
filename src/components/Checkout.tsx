@@ -342,6 +342,9 @@ const Checkout: React.FC = () => {
                 {state.appliedDiscount && (
                   <div className="flex items-center justify-between text-green-600">
                     <span>Discount ({state.appliedDiscount.code})</span>
+                    {state.appliedDiscount.max_uses === 1 && (
+                      <span className="text-xs text-green-500 ml-2">(Single item)</span>
+                    )}
                     <span>-₾{state.discountAmount.toFixed(2)}</span>
                   </div>
                 )}

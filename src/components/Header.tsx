@@ -283,7 +283,12 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                 {state.appliedDiscount && (
                   <div className="mb-4 p-2 bg-green-50 border border-green-200 rounded text-sm">
                     <div className="flex items-center justify-between text-green-800">
-                      <span>Discount: {state.appliedDiscount.code}</span>
+                      <span>
+                        Discount: {state.appliedDiscount.code}
+                        {state.appliedDiscount.max_uses === 1 && (
+                          <span className="text-xs ml-1">(Single item)</span>
+                        )}
+                      </span>
                       <span>-₾{state.discountAmount.toFixed(2)}</span>
                     </div>
                   </div>
