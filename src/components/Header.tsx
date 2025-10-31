@@ -291,11 +291,6 @@ const Header: React.FC<HeaderProps> = ({ categories }) => {
                       </span>
                       <span>-₾{state.discountAmount.toFixed(2)}</span>
                     </div>
-                    {state.appliedDiscount.max_uses && (
-                      <div className="text-xs text-green-600 mt-1">
-                        Uses: {state.appliedDiscount.current_uses}/{state.appliedDiscount.max_uses}
-                      </div>
-                    )}
                   </div>
                 )}
                 

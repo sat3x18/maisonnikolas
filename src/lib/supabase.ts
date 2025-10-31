@@ -229,6 +229,7 @@ export const api = {
       .insert(orderItems);
     if (itemsError) throw itemsError;
 
+  
     return order;
   },
 
@@ -554,23 +555,12 @@ export const api = {
     if (usageError) throw usageError;
 
     // Increment usage count
-    const { data: updatedCode, error: incrementError } = await supabaseAdmin
+    const { error: incrementError } = await supabaseAdmin
       .from('discount_codes')
-      .rpc('increment_discount_usage', { discount_id: discountCodeId })
-      .select()
-      .single();
+      .update({ current_uses: supabase.raw('current_uses + 1') })
+      .eq('id', discountCodeId);
     
     if (incrementError) throw incrementError;
-
-    // If this was a single-use code, deactivate it
-    if (updatedCode && updatedCode.max_uses === 1 && updatedCode.current_uses >= updatedCode.max_uses) {
-      const { error: deactivateError } = await supabaseAdmin
-        .from('discount_codes')
-        .update({ is_active: false })
-        .eq('id', discountCodeId);
-      
-      if (deactivateError) throw deactivateError;
-    }
   },
 
   // -------- Discord Webhooks --------

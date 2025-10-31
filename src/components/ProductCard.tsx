@@ -136,19 +136,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, viewMode = 'grid' })
               NEW
             </span>
           )}
-          {product.discount_price && (
-            <span className="bg-green-600 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
-              SALE
-            </span>
-          )}
           {product.is_limited && (
             <span className="bg-red-600 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
               LIMITED
-            </span>
-          )}
-          {product.discount_price && (
-            <span className="bg-green-600 text-white px-2 py-1 text-xs font-medium tracking-wider shadow-sm">
-              SALE
             </span>
           )}
         </div>

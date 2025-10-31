@@ -232,10 +232,7 @@ const Cart: React.FC = () => {
                   <div className="flex items-center justify-between text-green-600">
                     <span>Discount ({state.appliedDiscount.code})</span>
                     {state.appliedDiscount.max_uses === 1 && (
-                      <div className="flex flex-col items-end">
-                        <span className="text-xs text-green-500">(Single item)</span>
-                        <span className="text-xs text-green-400">Uses: {state.appliedDiscount.current_uses}/{state.appliedDiscount.max_uses}</span>
-                      </div>
+                      <span className="text-xs text-green-500 ml-2">(Single item)</span>
                     )}
                     <span>-₾{state.discountAmount.toFixed(2)}</span>
                   </div>
